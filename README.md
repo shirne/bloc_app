@@ -2,12 +2,8 @@
 
 基于bloc和flutter_bloc的Flutter APP框架.
 
-# 工具脚本
+预置功能: bloc页面模板，多语言，Models, API请求，图标，启动页
 
-bin/bloc.dart
-
-- 执行命令 dart bin/bloc.dart Pagename 添加新页面
-- globals/routes.dart 中添加路由配置
 
 # 修改启动页和图标
 
@@ -15,7 +11,12 @@ bin/bloc.dart
 - 执行命令 flutter pub run flutter_native_splash:create 生成新启动页
 - 执行命令 flutter pub run flutter_launcher_icons_maker:main 生成新图标
 
-# 添加路由
+# 添加页面
+
+bin/bloc.dart
+
+- 执行命令 dart bin/bloc.dart Pagename 添加新页面
+- globals/routes.dart 中添加路由配置
 
 # 页面结构说明
 

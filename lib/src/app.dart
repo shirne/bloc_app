@@ -36,7 +36,7 @@ class MainApp extends StatelessWidget {
                 GlobalCupertinoLocalizations.delegate,
               ],
               supportedLocales: const [
-                Locale('en', ''), // English, no country code
+                Locale('en', 'cn'), // English, no country code
               ],
               onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
               theme: _lightTheme(),

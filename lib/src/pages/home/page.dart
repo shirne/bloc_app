@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../generated/l10n.dart';
 import 'bloc.dart';
 
 class HomePage extends StatelessWidget {
@@ -13,7 +14,9 @@ class HomePage extends StatelessWidget {
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(
+              title: Text(S.of(context).appTitle),
+            ),
             body: Center(
               child: Text("${state.count}"),
             ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../pages/home/page.dart';
+import '../pages/login/page.dart';
+import '../pages/not_found.dart';
+import '../pages/settings/page.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -9,10 +12,24 @@ class Routes {
     '/',
     (RouteSettings settings) => const HomePage(),
   );
+  static final login = RouteItem(
+    '/login',
+    (RouteSettings settings) => const LoginPage(),
+  );
+  static final seettings = RouteItem(
+    '/settings',
+    (RouteSettings settings) => const SettingsPage(),
+  );
+  static final notFound = RouteItem(
+    '/404',
+    (RouteSettings settings) => NotFoundPage(settings.name),
+  );
 
   static final routes = {
     for (RouteItem e in [
       root,
+      login,
+      seettings,
     ])
       e.name: e
   };

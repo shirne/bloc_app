@@ -26,5 +26,8 @@ class HomeBloc extends CachedBloc<HomeEvent, HomeState> {
 
   _loadData({void Function(String message)? onError}) async {
     //TODO load data
+    if (isClosed) {
+      return;
+    }
   }
 }

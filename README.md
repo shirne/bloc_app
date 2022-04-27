@@ -11,15 +11,134 @@
 - 执行命令 flutter pub run flutter_native_splash:create 生成新启动页
 - 执行命令 flutter pub run flutter_launcher_icons_maker:main 生成新图标
 
+
 # 添加页面
 
-bin/bloc.dart
+- 执行命令 `dart bin/bloc.dart Pagename`  添加新页面
+- 执行命令 `dart bin/bloc.dart Pagename dirname` 在目录dirname中添加新页面
 
-- 执行命令 dart bin/bloc.dart Pagename 添加新页面
+    *注意 页面名称为大写开头的驼峰命名法(dart的类名规范)，目录名为全部小写的下划线命名法(dart中的文件名规范)
 - globals/routes.dart 中添加路由配置
+```dart
+class Routes {
+    // ...
 
-# 页面结构说明
+    /// 第一处，定义页面
+    static final pagename = RouteItem(
+        '/pagepath',
+        (RouteSettings settings) => const NewPage(),
+    );
+    // ...
+    static final routes = {
+        for (RouteItem e in [
+        // ...
+        pagename,       // 第二处，页面加入到map中
+        ])
+        e.name: e
+    };
+}
+```
+- 页面状态缓存
+在`page.dart` 中的 Widget build(BuildContext context) 方法中找到创建Bloc的代码，如：
+```dart
+create: (context) => HomeBloc(),
+```
+增加缓存键名的参数
+```dart
+create: (context) => HomeBloc('homestate'),
+```
 
+# 业务逻辑与UI分离
+* 不建议将Controller 之类的控制器存入State中，推荐将page 转换为StatefulWidget后写到State属性中
+* 不建议将context 传入到bloc中操作，可以在bloc或event中增加回调方法，在处理完业务逻辑后，将成功或失败状态回调至UI
+
+如：在bloc中加入回调，此方法比较固定，在指定页面的指定操作会回调到ui
+```dart
+/// bloc.dart
+class HomeBloc ... {
+    final void Function(String errmsg)? onError;
+    HomeBloc(this.onError,[String globalKey = '']): ...
+}
+
+/// page.dart
+
+_onError(String message){
+    // 这里如要使用context，需要将page转换为StatefulWidget
+    showDialog(context, (context){
+        return AlertDialog(
+            content: Text(message),
+            actions: <Widget>[
+                TextButton(
+                    child: const Text('好的'),
+                    onPressed: () {
+                        Navigator.of(context).pop();
+                    },
+                ),
+            ],
+        );
+    });
+}
+
+...
+create: (context) => HomeBloc(_onError,'homestate'),
+```
+
+在事件中回调: 此方法比较灵活，每次推送事件都可以绑定一个回调来处理该事件相关的操作
+```dart
+/// event.dart
+class LoadDataEvent extends HomeEvent{
+    final void Function(String errmsg)? onError;
+    LoadDataEvent(this.onError);
+}
+
+/// bloc.dart
+HomeBloc([String globalKey = ''])...{
+    ...
+    on<LoadDataEvent>((event, emit) {
+      emit(state.clone(status: Status.loading));
+      _loadData(onError: event.onError);
+    });
+    ...
+}
+
+_loadData({void Function(String message)? onError}) async {
+    ...
+
+    if(success){
+        add(StateChangedEvent(state.clone(...)));
+    }else{
+        onError?.call('load error');
+    }
+  }
+
+```
+    * 对于加载操作，一般不需要成功回调，因为加载完成就推送状态更新事件，页面数据直接刷新就可以了。
+    * 对于表单提交等操作，可能需要事件成功的回调，这种就建议将回调指定到事件上
+    * 注意异步操作完成需要更新状态或回调事件时，先通过`isClosed`判断一下页面是否已关闭，类似于StatefulWidget的`mounted`，两者状态是相反的
+
+* 不建议在page的tap或press中写业务逻辑代码，如api请求，大量的计算等
+* 建议将相似的组件抽离出来，一是简化了页面布局，二是方便统一调整组件
+
+# 目录结构说明
+
+```tree
+lib
+|- generated                // 多语言生成文件，不可修改
+|- l10n                     // 多语言配置文件，要修改或新增语言项在这里操作
+|- src                      // 源文件目录
+|   |- globals              // 全局项
+|   |- models               // Model目录
+|   |  |- base.dart         // 模型基类
+|   |  |- ...           
+|   |- pages                // 页面目录，创建的页面文件在此目录下，一般一个页面会生成一个子目录
+|   |  |- home              // 首页  
+|   |  |- home              // 登录页  
+|   |  |- settings          // 设置页  
+|   |  |- not_found.dart    // 默认的404页
+|   |- utils                // 工具库
+|   |- wigets               // 组件库
+|- main.dart                // 入口文件
+```
 
 
 ## Flutter

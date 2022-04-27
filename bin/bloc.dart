@@ -21,6 +21,7 @@ void main(List<String> args) {
 
   File(pagedir + 'bloc.dart').writeAsStringSync("""
 import 'package:flutter/widgets.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../../${pathDepper}widgets/cached_bloc.dart';
 
@@ -46,6 +47,9 @@ class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
   _loadData({void Function(String message)? onError}) async {
     await Future.delayed(const Duration(milliseconds: 500));
     //TODO load data
+    if(isClosed){
+      return;
+    }
   }
 }
 
@@ -103,6 +107,13 @@ class ${page}Page extends StatelessWidget {
       create: (context) => ${page}Bloc(),
       child: BlocBuilder<${page}Bloc, ${page}State>(
         builder: (context, state) {
+          // 初始化状态可以显示skeleton
+          if(state.status == Status.initial){
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(3, (index) => SkeletonListTile()),
+            );
+          }
           return Scaffold(
             appBar: AppBar(),
             body:Center(

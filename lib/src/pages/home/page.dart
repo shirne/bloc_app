@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../../../generated/l10n.dart';
+import '../../widgets/cached_bloc.dart';
 import 'bloc.dart';
 
 class HomePage extends StatelessWidget {
@@ -17,9 +19,14 @@ class HomePage extends StatelessWidget {
             appBar: AppBar(
               title: Text(S.of(context).appTitle),
             ),
-            body: Center(
-              child: Text("${state.count}"),
-            ),
+            body: state.status == Status.initial
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(3, (index) => SkeletonListTile()),
+                  )
+                : Center(
+                    child: Text("${state.count}"),
+                  ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 context.read<HomeBloc>().add(IncreaseEvent(1));

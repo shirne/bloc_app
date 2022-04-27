@@ -11,6 +11,60 @@
 - 执行命令 flutter pub run flutter_native_splash:create 生成新启动页
 - 执行命令 flutter pub run flutter_launcher_icons_maker:main 生成新图标
 
+# 添加模型
+
+- models目录中新增文件，新建类继承自Base
+```dart
+class ArticleModel extends Base {
+  int articleId;
+  String title;
+  String content;
+  ArticleModel({
+    this.articleId = 0,
+    this.title = '',
+    this.content = '',
+  });
+
+  /// 为了防止数据异常，这里转换可以使用工具类中的数字，日期等转换方法
+  ArticleModel.fromJson(Map<String, dynamic>? json)
+      : this(
+          articleId: json?['article_id'] ?? 0,
+          title: json?['title'] ?? '',
+          content: json?['content'] ?? '',
+        );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'article_id': articleId,
+      'title': title,
+      'content': content,
+    };
+  }
+}
+```
+- 如果需要在api中返回并解析该模型，则在Base.fromJson中增加该模型的解析分支
+```dart
+
+case ArticleModel:
+    return ArticleModel.fromJson(json) as T?;
+
+    ...
+
+    case 'ArticleModel':
+        return (isList
+            ? ModelList<ArticleModel>.fromJson(json)
+            : ModelPage<ArticleModel>.fromJson(json)) as T?;
+```
+这样就可以在使用API时直接用泛型调用来返回对应的模型
+```dart
+final result = await ApiService.getInstance().get<ArticleModel>('article/detail');
+print(result.data);
+
+//列表
+final result = await ApiService.getInstance().get<ModelList<ArticleModel>>('article/list');
+print(result.data);
+```
 
 # 添加页面
 

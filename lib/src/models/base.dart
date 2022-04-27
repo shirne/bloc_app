@@ -42,6 +42,7 @@ abstract class Base {
   }
 }
 
+/// 通用的接口返回模型
 class Model extends Base {
   Map<String, dynamic> data;
   Model(this.data);
@@ -62,6 +63,7 @@ class Model extends Base {
   }
 }
 
+/// 列表数据的模型
 class ModelList<T extends Base> extends Base {
   List<T>? lists;
   ModelList({this.lists});
@@ -82,6 +84,7 @@ class ModelList<T extends Base> extends Base {
   }
 }
 
+/// 分页数据的模型，以下定义的字段可根据实际情况调整
 class ModelPage<T extends Base> extends ModelList<T> {
   int total;
   int page;

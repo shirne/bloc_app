@@ -23,6 +23,12 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appTitle": MessageLookupByLibrary.simpleMessage("BlocApp"),
-        "login": MessageLookupByLibrary.simpleMessage("登录")
+        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "confirm": MessageLookupByLibrary.simpleMessage("确定"),
+        "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "loginDialogContent": MessageLookupByLibrary.simpleMessage("立即登录？"),
+        "loginDialogTitle": MessageLookupByLibrary.simpleMessage("请登录"),
+        "no": MessageLookupByLibrary.simpleMessage("否"),
+        "yes": MessageLookupByLibrary.simpleMessage("是")
       };
 }

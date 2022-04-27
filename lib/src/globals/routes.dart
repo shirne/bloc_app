@@ -67,4 +67,9 @@ class RouteItem {
   Future<T?> show<T>(BuildContext context, {Object? arguments}) {
     return Navigator.of(context).pushNamed<T>(name, arguments: arguments);
   }
+
+  Future<T?> replace<T>(BuildContext context, {Object? arguments}) {
+    return Navigator.of(context)
+        .pushReplacementNamed<T, Object>(name, arguments: arguments);
+  }
 }

@@ -1,4 +1,10 @@
 {
     "appTitle": "BlocApp",
-    "login": "Login"
+    "login": "Login",
+    "loginDialogTitle":"Login please",
+    "loginDialogContent":"Login now ?",
+    "cancel":"Cancel",
+    "confirm":"Confirm",
+    "yes":"Yes",
+    "no":"No"
 }

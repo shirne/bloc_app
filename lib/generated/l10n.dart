@@ -69,6 +69,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Login please`
+  String get loginDialogTitle {
+    return Intl.message(
+      'Login please',
+      name: 'loginDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login now ?`
+  String get loginDialogContent {
+    return Intl.message(
+      'Login now ?',
+      name: 'loginDialogContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message(
+      'Cancel',
+      name: 'cancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message(
+      'Confirm',
+      name: 'confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message(
+      'Yes',
+      name: 'yes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No`
+  String get no {
+    return Intl.message(
+      'No',
+      name: 'no',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,4 +1,10 @@
 {
     "appTitle": "BlocApp",
-    "login": "登录"
+    "login": "登录",
+    "loginDialogTitle":"请登录",
+    "loginDialogContent":"立即登录？",
+    "cancel":"取消",
+    "confirm":"确定",
+    "yes":"是",
+    "no":"否"
 }

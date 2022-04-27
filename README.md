@@ -61,7 +61,6 @@ class HomeBloc ... {
 }
 
 /// page.dart
-
 _onError(String message){
     // 这里如要使用context，需要将page转换为StatefulWidget
     showDialog(context, (context){
@@ -111,6 +110,8 @@ _loadData({void Function(String message)? onError}) async {
     }
   }
 
+/// page.dart 中调用
+context.read<HomeBloc>().add(LoadDataEvent(_onError));
 ```
     * 对于加载操作，一般不需要成功回调，因为加载完成就推送状态更新事件，页面数据直接刷新就可以了。
     * 对于表单提交等操作，可能需要事件成功的回调，这种就建议将回调指定到事件上

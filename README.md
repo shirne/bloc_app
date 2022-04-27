@@ -4,14 +4,22 @@
 
 预置功能: bloc页面模板，多语言，Models, API请求，图标，启动页
 
+## 开始
 
-# 修改启动页和图标
+* 重要提醒：开发上线项目，请修改包名(安卓)和bundle(Apple)
+    * 可以直接在android和ios目录修改
+    * 可以使用`flutter create --org yourdomain appname` 创建一个空项目，把代码及配置文件复制过去
+* 环境配置参考 
+    * `https://flutter.cn/docs/get-started/install` (国内)
+    * `https://docs.flutter.dev/docs/get-started/install` (国外)
+
+## 修改启动页和图标
 
 - 按assets/images 中的图片规格制作替换
 - 执行命令 flutter pub run flutter_native_splash:create 生成新启动页
 - 执行命令 flutter pub run flutter_launcher_icons_maker:main 生成新图标
 
-# 添加模型
+## 添加模型
 
 - models目录中新增文件，新建类继承自Base
 ```dart
@@ -66,7 +74,7 @@ final result = await ApiService.getInstance().get<ModelList<ArticleModel>>('arti
 print(result.data);
 ```
 
-# 添加页面
+## 添加页面
 
 - 执行命令 `dart bin/bloc.dart Pagename`  添加新页面
 - 执行命令 `dart bin/bloc.dart Pagename dirname` 在目录dirname中添加新页面
@@ -102,7 +110,7 @@ create: (context) => HomeBloc(),
 create: (context) => HomeBloc('homestate'),
 ```
 
-# 业务逻辑与UI分离
+## 业务逻辑与UI分离
 * 不建议将Controller 之类的控制器存入State中，推荐将page 转换为StatefulWidget后写到State属性中
 * 不建议将context 传入到bloc中操作，可以在bloc或event中增加回调方法，在处理完业务逻辑后，将成功或失败状态回调至UI
 
@@ -174,7 +182,7 @@ context.read<HomeBloc>().add(LoadDataEvent(_onError));
 * 不建议在page的tap或press中写业务逻辑代码，如api请求，大量的计算等
 * 建议将相似的组件抽离出来，一是简化了页面布局，二是方便统一调整组件
 
-# 目录结构说明
+## 目录结构说明
 
 ```tree
 lib
@@ -194,7 +202,6 @@ lib
 |   |- wigets               // 组件库
 |- main.dart                // 入口文件
 ```
-
 
 ## Flutter
 

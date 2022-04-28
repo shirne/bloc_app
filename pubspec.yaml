@@ -37,6 +37,7 @@ dependencies:
   bloc: 8.0.3
   intl: ^0.17.0             # 多语言
   flutter_bloc: 8.0.1
+  shared_preferences: 2.0.13 # 本地存储
   flutter_screenutil: 5.3.1 # 设计图与屏幕适配工具
   logger: ^1.1.0            # 日志工具
   skeletons: 0.0.3          # 骨架页构造工具

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletons/skeletons.dart';
 
 import '../../../generated/l10n.dart';
+import '../../globals/routes.dart';
 import '../../widgets/cached_bloc.dart';
 import 'bloc.dart';
 
@@ -18,14 +20,36 @@ class HomePage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(S.of(context).appTitle),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Routes.seettings.show(context);
+                  },
+                  icon: Icon(Icons.settings),
+                )
+              ],
             ),
             body: state.status == Status.initial
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(3, (index) => SkeletonListTile()),
+                ? Padding(
+                    padding: EdgeInsets.all(20.w),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(3, (index) => SkeletonListTile()),
+                    ),
                   )
                 : Center(
-                    child: Text("${state.count}"),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("${state.count}"),
+                        ElevatedButton(
+                          onPressed: () {
+                            Routes.login.show(context);
+                          },
+                          child: Text('登录'),
+                        ),
+                      ],
+                    ),
                   ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {

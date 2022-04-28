@@ -73,6 +73,8 @@ class ApiService {
   final int? receiveTimeout;
   final String baseUrl;
 
+  bool isLoginShow = false;
+
   Dio get dio => _dio;
   final Dio _dio;
 
@@ -144,32 +146,38 @@ class ApiService {
 
       final result = ApiResult<T>.fromResponse(res);
       if (result.status == 401) {
-        final context = navigatorKey.currentContext;
-        if (context != null) {
-          final goLogin = await showCupertinoDialog<bool>(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: Text(S.of(context).loginDialogTitle),
-                  content: Text(S.of(context).loginDialogContent),
-                  actions: [
-                    CupertinoDialogAction(
-                      child: Text(S.of(context).no),
-                      onPressed: () {
-                        Navigator.pop(context, false);
-                      },
-                    ),
-                    CupertinoDialogAction(
-                      child: Text(S.of(context).yes),
-                      onPressed: () {
-                        Navigator.pop(context, true);
-                      },
-                    ),
-                  ],
-                );
-              });
-          if (goLogin ?? false) {
-            Routes.login.show(context);
+        if (!isLoginShow) {
+          final context = navigatorKey.currentContext;
+          if (context != null) {
+            isLoginShow = true;
+            showCupertinoDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return CupertinoAlertDialog(
+                    title: Text(S.of(context).loginDialogTitle),
+                    content: Text(S.of(context).loginDialogContent),
+                    actions: [
+                      CupertinoDialogAction(
+                        child: Text(S.of(context).no),
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                      ),
+                      CupertinoDialogAction(
+                        child: Text(S.of(context).yes),
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                      ),
+                    ],
+                  );
+                }).then((goLogin) {
+              if (goLogin ?? false) {
+                Routes.login.show(context);
+              }
+            }).whenComplete(() {
+              isLoginShow = false;
+            });
           }
         }
       }

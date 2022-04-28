@@ -7,14 +7,18 @@ class User extends Base {
   String token;
   int expire;
   DateTime? createAt;
-
+  bool isAuthed;
+  bool needAuth;
   bool get isValid => userId > 0;
+
   User({
     this.userId = 0,
     this.username = '',
     this.nickname = '',
     this.token = '',
     this.expire = 0,
+    this.isAuthed = false,
+    this.needAuth = false,
     this.createAt,
   });
 

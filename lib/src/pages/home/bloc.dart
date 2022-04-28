@@ -25,9 +25,10 @@ class HomeBloc extends CachedBloc<HomeEvent, HomeState> {
   }
 
   _loadData({void Function(String message)? onError}) async {
-    //TODO load data
+    await Future.delayed(Duration(milliseconds: 500));
     if (isClosed) {
       return;
     }
+    add(StateChangedEvent(state.clone(status: Status.success)));
   }
 }

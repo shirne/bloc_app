@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:blocapp/src/globals/store_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,7 +13,8 @@ import 'globals/routes.dart';
 import 'utils/utils.dart';
 
 class MainApp extends StatelessWidget {
-  const MainApp({Key? key}) : super(key: key);
+  final StoreService storeService;
+  const MainApp(this.storeService, {Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -22,7 +24,7 @@ class MainApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: () => BlocProvider<GlobalBloc>(
-        create: (BuildContext context) => GlobalBloc(GlobalState()),
+        create: (BuildContext context) => GlobalBloc(storeService),
         child: BlocBuilder<GlobalBloc, GlobalState>(builder: (context, state) {
           return DefaultTextStyle(
             style: const TextStyle(fontFamily: '微软雅黑'),
@@ -36,7 +38,8 @@ class MainApp extends StatelessWidget {
                 GlobalCupertinoLocalizations.delegate,
               ],
               supportedLocales: const [
-                Locale('en', 'cn'), // English, no country code
+                Locale('en'), // English, no country code
+                Locale('zh', 'CN'),
               ],
               onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
               theme: _lightTheme(),
@@ -55,12 +58,10 @@ class MainApp extends StatelessWidget {
                     return MaterialPageRoute<dynamic>(
                       settings: RouteSettings(
                         name: '/login',
-                        arguments: routeSettings,
+                        arguments: routeSettings.arguments,
                       ),
                       builder: (BuildContext context) {
-                        return Routes.matchByName('/login')
-                            .builder
-                            .call(routeSettings);
+                        return Routes.login.builder.call(routeSettings);
                       },
                     );
                   }
@@ -86,21 +87,37 @@ class MainApp extends StatelessWidget {
     );
   }
 
-  ThemeData _lightTheme() {
-    return ThemeData.from(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF5AA7A7),
+  ThemeData widgetStyle(ThemeData base) {
+    return base.copyWith(
+      visualDensity: VisualDensity.standard,
+      cardTheme: CardTheme(
+        elevation: 20,
+      ),
+      listTileTheme: ListTileThemeData(
+        tileColor: base.colorScheme.surface,
+        selectedTileColor: base.colorScheme.primary.withAlpha(20),
       ),
     );
   }
 
+  ThemeData _lightTheme() {
+    final themeData = ThemeData.from(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF5AA7A7),
+      ),
+    );
+    return widgetStyle(themeData);
+  }
+
   ThemeData _darkTheme() {
-    return ThemeData.from(
+    final themeData = ThemeData.from(
       colorScheme: ColorScheme.fromSeed(
         seedColor: const Color(0xFF5AA7A7),
         brightness: Brightness.dark,
       ),
     );
+
+    return widgetStyle(themeData);
   }
 }
 

@@ -1,8 +1,8 @@
 # BlocApp
 
-基于bloc和flutter_bloc的Flutter APP框架.
+基于bloc和flutter_bloc的Flutter APP框架。旨在打造一个包含通用基础功能的项目模板，以减少创建项目的繁琐程度。
 
-预置功能: bloc页面模板，多语言，Models, API请求，图标，启动页
+预置功能: bloc页面模板，多语言，主题切换，Models, API请求，登录逻辑，图标，启动页
 
 ## 开始
 

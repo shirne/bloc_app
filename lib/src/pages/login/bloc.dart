@@ -6,8 +6,7 @@ part 'event.dart';
 part 'state.dart';
 
 class LoginBloc extends CachedBloc<LoginEvent, LoginState> {
-  LoginBloc([String globalKey = ''])
-      : super(() => const LoginState(), globalKey) {
+  LoginBloc([String globalKey = '']) : super(() => LoginState(), globalKey) {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });

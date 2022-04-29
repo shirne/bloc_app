@@ -31,7 +31,7 @@ part 'state.dart';
 class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
   
   ${page}Bloc([String globalKey = ''])
-      : super(() => const ${page}State(), globalKey) {
+      : super(() => ${page}State(), globalKey) {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });
@@ -75,12 +75,10 @@ class StateChangedEvent extends ${page}Event {
 part of 'bloc.dart';
 
 @immutable
-class ${page}State {
-  final Status status;
-
-  const ${page}State({
-    this.status = Status.initial,
-  });
+class ${page}State extends BaseState {
+  ${page}State({
+    Status status = Status.initial,
+  }) : super(status: status);
 
   ${page}State clone({
     Status? status,
@@ -95,6 +93,7 @@ class ${page}State {
   File(pagedir + 'page.dart').writeAsStringSync("""
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletons/skeletons.dart';
 
 import 'bloc.dart';
 
@@ -108,7 +107,7 @@ class ${page}Page extends StatelessWidget {
       child: BlocBuilder<${page}Bloc, ${page}State>(
         builder: (context, state) {
           // 初始化状态可以显示skeleton
-          if(state.status == Status.initial){
+          if (state.isInitial){
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(3, (index) => SkeletonListTile()),
@@ -117,7 +116,7 @@ class ${page}Page extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(),
             body:Center(
-              child:Text('$page'),
+              child: Text('$page'),
             ),
           );
         },
@@ -125,7 +124,6 @@ class ${page}Page extends StatelessWidget {
     );
   }
 }
-
 
 """);
   print('create $page ok');

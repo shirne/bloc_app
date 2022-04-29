@@ -8,20 +8,57 @@ enum Status {
   failure,
 }
 
-abstract class CachedBloc<E, T> extends Bloc<E, T> {
+abstract class BaseState {
+  final Status status;
+  BaseState({this.status = Status.initial});
+
+  bool get isInitial => status == Status.initial;
+  bool get isSuccess => status == Status.success;
+  bool get isLoading => status == Status.loading;
+  bool get isError => status == Status.failure;
+
+  clone();
+}
+
+final _states = <String, dynamic>{};
+
+abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
   final String globalKey;
-  static Map<String, dynamic> states = {};
 
   @mustCallSuper
-  CachedBloc(T Function() createState, [this.globalKey = ''])
+  CachedBloc(T Function() createState,
+      [this.globalKey = '', T Function(T)? fromCache])
       : super(globalKey.isEmpty
             ? createState()
-            : states.putIfAbsent(globalKey, createState));
+            : fromCache == null
+                ? _states.putIfAbsent(globalKey, createState)
+                : fromCache.call(_states.putIfAbsent(globalKey, createState)));
 
   @override
   Future<void> close() async {
     if (globalKey.isNotEmpty) {
-      states[globalKey] = state;
+      _states[globalKey] = state;
+    }
+    await super.close();
+  }
+}
+
+abstract class CachedCubit<T> extends Cubit<T> {
+  final String globalKey;
+
+  @mustCallSuper
+  CachedCubit(T Function() createState,
+      [this.globalKey = '', T Function(T)? fromCache])
+      : super(globalKey.isEmpty
+            ? createState()
+            : fromCache == null
+                ? _states.putIfAbsent(globalKey, createState)
+                : fromCache.call(_states.putIfAbsent(globalKey, createState)));
+
+  @override
+  Future<void> close() async {
+    if (globalKey.isNotEmpty) {
+      _states[globalKey] = state;
     }
     await super.close();
   }

@@ -6,8 +6,7 @@ part 'event.dart';
 part 'state.dart';
 
 class HomeBloc extends CachedBloc<HomeEvent, HomeState> {
-  HomeBloc([String globalKey = ''])
-      : super(() => const HomeState(), globalKey) {
+  HomeBloc([String globalKey = '']) : super(() => HomeState(), globalKey) {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });

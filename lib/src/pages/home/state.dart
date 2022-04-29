@@ -1,15 +1,15 @@
 part of 'bloc.dart';
 
 @immutable
-class HomeState {
-  final Status status;
+class HomeState extends BaseState {
   final int count;
 
-  const HomeState({
-    this.status = Status.initial,
+  HomeState({
+    Status status = Status.initial,
     this.count = 0,
-  });
+  }) : super(status: status);
 
+  @override
   HomeState clone({
     Status? status,
     int? count,

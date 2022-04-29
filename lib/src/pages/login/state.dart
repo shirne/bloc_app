@@ -1,13 +1,12 @@
 part of 'bloc.dart';
 
 @immutable
-class LoginState {
-  final Status status;
+class LoginState extends BaseState {
+  LoginState({
+    Status status = Status.initial,
+  }) : super(status: status);
 
-  const LoginState({
-    this.status = Status.initial,
-  });
-
+  @override
   LoginState clone({
     Status? status,
   }) {
@@ -16,4 +15,3 @@ class LoginState {
     );
   }
 }
-

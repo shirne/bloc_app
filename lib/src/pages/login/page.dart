@@ -1,12 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../generated/l10n.dart';
+import '../../globals/global_bloc.dart';
+import '../../globals/routes.dart';
+import '../../utils/utils.dart';
 import 'bloc.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  final String? backPage;
+  final Object? arguments;
+  LoginPage(Map<String, dynamic>? args, {Key? key})
+      : backPage = args?['back'] as String?,
+        arguments = args?['arguments'],
+        super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  String? backPage;
+  bool canClose = true;
+  bool isMarkedClose = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.backPage != null && widget.backPage != Routes.login.name) {
+      backPage = widget.backPage;
+    }
+  }
+
+  void close() {
+    if (backPage == null) {
+      log.i("no last route");
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        Routes.root.replace(context);
+      }
+    } else {
+      log.i("last route $backPage");
+
+      Navigator.of(context)
+          .pushReplacementNamed(backPage!, arguments: widget.arguments);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant LoginPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (canClose &&
+        !isMarkedClose &&
+        context.read<GlobalBloc>().state.user.isValid) {
+      isMarkedClose = true;
+      SchedulerBinding.instance?.addPostFrameCallback((v) => close());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

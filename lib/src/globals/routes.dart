@@ -10,19 +10,19 @@ final navigatorKey = GlobalKey<NavigatorState>();
 class Routes {
   static final root = RouteItem(
     '/',
-    (RouteSettings settings) => const HomePage(),
+    (arguments) => const HomePage(),
   );
   static final login = RouteItem(
     '/login',
-    (RouteSettings settings) => const LoginPage(),
+    (arguments) => LoginPage(arguments as Map<String, dynamic>?),
   );
   static final seettings = RouteItem(
     '/settings',
-    (RouteSettings settings) => const SettingsPage(),
+    (arguments) => const SettingsPage(),
   );
   static final notFound = RouteItem(
     '/404',
-    (RouteSettings settings) => NotFoundPage(settings.name),
+    (arguments) => NotFoundPage(arguments as String?),
   );
 
   static final routes = {
@@ -34,33 +34,19 @@ class Routes {
       e.name: e
   };
 
-  static RouteItem matchByName(String name) {
-    return (routes[name] ?? routes['/404'])!;
+  static RouteItem? matchByName(String? name) {
+    return routes[name];
   }
 
-  static RouteItem match(RouteSettings settings) {
-    return settings.name == null
-        ? routes['/404']!
-        : matchByName(settings.name!);
-  }
-
-  static navigateTo(BuildContext context, RouteSettings settings) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        settings: settings,
-        builder: (BuildContext context) {
-          return match(settings).builder.call(settings);
-        },
-      ),
-    );
+  static RouteItem? match(RouteSettings settings) {
+    return matchByName(settings.name);
   }
 }
 
 class RouteItem {
   final bool isAuth;
   final String name;
-  final Widget Function(RouteSettings) builder;
+  final Widget Function(Object? arguments) builder;
 
   const RouteItem(this.name, this.builder, {this.isAuth = true});
 

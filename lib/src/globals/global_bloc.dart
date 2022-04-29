@@ -25,9 +25,10 @@ class UserLoginEvent extends GlobalEvent {
 class UserQuitEvent extends GlobalEvent {}
 
 class GlobalState {
-  final User? user;
+  final User user;
   final ThemeMode themeMode;
-  GlobalState({this.user, this.themeMode = ThemeMode.system});
+  GlobalState({User? user, this.themeMode = ThemeMode.system})
+      : user = user ?? User();
 
   GlobalState clone({
     User? user,
@@ -53,7 +54,7 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
 
     on<UserAuthEvent>((event, emit) {
       if (event.authed) {
-        emit(state.clone(user: state.user!..isAuthed = true));
+        emit(state.clone(user: state.user..isAuthed = true));
       } else {
         emit(state.clone(user: User()));
       }
@@ -69,8 +70,8 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
       emit(state.clone(user: User()));
     });
 
-    if (state.user?.isValid ?? false) {
-      ApiService.getInstance().addHeader('token', state.user!.token);
+    if (state.user.isValid) {
+      ApiService.getInstance().addHeader('token', state.user.token);
     }
   }
 }

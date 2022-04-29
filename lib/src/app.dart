@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:blocapp/src/globals/store_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,6 +9,7 @@ import '../generated/l10n.dart';
 import 'app_navigator.dart';
 import 'globals/global_bloc.dart';
 import 'globals/routes.dart';
+import 'globals/store_service.dart';
 import 'utils/utils.dart';
 
 class MainApp extends StatelessWidget {
@@ -52,16 +52,25 @@ class MainApp extends StatelessWidget {
               ],
               onGenerateRoute: (RouteSettings routeSettings) {
                 final route = Routes.match(routeSettings);
+                if (route == null) {
+                  return MaterialPageRoute<dynamic>(
+                    settings:
+                        routeSettings.copyWith(name: Routes.notFound.name),
+                    builder: (BuildContext context) {
+                      return Routes.notFound.builder.call(routeSettings.name);
+                    },
+                  );
+                }
                 if (route.isAuth) {
-                  if (state.user?.isValid ?? false) {
+                  if (state.user.isValid) {
                     log.d(state.user);
                     return MaterialPageRoute<dynamic>(
-                      settings: RouteSettings(
-                        name: '/login',
-                        arguments: routeSettings.arguments,
-                      ),
+                      settings: routeSettings.copyWith(name: Routes.login.name),
                       builder: (BuildContext context) {
-                        return Routes.login.builder.call(routeSettings);
+                        return Routes.login.builder.call({
+                          'back': routeSettings.name,
+                          'arguments': routeSettings.arguments,
+                        });
                       },
                     );
                   }
@@ -76,7 +85,7 @@ class MainApp extends StatelessWidget {
                 return MaterialPageRoute<dynamic>(
                   settings: routeSettings,
                   builder: (BuildContext context) {
-                    return route.builder.call(routeSettings);
+                    return route.builder.call(routeSettings.arguments);
                   },
                 );
               },

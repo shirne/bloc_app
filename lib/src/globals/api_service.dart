@@ -40,25 +40,32 @@ class Api {
     String? password,
   }) async {
     return await ApiService.getInstance().post(
-        apiRegister,
-        {
-          'email': email,
-          'mobile': mobile,
-          'smsCode': smsCode,
-          'password': password,
-        },
-        skipLock: true);
+      apiRegister,
+      {
+        'email': email,
+        'mobile': mobile,
+        'smsCode': smsCode,
+        'password': password,
+      },
+      skipLock: true,
+    );
   }
 
   static Future<ApiResult<Model>> doSendSms(String mobile) async {
-    return await ApiService.getInstance()
-        .post(apiSms, {'mobile': mobile}, skipLock: true);
+    return await ApiService.getInstance().post(
+      apiSms,
+      {'mobile': mobile},
+      skipLock: true,
+    );
   }
 
   static Future<ApiResult<Model>> doCheck(String value,
       [String type = 'mobile']) async {
-    return await ApiService.getInstance()
-        .post(apiCheck, {'val': value, 'type': type}, skipLock: true);
+    return await ApiService.getInstance().post(
+      apiCheck,
+      {'val': value, 'type': type},
+      skipLock: true,
+    );
   }
 }
 
@@ -273,7 +280,7 @@ class ApiResult<T extends Base> {
   ApiResult(this.status, this.message, [this.data, this.debug]);
   ApiResult.fromResponse(Response<Map<String, dynamic>> response)
       : status = response.data?['status'] ?? -1,
-        message = response.data?['message'] ?? -1,
+        message = response.data?['message'] ?? '',
         data = transData<T>(response.data?['data']),
         debug = response.data?['debug'];
 

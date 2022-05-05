@@ -13,12 +13,14 @@ import 'config.dart';
 import 'routes.dart';
 
 class Api {
+  static final apiService = ApiService.getInstance();
+
   static void lock() {
-    ApiService.getInstance().lock();
+    apiService.lock();
   }
 
   static void unLock([bool complete = true]) {
-    ApiService.getInstance().unLock(complete);
+    apiService.unLock(complete);
   }
 
   static const apiTc = '';
@@ -29,7 +31,7 @@ class Api {
   static const apiCheck = 'auth/check';
 
   static Future<ApiResult<User>> doLogin(String email, String password) async {
-    return await ApiService.getInstance()
+    return await apiService
         .post(apiLogin, {'email': email, 'password': password}, skipLock: true);
   }
 
@@ -39,7 +41,7 @@ class Api {
     required String smsCode,
     String? password,
   }) async {
-    return await ApiService.getInstance().post(
+    return await apiService.post(
       apiRegister,
       {
         'email': email,
@@ -52,7 +54,7 @@ class Api {
   }
 
   static Future<ApiResult<Model>> doSendSms(String mobile) async {
-    return await ApiService.getInstance().post(
+    return await apiService.post(
       apiSms,
       {'mobile': mobile},
       skipLock: true,
@@ -61,7 +63,7 @@ class Api {
 
   static Future<ApiResult<Model>> doCheck(String value,
       [String type = 'mobile']) async {
-    return await ApiService.getInstance().post(
+    return await apiService.post(
       apiCheck,
       {'val': value, 'type': type},
       skipLock: true,

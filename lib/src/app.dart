@@ -23,7 +23,7 @@ class MainApp extends StatelessWidget {
       designSize: const Size(1080, 1920),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: () => BlocProvider<GlobalBloc>(
+      child: BlocProvider<GlobalBloc>(
         create: (BuildContext context) => GlobalBloc(storeService),
         child: BlocBuilder<GlobalBloc, GlobalState>(builder: (context, state) {
           return DefaultTextStyle(

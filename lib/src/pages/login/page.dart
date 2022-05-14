@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
         !isMarkedClose &&
         context.read<GlobalBloc>().state.user.isValid) {
       isMarkedClose = true;
-      SchedulerBinding.instance?.addPostFrameCallback((v) => close());
+      SchedulerBinding.instance.addPostFrameCallback((v) => close());
     }
   }
 

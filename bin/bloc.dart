@@ -16,7 +16,7 @@ void main(List<String> args) {
   final pathDeeper = dir.isEmpty ? '' : '../' * dir.split('/').length;
   Directory(pageDir).createSync(recursive: true);
 
-  File(pageDir + 'bloc.dart').writeAsStringSync("""
+  File('${pageDir}bloc.dart').writeAsStringSync("""
 import 'package:flutter/widgets.dart';
 import 'package:skeletons/skeletons.dart';
 
@@ -51,7 +51,7 @@ class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
 }
 
 """);
-  File(pageDir + 'event.dart').writeAsStringSync("""
+  File('${pageDir}event.dart').writeAsStringSync("""
 part of 'bloc.dart';
 
 @immutable
@@ -68,7 +68,7 @@ class StateChangedEvent extends ${page}Event {
 }
 
 """);
-  File(pageDir + 'state.dart').writeAsStringSync("""
+  File('${pageDir}state.dart').writeAsStringSync("""
 part of 'bloc.dart';
 
 @immutable
@@ -87,7 +87,7 @@ class ${page}State extends BaseState {
 }
 
 """);
-  File(pageDir + 'page.dart').writeAsStringSync("""
+  File('${pageDir}page.dart').writeAsStringSync("""
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletons/skeletons.dart';

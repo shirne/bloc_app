@@ -99,7 +99,7 @@ class MainApp extends StatelessWidget {
   ThemeData widgetStyle(ThemeData base) {
     return base.copyWith(
       visualDensity: VisualDensity.standard,
-      cardTheme: CardTheme(
+      cardTheme: const CardTheme(
         elevation: 20,
       ),
       listTileTheme: ListTileThemeData(

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import '../../generated/l10n.dart';
@@ -78,6 +77,7 @@ class ApiService {
     return _instance!;
   }
 
+  final int? connectTimeout;
   final int? sendTimeout;
   final int? receiveTimeout;
   final String baseUrl;
@@ -87,8 +87,17 @@ class ApiService {
   Dio get dio => _dio;
   final Dio _dio;
 
-  ApiService._(this.baseUrl, {this.sendTimeout, this.receiveTimeout})
-      : _dio = Dio() {
+  ApiService._(
+    this.baseUrl, {
+    this.connectTimeout,
+    this.sendTimeout,
+    this.receiveTimeout,
+  }) : _dio = Dio(BaseOptions(
+          connectTimeout: connectTimeout,
+          sendTimeout: sendTimeout,
+          receiveTimeout: receiveTimeout,
+          baseUrl: baseUrl,
+        )) {
     _dio.interceptors.add(ApiInterceptor());
   }
 
@@ -147,7 +156,7 @@ class ApiService {
 
     try {
       Response<Map<String, dynamic>> res = await _dio.request(
-        '$baseUrl$src',
+        src,
         data: data,
         queryParameters: queryParameters,
         options: options,

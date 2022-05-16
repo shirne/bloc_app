@@ -75,8 +75,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Card(
                 child: Container(
                   width: 800.w,
-                  height: 800.w,
-                  padding: EdgeInsets.all(60.w),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 60.w, vertical: 30.w),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 40.w),
+                      SizedBox(height: 20.w),
                       TextField(
                         decoration: InputDecoration(
                           hintText: '用户名',

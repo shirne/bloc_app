@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../generated/l10n.dart';
 import 'app_navigator.dart';
+import 'app_theme.dart';
 import 'globals/global_bloc.dart';
 import 'globals/routes.dart';
 import 'globals/store_service.dart';
@@ -27,6 +28,7 @@ class MainApp extends StatelessWidget {
         create: (BuildContext context) => GlobalBloc(storeService),
         child: BlocBuilder<GlobalBloc, GlobalState>(builder: (context, state) {
           return DefaultTextStyle(
+            // 如果需要内置字体，此处修改为对应的字体名
             style: const TextStyle(fontFamily: '微软雅黑'),
             child: MaterialApp(
               restorationScopeId: 'app',
@@ -96,8 +98,9 @@ class MainApp extends StatelessWidget {
     );
   }
 
-  ThemeData widgetStyle(ThemeData base) {
+  ThemeData widgetStyle(ThemeData base, AppTheme extTheme) {
     return base.copyWith(
+      useMaterial3: true,
       visualDensity: VisualDensity.standard,
       cardTheme: const CardTheme(
         elevation: 20,
@@ -106,6 +109,7 @@ class MainApp extends StatelessWidget {
         tileColor: base.colorScheme.surface,
         selectedTileColor: base.colorScheme.primary.withAlpha(20),
       ),
+      extensions: [extTheme],
     );
   }
 
@@ -115,7 +119,7 @@ class MainApp extends StatelessWidget {
         seedColor: const Color(0xFF5AA7A7),
       ),
     );
-    return widgetStyle(themeData);
+    return widgetStyle(themeData, AppTheme());
   }
 
   ThemeData _darkTheme() {
@@ -126,7 +130,7 @@ class MainApp extends StatelessWidget {
       ),
     );
 
-    return widgetStyle(themeData);
+    return widgetStyle(themeData, AppTheme());
   }
 }
 

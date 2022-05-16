@@ -46,7 +46,10 @@ class HomePage extends StatelessWidget {
                           onPressed: () {
                             Routes.login.show(context);
                           },
-                          child: Text('登录'),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 40.w),
+                            child: Text('登录'),
+                          ),
                         ),
                       ],
                     ),
@@ -56,6 +59,7 @@ class HomePage extends StatelessWidget {
                 context.read<HomeBloc>().add(IncreaseEvent(1));
               },
               tooltip: 'Increment',
+              enableFeedback: true,
               child: const Icon(Icons.add),
             ),
           );

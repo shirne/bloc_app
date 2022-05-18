@@ -99,7 +99,7 @@ BEGIN
             VALUE "FileDescription", "blocapp" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "blocapp" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 com.shirne. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 shirne.com All rights reserved." "\0"
             VALUE "OriginalFilename", "blocapp.exe" "\0"
             VALUE "ProductName", "blocapp" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

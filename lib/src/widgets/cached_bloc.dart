@@ -1,15 +1,26 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
 enum Status {
-  initial,
-  loading,
-  success,
-  failure,
+  initial('initial'),
+  loading('loading'),
+  success('success'),
+  failure('failure');
+
+  final String value;
+  const Status(this.value);
+
+  String toJson() => value;
+
+  @override
+  String toString() => value;
 }
 
 abstract class BaseState {
   final Status status;
+
   BaseState({this.status = Status.initial});
 
   bool get isInitial => status == Status.initial;
@@ -18,6 +29,15 @@ abstract class BaseState {
   bool get isError => status == Status.failure;
 
   clone();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'status': status,
+    };
+  }
+
+  @override
+  String toString() => jsonEncode(toJson());
 }
 
 final _states = <String, dynamic>{};

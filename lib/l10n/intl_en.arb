@@ -6,5 +6,21 @@
     "cancel":"Cancel",
     "confirm":"Confirm",
     "yes":"Yes",
-    "no":"No"
+    "no":"No",
+
+    "userLogin":"Login",
+    "labelUsername":"Username",
+    "labelPassword":"Password",
+    "loginButtonText":"Login",
+    "forgotPassword":"Forgot password",
+    "createAccount":"Create an account",
+
+    "settings":"Settings",
+    "theme":"Theme",
+    "themeDesc":"Set app theme",
+    "themeMode":"Theme mode",
+    "themeSystem":"System",
+    "themeLight":"Light",
+    "themeDark":"Dark"
+
 }

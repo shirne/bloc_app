@@ -25,12 +25,27 @@ class MessageLookup extends MessageLookupByLibrary {
         "appTitle": MessageLookupByLibrary.simpleMessage("BlocApp"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+        "createAccount":
+            MessageLookupByLibrary.simpleMessage("Create an account"),
+        "forgotPassword":
+            MessageLookupByLibrary.simpleMessage("Forgot password"),
+        "labelPassword": MessageLookupByLibrary.simpleMessage("Password"),
+        "labelUsername": MessageLookupByLibrary.simpleMessage("Username"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
+        "loginButtonText": MessageLookupByLibrary.simpleMessage("Login"),
         "loginDialogContent":
             MessageLookupByLibrary.simpleMessage("Login now ?"),
         "loginDialogTitle":
             MessageLookupByLibrary.simpleMessage("Login please"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
+        "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "theme": MessageLookupByLibrary.simpleMessage("Theme"),
+        "themeDark": MessageLookupByLibrary.simpleMessage("Dark"),
+        "themeDesc": MessageLookupByLibrary.simpleMessage("Set app theme"),
+        "themeLight": MessageLookupByLibrary.simpleMessage("Light"),
+        "themeMode": MessageLookupByLibrary.simpleMessage("Theme mode"),
+        "themeSystem": MessageLookupByLibrary.simpleMessage("System"),
+        "userLogin": MessageLookupByLibrary.simpleMessage("Login"),
         "yes": MessageLookupByLibrary.simpleMessage("Yes")
       };
 }

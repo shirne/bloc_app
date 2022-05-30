@@ -322,19 +322,15 @@ class ApiResult<T extends Base> {
     return Base.fromJson<T>(data);
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'message': message,
-      'data': data,
-      'debug': debug,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'status': status,
+        'message': message,
+        'data': data,
+        'debug': debug,
+      };
 
   @override
-  String toString() {
-    return toJson().toString();
-  }
+  String toString() => toJson().toString();
 }
 
 class ApiInterceptor extends Interceptor {

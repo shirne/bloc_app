@@ -129,6 +129,136 @@ class S {
       args: [],
     );
   }
+
+  /// `Login`
+  String get userLogin {
+    return Intl.message(
+      'Login',
+      name: 'userLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Username`
+  String get labelUsername {
+    return Intl.message(
+      'Username',
+      name: 'labelUsername',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password`
+  String get labelPassword {
+    return Intl.message(
+      'Password',
+      name: 'labelPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login`
+  String get loginButtonText {
+    return Intl.message(
+      'Login',
+      name: 'loginButtonText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Forgot password`
+  String get forgotPassword {
+    return Intl.message(
+      'Forgot password',
+      name: 'forgotPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create an account`
+  String get createAccount {
+    return Intl.message(
+      'Create an account',
+      name: 'createAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message(
+      'Settings',
+      name: 'settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme`
+  String get theme {
+    return Intl.message(
+      'Theme',
+      name: 'theme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set app theme`
+  String get themeDesc {
+    return Intl.message(
+      'Set app theme',
+      name: 'themeDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme mode`
+  String get themeMode {
+    return Intl.message(
+      'Theme mode',
+      name: 'themeMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System`
+  String get themeSystem {
+    return Intl.message(
+      'System',
+      name: 'themeSystem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Light`
+  String get themeLight {
+    return Intl.message(
+      'Light',
+      name: 'themeLight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dark`
+  String get themeDark {
+    return Intl.message(
+      'Dark',
+      name: 'themeDark',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

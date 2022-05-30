@@ -63,6 +63,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return BlocProvider<LoginBloc>(
       create: (context) => LoginBloc(),
       child: BlocBuilder<LoginBloc, LoginState>(
@@ -101,8 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 20.w),
                       Text(
-                        '会员登录',
-                        style: TextStyle(
+                        S.of(context).userLogin,
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
@@ -110,29 +111,35 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 20.w),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: '用户名',
-                          prefixIcon: Icon(Icons.person),
+                          hintText: S.of(context).labelUsername,
+                          prefixIcon: const Icon(Icons.person),
                         ),
                       ),
                       SizedBox(height: 40.w),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: '密码',
-                          prefixIcon: Icon(Icons.lock),
+                          hintText: S.of(context).labelPassword,
+                          prefixIcon: const Icon(Icons.lock),
                         ),
                       ),
                       SizedBox(height: 40.w),
                       ElevatedButton(
                           onPressed: () {},
                           child: Center(
-                            child: Text('登录'),
+                            child: Text(S.of(context).loginButtonText),
                           )),
                       SizedBox(height: 40.w),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          TextButton(onPressed: () {}, child: Text('找回密码')),
-                          TextButton(onPressed: () {}, child: Text('注册新用户')),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(S.of(context).forgotPassword),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(S.of(context).createAccount),
+                          ),
                         ],
                       ),
                     ],

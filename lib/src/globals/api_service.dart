@@ -313,6 +313,8 @@ class ApiResult<T extends Base> {
 
   static T? transData<T>(dynamic data) {
     if (data == null) return null;
+    // 基本类型或List,Map
+    if (data is T) return data;
     if (data is List<dynamic>) {
       return Base.fromJson<T>(data.isEmpty ? null : {'list': data});
     }

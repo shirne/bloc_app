@@ -70,6 +70,8 @@ class Api {
   }
 }
 
+typedef DataParser<T> = T Function(dynamic);
+
 class ApiService {
   static ApiService? _instance;
   static ApiService getInstance() {
@@ -138,6 +140,7 @@ class ApiService {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Map<String, String>? header,
+    DataParser<T>? dataParser,
     bool skipLock = false,
   }) async {
     if (!skipLock && isLocked) {
@@ -162,7 +165,7 @@ class ApiService {
         options: options,
       );
 
-      final result = ApiResult<T>.fromResponse(res);
+      final result = ApiResult<T>.fromResponse(res, dataParser);
       if (result.status == 401) {
         if (!isLoginShow) {
           final context = navigatorKey.currentContext;
@@ -211,6 +214,7 @@ class ApiService {
     String src, {
     Map<String, dynamic>? queryParameters,
     Map<String, String>? header,
+    DataParser<T>? dataParser,
     bool skipLock = false,
   }) async {
     return request(
@@ -218,6 +222,7 @@ class ApiService {
       'GET',
       header: header,
       queryParameters: queryParameters,
+      dataParser: dataParser,
       skipLock: skipLock,
     );
   }
@@ -228,6 +233,7 @@ class ApiService {
     dynamic data, {
     Map<String, dynamic>? queryParameters,
     Map<String, String>? header,
+    DataParser<T>? dataParser,
     bool skipLock = false,
   }) async {
     return request(
@@ -236,6 +242,7 @@ class ApiService {
       data: data,
       header: header,
       queryParameters: queryParameters,
+      dataParser: dataParser,
       skipLock: skipLock,
     );
   }
@@ -246,6 +253,7 @@ class ApiService {
     dynamic data, {
     Map<String, dynamic>? queryParameters,
     Map<String, String>? header,
+    DataParser<T>? dataParser,
     bool skipLock = false,
   }) async {
     return request(
@@ -254,6 +262,7 @@ class ApiService {
       data: data,
       header: header,
       queryParameters: queryParameters,
+      dataParser: dataParser,
       skipLock: skipLock,
     );
   }
@@ -264,6 +273,7 @@ class ApiService {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Map<String, String>? header,
+    DataParser<T>? dataParser,
     bool skipLock = false,
   }) async {
     return request(
@@ -272,6 +282,7 @@ class ApiService {
       data: data,
       header: header,
       queryParameters: queryParameters,
+      dataParser: dataParser,
       skipLock: skipLock,
     );
   }
@@ -289,14 +300,21 @@ class ApiResult<T extends Base> {
   bool get unauthorized => status == 403;
 
   ApiResult(this.status, this.message, [this.data, this.debug]);
-  ApiResult.fromResponse(Response<Map<String, dynamic>> response)
-      : status = response.data?['status'] ?? -1,
+  ApiResult.fromResponse(
+    Response<Map<String, dynamic>> response, [
+    DataParser<T>? dataParser,
+  ])  : status = response.data?['status'] ?? -1,
         message = response.data?['message'] ?? '',
-        data = transData<T>(response.data?['data']),
+        data = response.data?['data'] == null
+            ? null
+            : dataParser?.call(response.data?['data']) ??
+                transData<T>(response.data?['data']),
         debug = response.data?['debug'];
 
   static T? transData<T>(dynamic data) {
     if (data == null) return null;
+    // 基本类型或List,Map
+    if (data is T) return data;
     if (data is List<dynamic>) {
       return Base.fromJson<T>(data.isEmpty ? null : {'list': data});
     }
@@ -304,19 +322,15 @@ class ApiResult<T extends Base> {
     return Base.fromJson<T>(data);
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'message': message,
-      'data': data,
-      'debug': debug,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'status': status,
+        'message': message,
+        'data': data,
+        'debug': debug,
+      };
 
   @override
-  String toString() {
-    return toJson().toString();
-  }
+  String toString() => toJson().toString();
 }
 
 class ApiInterceptor extends Interceptor {

@@ -25,10 +25,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "appTitle": MessageLookupByLibrary.simpleMessage("BlocApp"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "confirm": MessageLookupByLibrary.simpleMessage("确定"),
+        "createAccount": MessageLookupByLibrary.simpleMessage("注册新用户"),
+        "forgotPassword": MessageLookupByLibrary.simpleMessage("忘记密码"),
+        "labelPassword": MessageLookupByLibrary.simpleMessage("密码"),
+        "labelUsername": MessageLookupByLibrary.simpleMessage("用户名"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "loginButtonText": MessageLookupByLibrary.simpleMessage("登录"),
         "loginDialogContent": MessageLookupByLibrary.simpleMessage("立即登录？"),
         "loginDialogTitle": MessageLookupByLibrary.simpleMessage("请登录"),
         "no": MessageLookupByLibrary.simpleMessage("否"),
+        "settings": MessageLookupByLibrary.simpleMessage("系统设置"),
+        "theme": MessageLookupByLibrary.simpleMessage("主题"),
+        "themeDark": MessageLookupByLibrary.simpleMessage("暗色"),
+        "themeDesc": MessageLookupByLibrary.simpleMessage("设置App主题"),
+        "themeLight": MessageLookupByLibrary.simpleMessage("亮色"),
+        "themeMode": MessageLookupByLibrary.simpleMessage("主题模式"),
+        "themeSystem": MessageLookupByLibrary.simpleMessage("跟随系统"),
+        "userLogin": MessageLookupByLibrary.simpleMessage("登录"),
         "yes": MessageLookupByLibrary.simpleMessage("是")
       };
 }

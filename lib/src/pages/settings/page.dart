@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../generated/l10n.dart';
 import '../../globals/global_bloc.dart';
 import 'bloc.dart';
 
@@ -18,7 +19,7 @@ class SettingsPage extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('系统设置'),
+              title: Text(S.of(context).settings),
             ),
             body: Padding(
               padding: EdgeInsets.all(20.w),
@@ -26,8 +27,8 @@ class SettingsPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    title: Text('Theme'),
-                    subtitle: Text('Set app theme '),
+                    title: Text(S.of(context).theme),
+                    subtitle: Text(S.of(context).themeDesc),
                     trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                       Text(
                         context
@@ -45,32 +46,32 @@ class SettingsPage extends StatelessWidget {
                           context: context,
                           builder: (context) {
                             return CupertinoActionSheet(
-                              title: Text('Theme mode'),
+                              title: Text(S.of(context).themeMode),
                               actions: [
                                 CupertinoActionSheetAction(
                                   onPressed: () {
                                     Navigator.pop(context, ThemeMode.system);
                                   },
-                                  child: Text('System'),
+                                  child: Text(S.of(context).themeSystem),
                                 ),
                                 CupertinoActionSheetAction(
                                   onPressed: () {
                                     Navigator.pop(context, ThemeMode.light);
                                   },
-                                  child: Text('Light'),
+                                  child: Text(S.of(context).themeLight),
                                 ),
                                 CupertinoActionSheetAction(
                                   onPressed: () {
                                     Navigator.pop(context, ThemeMode.dark);
                                   },
-                                  child: Text('Dark'),
+                                  child: Text(S.of(context).themeDark),
                                 ),
                               ],
                               cancelButton: CupertinoActionSheetAction(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text('Cancel'),
+                                child: Text(S.of(context).cancel),
                               ),
                             );
                           });

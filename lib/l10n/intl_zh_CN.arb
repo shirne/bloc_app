@@ -6,5 +6,20 @@
     "cancel":"取消",
     "confirm":"确定",
     "yes":"是",
-    "no":"否"
+    "no":"否",
+
+    "userLogin":"登录",
+    "labelUsername":"用户名",
+    "labelPassword":"密码",
+    "loginButtonText":"登录",
+    "forgotPassword":"忘记密码",
+    "createAccount":"注册新用户",
+
+    "settings":"系统设置",
+    "theme":"主题",
+    "themeDesc":"设置App主题",
+    "themeMode":"主题模式",
+    "themeSystem":"跟随系统",
+    "themeLight":"亮色",
+    "themeDark":"暗色"
 }

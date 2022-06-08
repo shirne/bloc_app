@@ -52,7 +52,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.1
-  flutter_launcher_icons_maker: 0.10.2
+  icons_launcher: 1.1.9
   intl_utils: 2.6.1
   flutter_native_splash: 2.1.1
 
@@ -99,12 +99,14 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_icons:
-  # flutter pub run flutter_launcher_icons_maker:main
+  # flutter pub run icons_launcher:create
+  image_path: "assets/images/icon.png"
+  adaptive_icon_foreground: "assets/images/icon_foreground.png"
+  adaptive_icon_background: "#3778FB"
   android: true
   ios: true
   macos: true
   windows: true
   web: true
-  image_path: "assets/images/icon.png"
 flutter_intl:
   enabled: true

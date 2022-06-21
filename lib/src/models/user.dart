@@ -33,14 +33,12 @@ class User extends Base {
         );
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      'user_id': userId,
-      'username': username,
-      'nickname': nickname,
-      'token': token,
-      'expire': expire,
-      'create_at': createAt,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'user_id': userId,
+        'username': username,
+        'nickname': nickname,
+        'token': token,
+        'expire': expire,
+        'create_at': createAt,
+      };
 }

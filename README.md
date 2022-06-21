@@ -42,13 +42,11 @@ class ArticleModel extends Base {
         );
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
+  Map<String, dynamic> toJson() => {
       'article_id': articleId,
       'title': title,
       'content': content,
     };
-  }
 }
 ```
 - 如果需要在api中返回并解析该模型，则在Base.fromJson中增加该模型的解析分支
@@ -64,8 +62,29 @@ case ArticleModel:
             ? ModelList<ArticleModel>.fromJson(json)
             : ModelPage<ArticleModel>.fromJson(json)) as T?;
 ```
+- 或者在api中传入解析函数
+```dart
+class Api {
+    ...
+
+    static Future<ApiResult<ArticleModel>> getArticle(int id){
+        return await apiService.get(
+            'article/detail',
+            {
+                'id': id,
+            },
+            dataParser: (d)=>ArticleModel.fromJson(d),
+        );
+    }
+
+    ...
+}
+```
 这样就可以在使用API时直接用泛型调用来返回对应的模型
 ```dart
+final result = await Api.getArticle(1);
+print(result.data);
+
 final result = await ApiService.getInstance().get<ArticleModel>('article/detail');
 print(result.data);
 
@@ -111,7 +130,7 @@ create: (context) => HomeBloc('homestate'),
 ```
 
 ## 业务逻辑与UI分离
-* 不建议将Controller 之类的控制器存入State中，推荐将page 转换为StatefulWidget后写到State属性中
+* 不建议将Controller(ScrollController,RefreshController等) 之类的控制器存入State中，推荐将page 转换为StatefulWidget后写到State属性中
 * 不建议将context 传入到bloc中操作，可以在bloc或event中增加回调方法，在处理完业务逻辑后，将成功或失败状态回调至UI
 
 如：在bloc中加入回调，此方法比较固定，在指定页面的指定操作会回调到ui
@@ -130,10 +149,10 @@ _onError(String message){
             content: Text(message),
             actions: <Widget>[
                 TextButton(
-                    child: const Text('好的'),
                     onPressed: () {
                         Navigator.of(context).pop();
                     },
+                    child: const Text('好的'),
                 ),
             ],
         );
@@ -203,15 +222,7 @@ lib
 |- main.dart                // 入口文件
 ```
 
-## Flutter
+## 注意事项
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* 如发现Bug或使用问题，可以提Issue
+* 如有好的改进方案，可以提Issue或PR

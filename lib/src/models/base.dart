@@ -37,9 +37,7 @@ abstract class Base {
   Map<String, dynamic> toJson();
 
   @override
-  String toString() {
-    return jsonEncode(toJson());
-  }
+  String toString() => jsonEncode(toJson());
 }
 
 /// 通用的接口返回模型
@@ -50,9 +48,7 @@ class Model extends Base {
   Model.fromJson(Map<String, dynamic>? json) : this(json ?? {});
 
   @override
-  Map<String, dynamic> toJson() {
-    return data;
-  }
+  Map<String, dynamic> toJson() => data;
 
   dynamic operator [](String key) {
     return data[key];
@@ -76,12 +72,10 @@ class ModelList<T extends Base> extends Base {
                 .toList());
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      'lists':
-          lists?.map<Map<String, dynamic>>((item) => item.toJson()).toList(),
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'lists':
+            lists?.map<Map<String, dynamic>>((item) => item.toJson()).toList(),
+      };
 }
 
 /// 分页数据的模型，以下定义的字段可根据实际情况调整

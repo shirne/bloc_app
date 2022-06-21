@@ -73,9 +73,7 @@ class StoreService {
     return await sp.setString(userTokenKey, jsonEncode(user.toJson()));
   }
 
-  bool needAuth() {
-    return sp.getBool(needAuthKey) ?? false;
-  }
+  bool needAuth() => sp.getBool(needAuthKey) ?? false;
 
   Future<void> setNeedAuth(bool needTouchID) async {
     await sp.setBool(needAuthKey, needTouchID);

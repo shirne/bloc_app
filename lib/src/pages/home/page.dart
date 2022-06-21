@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     Routes.seettings.show(context);
                   },
-                  icon: Icon(Icons.settings),
+                  icon: const Icon(Icons.settings),
                 )
               ],
             ),
@@ -48,7 +48,7 @@ class HomePage extends StatelessWidget {
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 40.w),
-                            child: Text('登录'),
+                            child: Text(S.of(context).login),
                           ),
                         ),
                       ],

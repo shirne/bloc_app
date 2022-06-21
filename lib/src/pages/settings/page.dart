@@ -39,7 +39,7 @@ class SettingsPage extends StatelessWidget {
                             .replaceFirst('ThemeMode.', ''),
                         style: theme.textTheme.caption,
                       ),
-                      Icon(Icons.arrow_forward_ios),
+                      const Icon(Icons.arrow_forward_ios),
                     ]),
                     onTap: () async {
                       final result = await showCupertinoModalPopup<ThemeMode>(

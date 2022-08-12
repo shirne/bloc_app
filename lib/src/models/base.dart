@@ -1,40 +1,11 @@
 import 'dart:convert';
 
-import '../utils/utils.dart';
-import 'user.dart';
+typedef DataParser<T> = T Function(dynamic);
+
+typedef Json = Map<String, dynamic>;
 
 abstract class Base {
-  static T? fromJson<T>(Map<String, dynamic>? json) {
-    switch (T) {
-      case User:
-        return User.fromJson(json) as T?;
-      // TODO: add more models
-      case Model:
-        return Model.fromJson(json) as T?;
-      default:
-        final tStr = T.toString();
-        if (tStr.startsWith('Model')) {
-          final isList = tStr.startsWith('ModelList');
-          switch (tStr.substring(tStr.indexOf('<') + 1, tStr.indexOf('>'))) {
-            case 'User':
-              return (isList
-                  ? ModelList<User>.fromJson(json)
-                  : ModelPage<User>.fromJson(json)) as T?;
-            // TODO: add more models
-            default:
-              return (isList
-                  ? ModelList<Model>.fromJson(json)
-                  : ModelPage<Model>.fromJson(json)) as T?;
-          }
-        }
-
-        break;
-    }
-    log.e('unsupported model $T');
-    return null;
-  }
-
-  Map<String, dynamic> toJson();
+  Json toJson();
 
   @override
   String toString() => jsonEncode(toJson());
@@ -42,13 +13,13 @@ abstract class Base {
 
 /// 通用的接口返回模型
 class Model extends Base {
-  Map<String, dynamic> data;
+  Json data;
   Model(this.data);
 
-  Model.fromJson(Map<String, dynamic>? json) : this(json ?? {});
+  Model.fromJson(Json? json) : this(json ?? {});
 
   @override
-  Map<String, dynamic> toJson() => data;
+  Json toJson() => data;
 
   dynamic operator [](String key) {
     return data[key];
@@ -64,17 +35,16 @@ class ModelList<T extends Base> extends Base {
   List<T>? lists;
   ModelList({this.lists});
 
-  ModelList.fromJson(Map<String, dynamic>? json)
+  ModelList.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
             lists: (json?['list'] as List<dynamic>?)
-                ?.map<T?>((item) => Base.fromJson<T>(item))
+                ?.map<T?>(dataParser ?? (item) => item as T?)
                 .whereType<T>()
                 .toList());
 
   @override
-  Map<String, dynamic> toJson() => {
-        'lists':
-            lists?.map<Map<String, dynamic>>((item) => item.toJson()).toList(),
+  Json toJson() => {
+        'lists': lists?.map<Json>((item) => item.toJson()).toList(),
       };
 }
 
@@ -85,18 +55,18 @@ class ModelPage<T extends Base> extends ModelList<T> {
   ModelPage({this.total = 0, this.page = 0, List<T>? lists})
       : super(lists: lists);
 
-  ModelPage.fromJson(Map<String, dynamic>? json)
+  ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
             total: json?['total'] ?? 0,
             page: json?['page'] ?? 0,
             lists: (json?['lists'] as List<dynamic>?)
-                ?.map<T?>((item) => Base.fromJson<T>(item))
+                ?.map<T?>(dataParser ?? (item) => item as T?)
                 .whereType<T>()
                 .toList());
 
   @override
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = super.toJson();
+  Json toJson() {
+    Json json = super.toJson();
     json['total'] = total;
     json['page'] = page;
     return json;

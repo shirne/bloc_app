@@ -70,8 +70,6 @@ class Api {
   }
 }
 
-typedef DataParser<T> = T Function(dynamic);
-
 class ApiService {
   static ApiService? _instance;
   static ApiService getInstance() {
@@ -158,7 +156,7 @@ class ApiService {
     );
 
     try {
-      Response<Map<String, dynamic>> res = await _dio.request(
+      Response<Json> res = await _dio.request(
         src,
         data: data,
         queryParameters: queryParameters,
@@ -292,7 +290,7 @@ class ApiResult<T extends Base> {
   final int status;
   final String message;
   final T? data;
-  final Map<String, dynamic>? debug;
+  final Json? debug;
 
   bool get failed => status != 200;
   bool get success => status == 200;
@@ -301,7 +299,7 @@ class ApiResult<T extends Base> {
 
   ApiResult(this.status, this.message, [this.data, this.debug]);
   ApiResult.fromResponse(
-    Response<Map<String, dynamic>> response, [
+    Response<Json> response, [
     DataParser<T>? dataParser,
   ])  : status = response.data?['status'] ?? -1,
         message = response.data?['message'] ?? '',
@@ -316,13 +314,17 @@ class ApiResult<T extends Base> {
     // 基本类型或List,Map
     if (data is T) return data;
     if (data is List<dynamic>) {
-      return Base.fromJson<T>(data.isEmpty ? null : {'list': data});
+      if (data.isEmpty) return null;
+      if (T is ModelList) {
+        return ModelList.fromJson({'list': data}) as T;
+      }
     }
+    log.e('Data parse error: $T from $data');
 
-    return Base.fromJson<T>(data);
+    return null;
   }
 
-  Map<String, dynamic> toJson() => {
+  Json toJson() => {
         'status': status,
         'message': message,
         'data': data,

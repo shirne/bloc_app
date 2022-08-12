@@ -22,7 +22,7 @@ class User extends Base {
     this.createAt,
   });
 
-  User.fromJson(Map<String, dynamic>? json)
+  User.fromJson(Json? json)
       : this(
           userId: json?['user_id'] ?? json?['id'] ?? 0,
           username: json?['username'] ?? '',
@@ -33,7 +33,7 @@ class User extends Base {
         );
 
   @override
-  Map<String, dynamic> toJson() => {
+  Json toJson() => {
         'user_id': userId,
         'username': username,
         'nickname': nickname,

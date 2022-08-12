@@ -49,20 +49,7 @@ class ArticleModel extends Base {
     };
 }
 ```
-- 如果需要在api中返回并解析该模型，则在Base.fromJson中增加该模型的解析分支
-```dart
-
-case ArticleModel:
-    return ArticleModel.fromJson(json) as T?;
-
-    ...
-
-    case 'ArticleModel':
-        return (isList
-            ? ModelList<ArticleModel>.fromJson(json)
-            : ModelPage<ArticleModel>.fromJson(json)) as T?;
-```
-- 或者在api中传入解析函数
+- 在api中返回并解析该模型，传入解析函数
 ```dart
 class Api {
     ...

@@ -139,7 +139,10 @@ class _CustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior scrollbar
   @override
   Widget buildScrollbar(
-      BuildContext context, Widget child, ScrollableDetails details) {
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
     return child;
   }
 
@@ -150,5 +153,7 @@ class _CustomScrollBehavior extends MaterialScrollBehavior {
         PointerDeviceKind.mouse,
         PointerDeviceKind.stylus,
         PointerDeviceKind.invertedStylus,
+        PointerDeviceKind.trackpad,
+        PointerDeviceKind.unknown,
       };
 }

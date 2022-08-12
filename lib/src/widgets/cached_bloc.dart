@@ -61,6 +61,12 @@ abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
     }
     await super.close();
   }
+
+  void safeAdd(E event) {
+    if (!isClosed) {
+      add(event);
+    }
+  }
 }
 
 abstract class CachedCubit<T> extends Cubit<T> {
@@ -81,5 +87,11 @@ abstract class CachedCubit<T> extends Cubit<T> {
       _states[globalKey] = state;
     }
     await super.close();
+  }
+
+  void safeEmit(T state) {
+    if (!isClosed) {
+      emit(state);
+    }
   }
 }

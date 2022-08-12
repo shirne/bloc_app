@@ -42,6 +42,7 @@ class SettingsPage extends StatelessWidget {
                       const Icon(Icons.arrow_forward_ios),
                     ]),
                     onTap: () async {
+                      final bloc = context.read<GlobalBloc>();
                       final result = await showCupertinoModalPopup<ThemeMode>(
                           context: context,
                           builder: (context) {
@@ -76,9 +77,7 @@ class SettingsPage extends StatelessWidget {
                             );
                           });
                       if (result != null) {
-                        context
-                            .read<GlobalBloc>()
-                            .add(ThemeModeChangedEvent(result));
+                        bloc.add(ThemeModeChangedEvent(result));
                       }
                     },
                   ),

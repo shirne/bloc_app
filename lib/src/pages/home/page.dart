@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:appscheme/appscheme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,11 +9,42 @@ import 'package:skeletons/skeletons.dart';
 
 import '../../../generated/l10n.dart';
 import '../../globals/routes.dart';
+import '../../utils/utils.dart';
 import '../../widgets/cached_bloc.dart';
 import 'bloc.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      Future(checkScheme);
+    }
+  }
+
+  void checkScheme() {
+    AppScheme? appScheme = AppSchemeImpl.getInstance();
+    appScheme?.getInitScheme().then(onScheme);
+    appScheme?.registerSchemeListener().listen(onScheme);
+  }
+
+  void onScheme(value) {
+    if (value != null) {
+      log.d('Init  ${value.dataString}');
+      if (value.path != null &&
+          value.path != Routes.root.name &&
+          value.path != Routes.login.name) {
+        Navigator.of(context).pushNamed(value.path!, arguments: value.query);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

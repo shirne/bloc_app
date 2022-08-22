@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/gen/l10n.dart';
 import '../app_theme.dart';
 
 /// 基于核心库的扩展
@@ -105,4 +106,6 @@ extension BuildContextExtension on BuildContext {
   ColorScheme get colorScheme => theme.colorScheme;
 
   Color get surfaceColor => colorScheme.surface;
+
+  AppLocalizations get l10n => AppLocalizations.of(this)!;
 }

@@ -47,3 +47,5 @@ app.*.map.json
 
 **/flutter/generated_plugin_registrant.*
 **/Flutter/GeneratedPluginRegistrant.*
+
+untranslated.txt

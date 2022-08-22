@@ -7,10 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletons/skeletons.dart';
 
-import '../../../generated/l10n.dart';
-import '../../globals/routes.dart';
-import '../../utils/utils.dart';
-import '../../widgets/cached_bloc.dart';
+import 'package:blocapp/src/common.dart';
 import 'bloc.dart';
 
 class HomePage extends StatefulWidget {
@@ -54,7 +51,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(S.of(context).appTitle),
+              title: Text(context.l10n.appTitle),
               actions: [
                 IconButton(
                   onPressed: () {
@@ -83,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 40.w),
-                            child: Text(S.of(context).login),
+                            child: Text(context.l10n.login),
                           ),
                         ),
                       ],

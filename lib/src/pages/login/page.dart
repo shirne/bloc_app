@@ -3,10 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../generated/l10n.dart';
-import '../../globals/global_bloc.dart';
-import '../../globals/routes.dart';
-import '../../utils/utils.dart';
+import 'package:blocapp/src/common.dart';
 import 'bloc.dart';
 
 class LoginPage extends StatefulWidget {
@@ -70,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(S.of(context).login),
+              title: Text(context.l10n.login),
             ),
             body: Center(
               child: Card(
@@ -102,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 20.w),
                       Text(
-                        S.of(context).userLogin,
+                        context.l10n.userLogin,
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -111,14 +108,14 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 20.w),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: S.of(context).labelUsername,
+                          hintText: context.l10n.labelUsername,
                           prefixIcon: const Icon(Icons.person),
                         ),
                       ),
                       SizedBox(height: 40.w),
                       TextField(
                         decoration: InputDecoration(
-                          hintText: S.of(context).labelPassword,
+                          hintText: context.l10n.labelPassword,
                           prefixIcon: const Icon(Icons.lock),
                         ),
                       ),
@@ -126,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                       ElevatedButton(
                           onPressed: () {},
                           child: Center(
-                            child: Text(S.of(context).loginButtonText),
+                            child: Text(context.l10n.loginButtonText),
                           )),
                       SizedBox(height: 40.w),
                       Row(
@@ -134,11 +131,11 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           TextButton(
                             onPressed: () {},
-                            child: Text(S.of(context).forgotPassword),
+                            child: Text(context.l10n.forgotPassword),
                           ),
                           TextButton(
                             onPressed: () {},
-                            child: Text(S.of(context).createAccount),
+                            child: Text(context.l10n.createAccount),
                           ),
                         ],
                       ),

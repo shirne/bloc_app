@@ -4,12 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 
-import '../../generated/l10n.dart';
-import '../models/base.dart';
+import 'package:blocapp/src/common.dart';
 import '../models/user.dart';
-import '../utils/utils.dart';
 import 'config.dart';
-import 'routes.dart';
 
 class Api {
   static final apiService = ApiService.getInstance();
@@ -173,17 +170,17 @@ class ApiService {
                 context: context,
                 builder: (BuildContext context) {
                   return CupertinoAlertDialog(
-                    title: Text(S.of(context).loginDialogTitle),
-                    content: Text(S.of(context).loginDialogContent),
+                    title: Text(context.l10n.loginDialogTitle),
+                    content: Text(context.l10n.loginDialogContent),
                     actions: [
                       CupertinoDialogAction(
-                        child: Text(S.of(context).no),
+                        child: Text(context.l10n.no),
                         onPressed: () {
                           Navigator.pop(context, false);
                         },
                       ),
                       CupertinoDialogAction(
-                        child: Text(S.of(context).yes),
+                        child: Text(context.l10n.yes),
                         onPressed: () {
                           Navigator.pop(context, true);
                         },

@@ -5,13 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../generated/l10n.dart';
+import 'package:blocapp/src/common.dart';
 import 'app_navigator.dart';
-import 'app_theme.dart';
-import 'globals/global_bloc.dart';
-import 'globals/routes.dart';
-import 'globals/store_service.dart';
-import 'utils/utils.dart';
+
+enum SortType {
+  newst(200),
+  hot(300);
+
+  final int sort;
+  const SortType(this.sort);
+}
 
 class MainApp extends StatelessWidget {
   final StoreService storeService;
@@ -24,6 +27,9 @@ class MainApp extends StatelessWidget {
       designSize: const Size(1080, 1920),
       minTextAdapt: true,
       splitScreenMode: true,
+      builder: (BuildContext context, Widget? child) {
+        return child!;
+      },
       child: BlocProvider<GlobalBloc>(
         create: (BuildContext context) => GlobalBloc(storeService),
         child: BlocBuilder<GlobalBloc, GlobalState>(builder: (context, state) {
@@ -34,7 +40,7 @@ class MainApp extends StatelessWidget {
               restorationScopeId: 'app',
               navigatorKey: navigatorKey,
               localizationsDelegates: const [
-                S.delegate,
+                AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
@@ -43,7 +49,7 @@ class MainApp extends StatelessWidget {
                 Locale('en'), // English, no country code
                 Locale('zh', 'CN'),
               ],
-              onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
+              onGenerateTitle: (c) => c.l10n.appTitle,
               theme: _lightTheme(),
               darkTheme: _darkTheme(),
               themeMode: state.themeMode,

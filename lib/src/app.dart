@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:blocapp/src/common.dart';
+import 'package:shirne_dialog/shirne_dialog.dart';
 import 'app_navigator.dart';
 
 enum SortType {
@@ -23,6 +24,7 @@ class MainApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    MyDialog.navigatorKey = navigatorKey;
     return ScreenUtilInit(
       designSize: const Size(1080, 1920),
       minTextAdapt: true,
@@ -41,6 +43,7 @@ class MainApp extends StatelessWidget {
               navigatorKey: navigatorKey,
               localizationsDelegates: const [
                 AppLocalizations.delegate,
+                ShirneDialogLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
@@ -115,7 +118,7 @@ class MainApp extends StatelessWidget {
         tileColor: base.colorScheme.surface,
         selectedTileColor: base.colorScheme.primary.withAlpha(20),
       ),
-      extensions: [extTheme],
+      extensions: [extTheme, const ShirneDialogTheme()],
     );
   }
 

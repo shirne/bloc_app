@@ -71,6 +71,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.16.0"
+  combined_animation:
+    dependency: transitive
+    description:
+      name: combined_animation
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.2"
   crypto:
     dependency: transitive
     description:
@@ -105,7 +112,7 @@ packages:
       name: ffi
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.1"
+    version: "1.2.1"
   file:
     dependency: transitive
     description:
@@ -113,6 +120,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.1.4"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.6.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -125,6 +139,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "8.1.1"
+  flutter_inappwebview:
+    dependency: "direct main"
+    description:
+      name: flutter_inappwebview
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "5.4.3+7"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -144,6 +165,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.2.8"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.7"
   flutter_screenutil:
     dependency: "direct main"
     description:
@@ -161,6 +189,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_widget_from_html_core:
+    dependency: "direct main"
+    description:
+      name: flutter_widget_from_html_core
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.8.5+3"
+  fwfh_text_style:
+    dependency: transitive
+    description:
+      name: fwfh_text_style
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.22.08"
   html:
     dependency: transitive
     description:
@@ -279,7 +321,7 @@ packages:
       name: path_provider_windows
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.2"
+    version: "2.0.7"
   petitparser:
     dependency: transitive
     description:
@@ -371,6 +413,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
+  shirne_dialog:
+    dependency: "direct main"
+    description:
+      name: shirne_dialog
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.1.0"
   skeletons:
     dependency: "direct main"
     description:
@@ -452,7 +501,7 @@ packages:
       name: win32
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.7.0"
+    version: "2.6.1"
   xdg_directories:
     dependency: transitive
     description:
@@ -476,4 +525,4 @@ packages:
     version: "3.1.1"
 sdks:
   dart: ">=2.17.1 <3.0.0"
-  flutter: ">=3.0.0"
+  flutter: ">=2.8.0"

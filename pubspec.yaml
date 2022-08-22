@@ -42,6 +42,12 @@ dependencies:
   logger: ^1.1.0            # 日志工具
   skeletons: ^0.0.3          # 骨架页构造工具
   appscheme: ^1.0.8          # applink处理
+  file_picker: ^4.5.1         # 文件选择
+
+  shirne_dialog: ^4.1.0       # 对话框
+
+  flutter_widget_from_html_core: ^0.8.5+3 # 简单html全平台解析
+  flutter_inappwebview: ^5.4.3+7  # 内置webview
 
 dev_dependencies:
   flutter_test:

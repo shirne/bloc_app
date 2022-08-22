@@ -1,5 +1,7 @@
+import 'package:blocapp/src/pages/web/page.dart';
 import 'package:flutter/material.dart';
 
+import '../common.dart';
 import '../pages/home/page.dart';
 import '../pages/login/page.dart';
 import '../pages/not_found.dart';
@@ -14,11 +16,15 @@ class Routes {
   );
   static final login = RouteItem(
     '/login',
-    (arguments) => LoginPage(arguments as Map<String, dynamic>?),
+    (arguments) => LoginPage(arguments as Json?),
   );
   static final seettings = RouteItem(
     '/settings',
     (arguments) => const SettingsPage(),
+  );
+  static final web = RouteItem(
+    '/web',
+    (arguments) => WebViewPage(arguments as Json),
   );
   static final notFound = RouteItem(
     '/404',
@@ -30,6 +36,7 @@ class Routes {
       root,
       login,
       seettings,
+      web,
     ])
       e.name: e
   };

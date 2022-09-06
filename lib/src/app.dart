@@ -34,75 +34,79 @@ class MainApp extends StatelessWidget {
       },
       child: BlocProvider<GlobalBloc>(
         create: (BuildContext context) => GlobalBloc(storeService),
-        child: BlocBuilder<GlobalBloc, GlobalState>(builder: (context, state) {
-          return DefaultTextStyle(
-            // 如果需要内置字体，此处修改为对应的字体名
-            style: const TextStyle(fontFamily: '微软雅黑'),
-            child: MaterialApp(
-              restorationScopeId: 'app',
-              navigatorKey: navigatorKey,
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                ShirneDialogLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: const [
-                Locale('en'), // English, no country code
-                Locale('zh', 'CN'),
-              ],
-              onGenerateTitle: (c) => c.l10n.appTitle,
-              theme: _lightTheme(),
-              darkTheme: _darkTheme(),
-              themeMode: state.themeMode,
-              debugShowCheckedModeBanner: false,
-              scrollBehavior: _CustomScrollBehavior(),
-              navigatorObservers: [
-                AppNavigatorObserver(navigatorKey),
-              ],
-              onGenerateRoute: (RouteSettings routeSettings) {
-                final route = Routes.match(routeSettings);
-                if (route == null) {
-                  return MaterialPageRoute<dynamic>(
-                    settings:
-                        routeSettings.copyWith(name: Routes.notFound.name),
-                    builder: (BuildContext context) {
-                      return Routes.notFound.builder.call(routeSettings.name);
-                    },
-                  );
-                }
-                if (route.isAuth) {
-                  if (state.user.isValid) {
-                    log.d(state.user);
+        child: BlocBuilder<GlobalBloc, GlobalState>(
+          builder: (context, state) {
+            return DefaultTextStyle(
+              // 如果需要内置字体，此处修改为对应的字体名
+              style: const TextStyle(fontFamily: '微软雅黑'),
+              child: MaterialApp(
+                restorationScopeId: 'app',
+                navigatorKey: navigatorKey,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  ShirneDialogLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('en'), // English, no country code
+                  Locale('zh', 'CN'),
+                ],
+                onGenerateTitle: (c) => c.l10n.appTitle,
+                theme: _lightTheme(),
+                darkTheme: _darkTheme(),
+                themeMode: state.themeMode,
+                debugShowCheckedModeBanner: false,
+                scrollBehavior: _CustomScrollBehavior(),
+                navigatorObservers: [
+                  AppNavigatorObserver(navigatorKey),
+                ],
+                initialRoute: Routes.splash.name,
+                onGenerateRoute: (RouteSettings routeSettings) {
+                  final route = Routes.match(routeSettings);
+                  if (route == null) {
                     return MaterialPageRoute<dynamic>(
-                      settings: routeSettings.copyWith(name: Routes.login.name),
+                      settings:
+                          routeSettings.copyWith(name: Routes.notFound.name),
                       builder: (BuildContext context) {
-                        return Routes.login.builder.call({
-                          'back': routeSettings.name,
-                          'arguments': routeSettings.arguments,
-                        });
+                        return Routes.notFound.builder.call(routeSettings.name);
                       },
                     );
                   }
-                  // TODO: 这里是指纹验证逻辑
-                  // } else if (state.needVerify) {
-                  //   Api.lock();
-                  //   Auth.isAuthenticate().then((value) {
-                  //     bloc.add(UserVerifyEvent(value == authResult.auth));
-                  //   });
-                  // }
-                }
-                return MaterialPageRoute<dynamic>(
-                  settings: routeSettings,
-                  builder: (BuildContext context) {
-                    return route.builder.call(routeSettings.arguments);
-                  },
-                );
-              },
-            ),
-          );
-        }),
+                  if (route.isAuth) {
+                    if (state.user.isValid) {
+                      log.d(state.user);
+                      return MaterialPageRoute<dynamic>(
+                        settings:
+                            routeSettings.copyWith(name: Routes.login.name),
+                        builder: (BuildContext context) {
+                          return Routes.login.builder.call({
+                            'back': routeSettings.name,
+                            'arguments': routeSettings.arguments,
+                          });
+                        },
+                      );
+                    }
+                    // TODO: 这里是指纹验证逻辑
+                    // } else if (state.needVerify) {
+                    //   Api.lock();
+                    //   Auth.isAuthenticate().then((value) {
+                    //     bloc.add(UserVerifyEvent(value == authResult.auth));
+                    //   });
+                    // }
+                  }
+                  return MaterialPageRoute<dynamic>(
+                    settings: routeSettings,
+                    builder: (BuildContext context) {
+                      return route.builder.call(routeSettings.arguments);
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

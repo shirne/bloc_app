@@ -20,7 +20,7 @@ class SettingsBloc extends CachedBloc<SettingsEvent, SettingsState> {
     _loadData();
   }
 
-  _loadData({void Function(String message)? onError}) async {
+  Future<void> _loadData({void Function(String message)? onError}) async {
     await Future.delayed(const Duration(milliseconds: 500));
     //TODO load data
   }

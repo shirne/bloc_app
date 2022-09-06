@@ -1,10 +1,5 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:blocapp/src/common.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
@@ -12,49 +7,76 @@ import 'src/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runZonedGuarded<void>(
-    () async {
-      final storeService = await StoreService.getInstance();
 
-      if (!kIsWeb && Platform.isAndroid) {
-        await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(
-            true);
+  handleError();
 
-        final swAvailable = await AndroidWebViewFeature.isFeatureSupported(
-          AndroidWebViewFeature.SERVICE_WORKER_BASIC_USAGE,
-        );
-        final swInterceptAvailable =
-            await AndroidWebViewFeature.isFeatureSupported(
-          AndroidWebViewFeature.SERVICE_WORKER_SHOULD_INTERCEPT_REQUEST,
-        );
+  final storeService = await StoreService.getInstance();
 
-        if (swAvailable && swInterceptAvailable) {
-          final serviceWorkerController =
-              AndroidServiceWorkerController.instance();
+  runApp(MainApp(storeService));
+}
 
-          await serviceWorkerController
-              .setServiceWorkerClient(AndroidServiceWorkerClient(
-            shouldInterceptRequest: (request) async {
-              log.d(request);
-              return null;
-            },
-          ));
-        }
-      }
+void handleError() {
+  FlutterError.onError = (FlutterErrorDetails errorDetails) {
+    final e = errorDetails.exception;
 
-      runApp(MainApp(storeService));
-    },
-    (Object e, StackTrace s) {
-      log.e(
-        'Caught unhandled exception: $e',
-        e,
-        s,
-      );
-      if (e is DioError && e.type == DioErrorType.cancel) {
-        MyDialog.toast('$e');
-      } else {
-        MyDialog.popup(Text('$e'));
-      }
-    },
-  );
+    if (e is DioError && e.type == DioErrorType.cancel) {
+      return;
+    }
+    log.e(
+      'Caught unhandled exception: $e',
+      e,
+      errorDetails.stack,
+    );
+    MyDialog.toast('$e');
+  };
+  ErrorWidget.builder = (FlutterErrorDetails d) {
+    log.e(
+      'Error has been delivered to the ErrorWidget: ${d.exception}',
+      d.exception,
+      d.stack,
+    );
+    return Material(
+      type: MaterialType.transparency,
+      child: Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(13),
+          color: Colors.redAccent,
+        ),
+        child: DefaultTextStyle.merge(
+          style: const TextStyle(color: Colors.white),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const FractionallySizedBox(
+                widthFactor: 0.25,
+                child: FlutterLogo(),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Flutter Error',
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                d.exception.toString(),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                d.stack.toString(),
+                style: const TextStyle(fontSize: 13),
+                maxLines: 10,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  };
 }

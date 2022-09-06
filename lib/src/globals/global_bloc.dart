@@ -5,11 +5,24 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import 'api_service.dart';
 
+typedef ResultCallback<T> = void Function(bool, T? data);
+
+@immutable
 abstract class GlobalEvent {}
 
 class ThemeModeChangedEvent extends GlobalEvent {
   final ThemeMode themeMode;
   ThemeModeChangedEvent(this.themeMode);
+}
+
+class InitEvent extends GlobalEvent {
+  final ResultCallback? onReady;
+  InitEvent([this.onReady]);
+}
+
+class StateChangedEvent extends GlobalEvent {
+  final GlobalState state;
+  StateChangedEvent(this.state);
 }
 
 class UserAuthEvent extends GlobalEvent {
@@ -44,12 +57,22 @@ class GlobalState {
 
 class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
   GlobalBloc(StoreService storeService)
-      : super(GlobalState(
-          user: storeService.user(),
-          themeMode: storeService.themeMode(),
-        )) {
+      : super(
+          GlobalState(
+            user: storeService.user(),
+            themeMode: storeService.themeMode(),
+          ),
+        ) {
     on<ThemeModeChangedEvent>((event, emit) {
       emit(state.clone(themeMode: event.themeMode));
+    });
+
+    on<StateChangedEvent>((event, emit) {
+      emit(event.state);
+    });
+
+    on<InitEvent>((event, emit) {
+      _init(event.onReady);
     });
 
     on<UserAuthEvent>((event, emit) {
@@ -72,6 +95,26 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
 
     if (state.user.isValid) {
       ApiService.getInstance().addHeader('token', state.user.token);
+    }
+  }
+  Future<void> _init([ResultCallback? onReady]) async {
+    if (state.user.token.isNotEmpty) {
+      if (state.user.isValid) {
+        ApiService.getInstance().addHeader('token', state.user.token);
+        await _upUserinfo(() {});
+      }
+    }
+    onReady?.call(true, null);
+  }
+
+  Future<void> _upUserinfo([VoidCallback? onRequireLogin]) async {
+    final result = await Api.getUserinfo(onRequireLogin);
+    if (!isClosed && result.success) {
+      add(
+        StateChangedEvent(
+          state.clone(user: result.data!..token = state.user.token),
+        ),
+      );
     }
   }
 }

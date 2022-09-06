@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     if (value != null) {
       log.d('Init  ${value.dataString}');
       if (value.path != null &&
-          value.path != Routes.root.name &&
+          value.path != Routes.home.name &&
           value.path != Routes.login.name) {
         Navigator.of(context).pushNamed(value.path!, arguments: value.query);
       }

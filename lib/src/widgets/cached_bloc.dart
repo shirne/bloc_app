@@ -28,7 +28,7 @@ abstract class BaseState {
   bool get isLoading => status == Status.loading;
   bool get isError => status == Status.failure;
 
-  clone();
+  BaseState clone();
 
   Map<String, dynamic> toJson() {
     return {
@@ -46,13 +46,17 @@ abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
   final String globalKey;
 
   @mustCallSuper
-  CachedBloc(T Function() createState,
-      [this.globalKey = '', T Function(T)? fromCache])
-      : super(globalKey.isEmpty
-            ? createState()
-            : fromCache == null
-                ? _states.putIfAbsent(globalKey, createState)
-                : fromCache.call(_states.putIfAbsent(globalKey, createState)));
+  CachedBloc(
+    T Function() createState, [
+    this.globalKey = '',
+    T Function(T)? fromCache,
+  ]) : super(
+          globalKey.isEmpty
+              ? createState()
+              : fromCache == null
+                  ? _states.putIfAbsent(globalKey, createState)
+                  : fromCache.call(_states.putIfAbsent(globalKey, createState)),
+        );
 
   @override
   Future<void> close() async {
@@ -73,13 +77,17 @@ abstract class CachedCubit<T> extends Cubit<T> {
   final String globalKey;
 
   @mustCallSuper
-  CachedCubit(T Function() createState,
-      [this.globalKey = '', T Function(T)? fromCache])
-      : super(globalKey.isEmpty
-            ? createState()
-            : fromCache == null
-                ? _states.putIfAbsent(globalKey, createState)
-                : fromCache.call(_states.putIfAbsent(globalKey, createState)));
+  CachedCubit(
+    T Function() createState, [
+    this.globalKey = '',
+    T Function(T)? fromCache,
+  ]) : super(
+          globalKey.isEmpty
+              ? createState()
+              : fromCache == null
+                  ? _states.putIfAbsent(globalKey, createState)
+                  : fromCache.call(_states.putIfAbsent(globalKey, createState)),
+        );
 
   @override
   Future<void> close() async {

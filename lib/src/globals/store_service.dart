@@ -11,7 +11,7 @@ class StoreService {
   static const needAuthKey = 'need_auth';
 
   late SharedPreferences _sp;
-  init() async {
+  Future<void> init() async {
     _sp = await SharedPreferences.getInstance();
   }
 

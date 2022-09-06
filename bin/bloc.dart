@@ -7,9 +7,13 @@ void main(List<String> args) {
   final page = args[0];
   final lowerPage = page
       .replaceFirstMapped(
-          RegExp('^[A-Z]'), (item) => item.group(0)!.toLowerCase())
+        RegExp('^[A-Z]'),
+        (item) => item.group(0)!.toLowerCase(),
+      )
       .replaceAllMapped(
-          RegExp('[A-Z]+'), (match) => '_${match.group(0)!.toLowerCase()}');
+        RegExp('[A-Z]+'),
+        (match) => '_${match.group(0)!.toLowerCase()}',
+      );
 
   final pageDir = "${Directory.current.path}/lib/src/pages/"
       '${dir.isEmpty ? '' : ('$dir/')}$lowerPage/';
@@ -41,7 +45,7 @@ class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
     _loadData();
   }
   
-  _loadData({void Function(String message)? onError}) async {
+  Future<void> _loadData({void Function(String message)? onError}) async {
     await Future.delayed(const Duration(milliseconds: 500));
     //TODO load data
     if(isClosed){

@@ -6,13 +6,18 @@ import '../pages/home/page.dart';
 import '../pages/login/page.dart';
 import '../pages/not_found.dart';
 import '../pages/settings/page.dart';
+import '../pages/splash.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class Routes {
-  static final root = RouteItem(
+  static final home = RouteItem(
     '/',
     (arguments) => const HomePage(),
+  );
+  static final splash = RouteItem(
+    '/splash',
+    (arguments) => const SplashPage(),
   );
   static final login = RouteItem(
     '/login',
@@ -33,7 +38,8 @@ class Routes {
 
   static final routes = {
     for (RouteItem e in [
-      root,
+      home,
+      splash,
       login,
       seettings,
       web,

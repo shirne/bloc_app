@@ -23,10 +23,13 @@ void loopDir(Directory dir) {
       final match = pfile.firstMatch(name);
       if (match != null) {
         final ndir = dirs.putIfAbsent(
-            match.group(1)!, () => getXDir(match.group(1)!, dir));
+          match.group(1)!,
+          () => getXDir(match.group(1)!, dir),
+        );
         if (ndir != null) {
           item.renameSync(
-              '${ndir.path}/${name.split('@').first}.${match.group(2)}');
+            '${ndir.path}/${name.split('@').first}.${match.group(2)}',
+          );
         }
       }
     }

@@ -44,59 +44,71 @@ class AppNavigatorObserver extends NavigatorObserver {
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
 
-    _stream.add(RouteEvent(
-      RouteEventType.pop,
-      route: route,
-      previousRoute: previousRoute,
-    ));
+    _stream.add(
+      RouteEvent(
+        RouteEventType.pop,
+        route: route,
+        previousRoute: previousRoute,
+      ),
+    );
   }
 
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
 
-    _stream.add(RouteEvent(
-      RouteEventType.push,
-      route: route,
-      previousRoute: previousRoute,
-    ));
+    _stream.add(
+      RouteEvent(
+        RouteEventType.push,
+        route: route,
+        previousRoute: previousRoute,
+      ),
+    );
   }
 
   @override
   void didRemove(Route route, Route? previousRoute) {
     super.didRemove(route, previousRoute);
-    _stream.add(RouteEvent(
-      RouteEventType.remove,
-      route: route,
-      previousRoute: previousRoute,
-    ));
+    _stream.add(
+      RouteEvent(
+        RouteEventType.remove,
+        route: route,
+        previousRoute: previousRoute,
+      ),
+    );
   }
 
   @override
   void didReplace({Route? newRoute, Route? oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    _stream.add(RouteEvent(
-      RouteEventType.replace,
-      route: newRoute,
-      previousRoute: oldRoute,
-    ));
+    _stream.add(
+      RouteEvent(
+        RouteEventType.replace,
+        route: newRoute,
+        previousRoute: oldRoute,
+      ),
+    );
   }
 
   @override
   void didStartUserGesture(Route route, Route? previousRoute) {
     super.didStartUserGesture(route, previousRoute);
-    _stream.add(RouteEvent(
-      RouteEventType.startUserGesture,
-      route: route,
-      previousRoute: previousRoute,
-    ));
+    _stream.add(
+      RouteEvent(
+        RouteEventType.startUserGesture,
+        route: route,
+        previousRoute: previousRoute,
+      ),
+    );
   }
 
   @override
   void didStopUserGesture() {
     super.didStopUserGesture();
-    _stream.add(const RouteEvent(
-      RouteEventType.stopUserGesture,
-    ));
+    _stream.add(
+      const RouteEvent(
+        RouteEventType.stopUserGesture,
+      ),
+    );
   }
 }

@@ -28,53 +28,57 @@ class SettingsPage extends StatelessWidget {
                   ListTile(
                     title: Text(context.l10n.theme),
                     subtitle: Text(context.l10n.themeDesc),
-                    trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                      Text(
-                        context
-                            .read<GlobalBloc>()
-                            .state
-                            .themeMode
-                            .toString()
-                            .replaceFirst('ThemeMode.', ''),
-                        style: theme.textTheme.caption,
-                      ),
-                      const Icon(Icons.arrow_forward_ios),
-                    ]),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          context
+                              .read<GlobalBloc>()
+                              .state
+                              .themeMode
+                              .toString()
+                              .replaceFirst('ThemeMode.', ''),
+                          style: theme.textTheme.caption,
+                        ),
+                        const Icon(Icons.arrow_forward_ios),
+                      ],
+                    ),
                     onTap: () async {
                       final bloc = context.read<GlobalBloc>();
                       final result = await showCupertinoModalPopup<ThemeMode>(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoActionSheet(
-                              title: Text(context.l10n.themeMode),
-                              actions: [
-                                CupertinoActionSheetAction(
-                                  onPressed: () {
-                                    Navigator.pop(context, ThemeMode.system);
-                                  },
-                                  child: Text(context.l10n.themeSystem),
-                                ),
-                                CupertinoActionSheetAction(
-                                  onPressed: () {
-                                    Navigator.pop(context, ThemeMode.light);
-                                  },
-                                  child: Text(context.l10n.themeLight),
-                                ),
-                                CupertinoActionSheetAction(
-                                  onPressed: () {
-                                    Navigator.pop(context, ThemeMode.dark);
-                                  },
-                                  child: Text(context.l10n.themeDark),
-                                ),
-                              ],
-                              cancelButton: CupertinoActionSheetAction(
+                        context: context,
+                        builder: (context) {
+                          return CupertinoActionSheet(
+                            title: Text(context.l10n.themeMode),
+                            actions: [
+                              CupertinoActionSheetAction(
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context, ThemeMode.system);
                                 },
-                                child: Text(context.l10n.cancel),
+                                child: Text(context.l10n.themeSystem),
                               ),
-                            );
-                          });
+                              CupertinoActionSheetAction(
+                                onPressed: () {
+                                  Navigator.pop(context, ThemeMode.light);
+                                },
+                                child: Text(context.l10n.themeLight),
+                              ),
+                              CupertinoActionSheetAction(
+                                onPressed: () {
+                                  Navigator.pop(context, ThemeMode.dark);
+                                },
+                                child: Text(context.l10n.themeDark),
+                              ),
+                            ],
+                            cancelButton: CupertinoActionSheetAction(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(context.l10n.cancel),
+                            ),
+                          );
+                        },
+                      );
                       if (result != null) {
                         bloc.add(ThemeModeChangedEvent(result));
                       }

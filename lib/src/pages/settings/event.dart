@@ -12,4 +12,3 @@ class StateChangedEvent extends SettingsEvent {
   final SettingsState state;
   StateChangedEvent(this.state);
 }
-

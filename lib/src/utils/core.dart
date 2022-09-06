@@ -48,7 +48,15 @@ extension DateTimeExtension on DateTime {
   /// `offset`=-1时以周日起始
   DateTime endOfWeek([int offset = 0]) {
     return DateTime(
-        year, month, day + 7 + offset - weekday, 23, 59, 59, 999, 999);
+      year,
+      month,
+      day + 7 + offset - weekday,
+      23,
+      59,
+      59,
+      999,
+      999,
+    );
   }
 
   DateTime startOfMonth() {

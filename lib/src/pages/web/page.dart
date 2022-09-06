@@ -106,8 +106,9 @@ class _WebViewPageState extends State<WebViewPage> {
         },
         androidOnPermissionRequest: (controller, origin, resources) async {
           return PermissionRequestResponse(
-              resources: resources,
-              action: PermissionRequestResponseAction.GRANT);
+            resources: resources,
+            action: PermissionRequestResponseAction.GRANT,
+          );
         },
         androidOnGeolocationPermissionsShowPrompt:
             (InAppWebViewController controller, String origin) async {

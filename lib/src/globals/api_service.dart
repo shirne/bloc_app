@@ -57,11 +57,23 @@ class Api {
     );
   }
 
-  static Future<ApiResult<Model>> doCheck(String value,
-      [String type = 'mobile']) async {
+  static Future<ApiResult<Model>> doCheck(
+    String value, [
+    String type = 'mobile',
+  ]) async {
     return await apiService.post(
       apiCheck,
       {'val': value, 'type': type},
+      skipLock: true,
+    );
+  }
+
+  static const apiUserinfo = 'user/profile';
+  static Future<ApiResult<User>> getUserinfo([
+    VoidCallback? onRequireLogin,
+  ]) async {
+    return await apiService.get(
+      apiUserinfo,
       skipLock: true,
     );
   }
@@ -79,7 +91,8 @@ class ApiService {
   final int? receiveTimeout;
   final String baseUrl;
 
-  bool isLoginShow = false;
+  /// 防止登录询问窗口多次弹出
+  bool _isLoginShow = false;
 
   Dio get dio => _dio;
   final Dio _dio;
@@ -89,12 +102,14 @@ class ApiService {
     this.connectTimeout,
     this.sendTimeout,
     this.receiveTimeout,
-  }) : _dio = Dio(BaseOptions(
-          connectTimeout: connectTimeout,
-          sendTimeout: sendTimeout,
-          receiveTimeout: receiveTimeout,
-          baseUrl: baseUrl,
-        )) {
+  }) : _dio = Dio(
+          BaseOptions(
+            connectTimeout: connectTimeout,
+            sendTimeout: sendTimeout,
+            receiveTimeout: receiveTimeout,
+            baseUrl: baseUrl,
+          ),
+        ) {
     _dio.interceptors.add(ApiInterceptor());
   }
 
@@ -128,6 +143,41 @@ class ApiService {
     }
   }
 
+  Future<void> _onRequireLogin() async {
+    if (_isLoginShow) return;
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+    _isLoginShow = true;
+    await showCupertinoDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(context.l10n.loginDialogTitle),
+          content: Text(context.l10n.loginDialogContent),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(context.l10n.no),
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text(context.l10n.yes),
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+            ),
+          ],
+        );
+      },
+    ).then((goLogin) {
+      if (goLogin ?? false) {
+        Routes.login.show(context);
+      }
+    });
+    _isLoginShow = false;
+  }
+
   /// 通用请求
   Future<ApiResult<T>> request<T extends Base>(
     String src,
@@ -137,6 +187,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    VoidCallback? onRequireLogin,
   }) async {
     if (!skipLock && isLocked) {
       log.d('api is locked');
@@ -162,39 +213,10 @@ class ApiService {
 
       final result = ApiResult<T>.fromResponse(res, dataParser);
       if (result.status == 401) {
-        if (!isLoginShow) {
-          final context = navigatorKey.currentContext;
-          if (context != null) {
-            isLoginShow = true;
-            showCupertinoDialog<bool>(
-                context: context,
-                builder: (BuildContext context) {
-                  return CupertinoAlertDialog(
-                    title: Text(context.l10n.loginDialogTitle),
-                    content: Text(context.l10n.loginDialogContent),
-                    actions: [
-                      CupertinoDialogAction(
-                        child: Text(context.l10n.no),
-                        onPressed: () {
-                          Navigator.pop(context, false);
-                        },
-                      ),
-                      CupertinoDialogAction(
-                        child: Text(context.l10n.yes),
-                        onPressed: () {
-                          Navigator.pop(context, true);
-                        },
-                      ),
-                    ],
-                  );
-                }).then((goLogin) {
-              if (goLogin ?? false) {
-                Routes.login.show(context);
-              }
-            }).whenComplete(() {
-              isLoginShow = false;
-            });
-          }
+        if (onRequireLogin != null) {
+          onRequireLogin.call();
+        } else {
+          _onRequireLogin();
         }
       }
 
@@ -211,6 +233,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    VoidCallback? onRequireLogin,
   }) async {
     return request(
       src,
@@ -219,6 +242,7 @@ class ApiService {
       queryParameters: queryParameters,
       dataParser: dataParser,
       skipLock: skipLock,
+      onRequireLogin: onRequireLogin,
     );
   }
 
@@ -230,6 +254,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    VoidCallback? onRequireLogin,
   }) async {
     return request(
       src,
@@ -239,6 +264,7 @@ class ApiService {
       queryParameters: queryParameters,
       dataParser: dataParser,
       skipLock: skipLock,
+      onRequireLogin: onRequireLogin,
     );
   }
 
@@ -250,6 +276,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    VoidCallback? onRequireLogin,
   }) async {
     return request(
       src,
@@ -259,6 +286,7 @@ class ApiService {
       queryParameters: queryParameters,
       dataParser: dataParser,
       skipLock: skipLock,
+      onRequireLogin: onRequireLogin,
     );
   }
 
@@ -270,6 +298,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    VoidCallback? onRequireLogin,
   }) async {
     return request(
       src,
@@ -279,6 +308,7 @@ class ApiService {
       queryParameters: queryParameters,
       dataParser: dataParser,
       skipLock: skipLock,
+      onRequireLogin: onRequireLogin,
     );
   }
 }
@@ -337,20 +367,33 @@ class ApiInterceptor extends Interceptor {
   ApiInterceptor() : log = Logger();
   @override
   void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
-    log.i('网络请求',
-        '${options.path} ${options.method}\n\nHeader：${options.headers}\n\nQueryParameters：${options.queryParameters}\n\nRequestData：${options.data}');
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    log.i(
+      '网络请求',
+      '${options.path} ${options.method}\n\n'
+          'Header：${options.headers}\n\n'
+          'QueryParameters：${options.queryParameters}\n\n'
+          'RequestData：${options.data}',
+    );
 
     super.onRequest(options, handler);
   }
 
   @override
   Future onResponse(
-      Response response, ResponseInterceptorHandler handler) async {
+    Response response,
+    ResponseInterceptorHandler handler,
+  ) async {
     var requestOptions = response.requestOptions;
 
-    log.i('网络请求响应',
-        '${requestOptions.path} ${requestOptions.method} ${response.statusCode}\n\nHeader：${response.headers}\nResponseData：${response.data}');
+    log.i(
+        '网络请求响应',
+        '${requestOptions.path} '
+            '${requestOptions.method} ${response.statusCode}\n\n'
+            'Header：${response.headers}\n'
+            'ResponseData：${response.data}');
 
     return super.onResponse(response, handler);
   }

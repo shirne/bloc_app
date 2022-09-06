@@ -19,7 +19,9 @@ class CssStyleDeclaration {
 
 class PlatformViewRegistry {
   void registerViewFactory(
-      String id, IFrameElement Function(int id) callBack) {}
+    String id,
+    IFrameElement Function(int id) callBack,
+  ) {}
 }
 
 final platformViewRegistry = PlatformViewRegistry();

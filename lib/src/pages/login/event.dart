@@ -12,4 +12,3 @@ class StateChangedEvent extends LoginEvent {
   final LoginState state;
   StateChangedEvent(this.state);
 }
-

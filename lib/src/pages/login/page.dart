@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       } else {
-        Routes.root.replace(context);
+        Routes.home.replace(context);
       }
     } else {
       log.i("last route $backPage");
@@ -121,10 +121,11 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 40.w),
                       ElevatedButton(
-                          onPressed: () {},
-                          child: Center(
-                            child: Text(context.l10n.loginButtonText),
-                          )),
+                        onPressed: () {},
+                        child: Center(
+                          child: Text(context.l10n.loginButtonText),
+                        ),
+                      ),
                       SizedBox(height: 40.w),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

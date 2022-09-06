@@ -37,10 +37,11 @@ class ModelList<T extends Base> extends Base {
 
   ModelList.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
-            lists: (json?['list'] as List<dynamic>?)
-                ?.map<T?>(dataParser ?? (item) => item as T?)
-                .whereType<T>()
-                .toList());
+          lists: (json?['list'] as List<dynamic>?)
+              ?.map<T?>(dataParser ?? (item) => item as T?)
+              .whereType<T>()
+              .toList(),
+        );
 
   @override
   Json toJson() => {
@@ -57,12 +58,13 @@ class ModelPage<T extends Base> extends ModelList<T> {
 
   ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
-            total: json?['total'] ?? 0,
-            page: json?['page'] ?? 0,
-            lists: (json?['lists'] as List<dynamic>?)
-                ?.map<T?>(dataParser ?? (item) => item as T?)
-                .whereType<T>()
-                .toList());
+          total: json?['total'] ?? 0,
+          page: json?['page'] ?? 0,
+          lists: (json?['lists'] as List<dynamic>?)
+              ?.map<T?>(dataParser ?? (item) => item as T?)
+              .whereType<T>()
+              .toList(),
+        );
 
   @override
   Json toJson() {

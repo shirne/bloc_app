@@ -92,9 +92,9 @@ class _SplashPageState extends State<SplashPage> {
             ),
             alignment: Alignment.center,
             child: Image.asset(
-              'assets/images/splash.png',
-              width: 118,
-              height: 138,
+              'assets/images/splash_logo.png',
+              width: 90.25,
+              height: 128.75,
             ),
           ),
           Positioned(
@@ -103,8 +103,8 @@ class _SplashPageState extends State<SplashPage> {
             right: 0,
             child: Image.asset(
               'assets/images/text.png',
-              width: 164.25,
-              height: 35.75,
+              width: 150.25,
+              height: 25,
             ),
           ),
         ],

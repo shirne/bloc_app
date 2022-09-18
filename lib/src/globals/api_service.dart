@@ -212,12 +212,8 @@ class ApiService {
       );
 
       final result = ApiResult<T>.fromResponse(res, dataParser);
-      if (result.status == 401) {
-        if (onRequireLogin != null) {
-          onRequireLogin.call();
-        } else {
-          _onRequireLogin();
-        }
+      if (result.needLogin) {
+        (onRequireLogin ?? _onRequireLogin).call();
       }
 
       return result;
@@ -321,6 +317,8 @@ class ApiResult<T extends Base> {
 
   bool get failed => status != 200;
   bool get success => status == 200;
+
+  bool get invalidToken => status == 402;
   bool get needLogin => status == 401;
   bool get unauthorized => status == 403;
 

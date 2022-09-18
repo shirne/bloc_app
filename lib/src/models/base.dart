@@ -1,8 +1,36 @@
 import 'dart:convert';
 
+import '../utils/utils.dart';
+
 typedef DataParser<T> = T Function(dynamic);
 
 typedef Json = Map<String, dynamic>;
+
+T? as<T>(dynamic value) {
+  if (value is T) {
+    return value;
+  }
+  if (value is String) {
+    if (T == int) {
+      return int.tryParse(value) as T?;
+    } else if (T == double) {
+      return double.tryParse(value) as T?;
+    } else if (T == DateTime) {
+      // DateTime.parse不支持 /
+      if (value.contains('/')) {
+        value = value.replaceAll('/', '-');
+      }
+      return DateTime.tryParse(value) as T?;
+    }
+  }
+  if (value != null) {
+    if (T == String) {
+      return '$value' as T;
+    }
+    log.e('Type $T cast error: $value (${value.runtimeType})');
+  }
+  return null;
+}
 
 abstract class Base {
   Json toJson();

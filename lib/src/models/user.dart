@@ -24,12 +24,12 @@ class User extends Base {
 
   User.fromJson(Json? json)
       : this(
-          userId: json?['user_id'] ?? json?['id'] ?? 0,
+          userId: as<int>(json?['user_id'] ?? json?['id']) ?? 0,
           username: json?['username'] ?? '',
           nickname: json?['nickname'] ?? '',
           token: json?['token'] ?? '',
-          expire: json?['expire'] ?? '',
-          createAt: json?['create_at'] ?? '',
+          expire: as<int>(json?['expire']) ?? 0,
+          createAt: as<DateTime>(json?['create_at']),
         );
 
   @override
@@ -41,4 +41,19 @@ class User extends Base {
         'expire': expire,
         'create_at': createAt,
       };
+}
+
+class UserInfo extends Base {
+  @override
+  Json toJson() => {};
+}
+
+class UserLevel extends Base {
+  @override
+  Json toJson() => {};
+}
+
+class UserAgentLevel extends Base {
+  @override
+  Json toJson() => {};
 }

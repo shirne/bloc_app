@@ -27,7 +27,9 @@ void handleError() {
       e,
       errorDetails.stack,
     );
-    MyDialog.toast('$e');
+    WidgetsBinding.instance.scheduleFrameCallback((timeStamp) {
+      MyDialog.toast('$e');
+    });
   };
   ErrorWidget.builder = (FlutterErrorDetails d) {
     log.e(

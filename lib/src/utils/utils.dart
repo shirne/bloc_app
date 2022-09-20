@@ -1,5 +1,8 @@
-import 'dart:ui';
+import 'dart:async';
 
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 
 import '../globals/config.dart';
@@ -112,4 +115,47 @@ class Utils {
       blue < 0 ? 0 : (blue > 255 ? 255 : blue),
     );
   }
+}
+
+Future<void> preloadAssetsImage(
+  ImageProvider provider, {
+  Size? size,
+  ImageErrorListener? onError,
+}) {
+  final ImageConfiguration config = ImageConfiguration(bundle: rootBundle);
+  final Completer<void> completer = Completer<void>();
+  final ImageStream stream = provider.resolve(config);
+  ImageStreamListener? listener;
+  listener = ImageStreamListener(
+    (ImageInfo? image, bool sync) {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+
+      SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
+        stream.removeListener(listener!);
+      });
+    },
+    onError: (Object exception, StackTrace? stackTrace) {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+      stream.removeListener(listener!);
+      if (onError != null) {
+        onError(exception, stackTrace);
+      } else {
+        FlutterError.reportError(
+          FlutterErrorDetails(
+            context: ErrorDescription('image failed to precache'),
+            library: 'image resource service',
+            exception: exception,
+            stack: stackTrace,
+            silent: true,
+          ),
+        );
+      }
+    },
+  );
+  stream.addListener(listener);
+  return completer.future;
 }

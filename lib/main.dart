@@ -11,7 +11,7 @@ void main() async {
   handleError();
 
   final storeService = await StoreService.getInstance();
-
+  await preloadAssetsImage(const AssetImage('assets/images/background.png'));
   runApp(MainApp(storeService));
 }
 

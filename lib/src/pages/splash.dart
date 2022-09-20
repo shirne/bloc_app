@@ -79,6 +79,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff3778FB),
       body: Stack(
         children: [
           Container(
@@ -104,7 +105,7 @@ class _SplashPageState extends State<SplashPage> {
             child: Image.asset(
               'assets/images/text.png',
               width: 150.25,
-              height: 25,
+              height: 50,
             ),
           ),
         ],

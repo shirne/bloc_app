@@ -9,19 +9,10 @@ import 'package:blocapp/src/common.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 import 'app_navigator.dart';
 
-enum SortType {
-  newst(200),
-  hot(300);
-
-  final int sort;
-  const SortType(this.sort);
-}
-
 class MainApp extends StatelessWidget {
   final StoreService storeService;
   const MainApp(this.storeService, {Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     MyDialog.navigatorKey = navigatorKey;

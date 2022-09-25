@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
-import 'package:blocapp/src/common.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
+
 import 'src/app.dart';
+import 'src/globals/store_service.dart';
+import 'src/utils/utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

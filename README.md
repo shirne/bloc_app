@@ -17,7 +17,7 @@
 
 - 按assets/images 中的图片规格制作替换
 - 执行命令 flutter pub run flutter_native_splash:create 生成新启动页
-- 执行命令 flutter pub run flutter_launcher_icons_maker:main 生成新图标
+- 执行命令 flutter pub run icons_launcher:create 生成新图标
 
 ## 添加模型
 

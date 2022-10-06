@@ -11,13 +11,13 @@ import '../pages/splash.dart';
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class Routes {
-  static final home = RouteItem(
-    '/',
-    (arguments) => const HomePage(),
-  );
   static final splash = RouteItem(
-    '/splash',
+    '/',
     (arguments) => const SplashPage(),
+  );
+  static final home = RouteItem(
+    '/home',
+    (arguments) => const HomePage(),
   );
   static final login = RouteItem(
     '/login',

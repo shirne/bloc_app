@@ -22,7 +22,6 @@ void main(List<String> args) {
 
   File('${pageDir}bloc.dart').writeAsStringSync("""
 import 'package:flutter/widgets.dart';
-import 'package:skeletons/skeletons.dart';
 
 import '../../${pathDeeper}widgets/cached_bloc.dart';
 
@@ -51,9 +50,9 @@ class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
     if(isClosed){
       return;
     }
+    add(StateChangedEvent(${page}State(status: Status.success)));
   }
 }
-
 """);
   File('${pageDir}event.dart').writeAsStringSync("""
 part of 'bloc.dart';
@@ -70,7 +69,6 @@ class StateChangedEvent extends ${page}Event {
   final ${page}State state;
   StateChangedEvent(this.state);
 }
-
 """);
   File('${pageDir}state.dart').writeAsStringSync("""
 part of 'bloc.dart';
@@ -81,6 +79,7 @@ class ${page}State extends BaseState {
     Status status = Status.initial,
   }) : super(status: status);
 
+  @override
   ${page}State clone({
     Status? status,
   }) {
@@ -89,7 +88,6 @@ class ${page}State extends BaseState {
     );
   }
 }
-
 """);
   File('${pageDir}page.dart').writeAsStringSync("""
 import 'package:flutter/material.dart';
@@ -125,7 +123,6 @@ class ${page}Page extends StatelessWidget {
     );
   }
 }
-
 """);
   print('create $page ok');
 }

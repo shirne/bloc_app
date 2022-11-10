@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
 void main(List<String> args) {
@@ -124,5 +122,5 @@ class ${page}Page extends StatelessWidget {
   }
 }
 """);
-  print('create $page ok');
+  stdout.write('create $page ok');
 }

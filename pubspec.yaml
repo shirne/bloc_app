@@ -27,7 +27,7 @@ dependencies:
 
   shirne_dialog: ^4.3.0       # 对话框
 
-  flutter_widget_from_html_core: ^0.8.5+3 # 简单html全平台解析
+  flutter_widget_from_html_core: ^0.9.0+2 # 简单html全平台解析
   flutter_inappwebview: ^5.4.3+7  # 内置webview
 
 dev_dependencies:

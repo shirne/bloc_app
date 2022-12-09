@@ -101,6 +101,10 @@ extension BuildContextExtension on BuildContext {
 
   ButtonThemeData get buttonTheme => ButtonTheme.of(this);
 
+  ButtonStyle get elevatedButtonStyle => theme.elevatedButtonTheme.style!;
+  ButtonStyle get outlinedButtonStyle => theme.outlinedButtonTheme.style!;
+  ButtonStyle get textButtonStyle => theme.textButtonTheme.style!;
+
   IconThemeData get iconTheme => IconTheme.of(this);
 
   MediaQueryData get mediaQuery => MediaQuery.of(this);

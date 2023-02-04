@@ -58,8 +58,10 @@ class MainApp extends StatelessWidget {
                   final route = Routes.match(routeSettings);
                   if (route == null) {
                     return MaterialPageRoute<dynamic>(
-                      settings:
-                          routeSettings.copyWith(name: Routes.notFound.name),
+                      settings: RouteSettings(
+                        name: Routes.notFound.name,
+                        arguments: routeSettings.arguments,
+                      ),
                       builder: (BuildContext context) {
                         return Routes.notFound.builder.call(routeSettings.name);
                       },
@@ -69,8 +71,10 @@ class MainApp extends StatelessWidget {
                     if (state.user.isValid) {
                       log.d(state.user);
                       return MaterialPageRoute<dynamic>(
-                        settings:
-                            routeSettings.copyWith(name: Routes.login.name),
+                        settings: RouteSettings(
+                          name: Routes.login.name,
+                          arguments: routeSettings.arguments,
+                        ),
                         builder: (BuildContext context) {
                           return Routes.login.builder.call({
                             'back': routeSettings.name,

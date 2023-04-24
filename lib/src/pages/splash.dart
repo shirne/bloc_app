@@ -54,7 +54,7 @@ class _SplashPageState extends State<SplashPage> {
         await serviceWorkerController.setServiceWorkerClient(
           AndroidServiceWorkerClient(
             shouldInterceptRequest: (request) async {
-              log.d(request);
+              logger.info(request);
               return null;
             },
           ),

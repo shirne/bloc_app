@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../utils/utils.dart';
+import '../utils/core.dart';
 
 typedef DataParser<T> = T Function(dynamic);
 
@@ -11,6 +12,11 @@ T? as<T>(dynamic value) {
     return value;
   }
   if (value is String) {
+    logger.warning(
+      'Force case String to $T',
+      'Force case String to $T',
+      StackTrace.current.cast(3),
+    );
     if (T == int) {
       return int.tryParse(value) as T?;
     } else if (T == double) {
@@ -27,7 +33,11 @@ T? as<T>(dynamic value) {
     if (T == String) {
       return '$value' as T;
     }
-    log.e('Type $T cast error: $value (${value.runtimeType})');
+    logger.warning(
+      'Type $T cast error: $value (${value.runtimeType})',
+      'Type $T cast error: $value (${value.runtimeType})',
+      StackTrace.current.cast(3),
+    );
   }
   return null;
 }

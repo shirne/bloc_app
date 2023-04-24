@@ -4,12 +4,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.19.0 <3.0.0"
-
-
-dependency_overrides: 
-  path: ^1.8.3
-  intl: ^0.18.0
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -18,14 +13,14 @@ dependencies:
     sdk: flutter
 
 
-  path: ^1.8.3
+  path:
+  intl:                    # 国际化
+  logging:                  # 日志工具
   dio: ^4.0.4                # 网络库
   bloc: ^8.0.3
-  intl: ^0.18.0             # 多语言
   flutter_bloc: ^8.0.1
   shared_preferences: ^2.0.17 # 本地存储
   flutter_screenutil: ^5.6.1 # 设计图与屏幕适配工具
-  logger: ^1.1.0            # 日志工具
   skeletons: ^0.0.3          # 骨架页构造工具
   appscheme: ^1.0.8          # applink处理
   file_picker: ^5.2.5         # 文件选择

@@ -69,7 +69,7 @@ class MainApp extends StatelessWidget {
                   }
                   if (route.isAuth) {
                     if (state.user.isValid) {
-                      log.d(state.user);
+                      logger.info(state.user);
                       return MaterialPageRoute<dynamic>(
                         settings: RouteSettings(
                           name: Routes.login.name,

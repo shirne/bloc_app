@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   void onScheme(value) {
     if (value != null) {
-      log.d('Init  ${value.dataString}');
+      logger.info('Init  ${value.dataString}');
       if (value.path != null &&
           value.path != Routes.home.name &&
           value.path != Routes.login.name) {

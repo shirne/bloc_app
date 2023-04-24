@@ -55,10 +55,10 @@ class _WebViewPageState extends State<WebViewPage> {
           this.title.value = title ?? '';
         },
         onLoadError: (controller, url, code, message) {
-          log.e('onLoadError: $url, $message');
+          logger.warning('onLoadError: $url, $message');
         },
         onConsoleMessage: (controller, consoleMessage) {
-          log.d(consoleMessage.message);
+          logger.info(consoleMessage.message);
         },
         // onCreateWindow: (controller, createWindowAction) async {
         //   return false;
@@ -102,7 +102,7 @@ class _WebViewPageState extends State<WebViewPage> {
           );
         },
         onLoadHttpError: (controller, url, statusCode, description) {
-          log.e('onLoadError: $url, $statusCode, $description');
+          logger.warning('onLoadError: $url, $statusCode, $description');
         },
         androidOnPermissionRequest: (controller, origin, resources) async {
           return PermissionRequestResponse(

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user.dart';
 import '../utils/utils.dart';
+import '../utils/core.dart';
 
 class StoreService {
   static const userTokenKey = 'user_token';
@@ -58,7 +59,11 @@ class StoreService {
         return User.fromJson(jsonDecode(jsonData))..needAuth = needAuth();
       } catch (_) {
         deleteUser();
-        log.e('user auth decode failed: $jsonData');
+        logger.warning(
+          'user auth decode failed: $jsonData',
+          Exception('user auth decode failed: $jsonData'),
+          StackTrace.current.cast(5),
+        );
       }
     }
     return User();

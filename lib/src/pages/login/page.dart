@@ -33,14 +33,14 @@ class _LoginPageState extends State<LoginPage> {
 
   void close() {
     if (backPage == null) {
-      log.i("no last route");
+      logger.fine("no last route");
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       } else {
         Routes.home.replace(context);
       }
     } else {
-      log.i("last route $backPage");
+      logger.fine("last route $backPage");
 
       Navigator.of(context)
           .pushReplacementNamed(backPage!, arguments: widget.arguments);

@@ -1,24 +1,24 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 
 import '../globals/config.dart';
 
-final log = Logger(
-  filter:
-      Config.env == Env.development ? DevelopmentFilter() : ProductionFilter(),
-  printer: PrettyPrinter(
-    methodCount: 0,
-    errorMethodCount: 8,
-    lineLength: 120,
-    colors: true,
-    printEmojis: true,
-    printTime: false,
-  ),
-);
+final logger = Logger.root
+  ..onRecord.listen((record) {
+    log(
+      record.message,
+      time: record.time,
+      level: record.level.value,
+      error: record.error,
+      stackTrace: record.stackTrace,
+      sequenceNumber: record.sequenceNumber,
+    );
+  });
 
 class Utils {
   static final mobileExp = RegExp(r'^1[3-9][0-9]{9}$');

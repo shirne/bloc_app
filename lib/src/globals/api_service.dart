@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:logger/logger.dart';
 
 import 'package:blocapp/src/common.dart';
 import '../models/user.dart';
@@ -130,7 +129,7 @@ class ApiService {
   /// 锁
   void lock() {
     if (!isLocked) {
-      log.d('api locked');
+      logger.info('api locked');
       _locker = Completer<bool>();
     }
   }
@@ -138,7 +137,7 @@ class ApiService {
   /// 解锁
   void unLock([bool complete = true]) {
     if (isLocked) {
-      log.d('api unlocked');
+      logger.info('api unlocked');
       _locker?.complete(complete);
     }
   }
@@ -190,7 +189,7 @@ class ApiService {
     VoidCallback? onRequireLogin,
   }) async {
     if (!skipLock && isLocked) {
-      log.d('api is locked');
+      logger.info('api is locked');
       final isPass = await _locker!.future;
       if (!isPass) {
         return ApiResult<T>(500, 'Request canceled');
@@ -344,7 +343,11 @@ class ApiResult<T extends Base> {
         return ModelList.fromJson({'list': data}) as T;
       }
     }
-    log.e('Data parse error: $T from $data');
+    logger.warning(
+      'Data parse error: $T from $data',
+      Exception('Data parse error: $T from $data'),
+      StackTrace.current.cast(3),
+    );
 
     return null;
   }
@@ -361,14 +364,14 @@ class ApiResult<T extends Base> {
 }
 
 class ApiInterceptor extends Interceptor {
-  final Logger log;
-  ApiInterceptor() : log = Logger();
+  ApiInterceptor();
+
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    log.i(
+    logger.fine(
       '网络请求',
       '${options.path} ${options.method}\n\n'
           'Header：${options.headers}\n\n'
@@ -386,19 +389,20 @@ class ApiInterceptor extends Interceptor {
   ) async {
     var requestOptions = response.requestOptions;
 
-    log.i(
-        '网络请求响应',
-        '${requestOptions.path} '
-            '${requestOptions.method} ${response.statusCode}\n\n'
-            'Header：${response.headers}\n'
-            'ResponseData：${response.data}');
+    logger.fine(
+      '网络请求响应',
+      '${requestOptions.path} '
+          '${requestOptions.method} ${response.statusCode}\n\n'
+          'Header：${response.headers}\n'
+          'ResponseData：${response.data}',
+    );
 
     return super.onResponse(response, handler);
   }
 
   @override
   Future onError(DioError err, ErrorInterceptorHandler handler) async {
-    log.e('网络请求错误', err.error);
+    logger.warning('网络请求错误', err.error, StackTrace.current.cast(5));
     return super.onError(err, handler);
   }
 }

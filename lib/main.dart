@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 
@@ -17,23 +18,16 @@ void main() async {
 }
 
 void handleError() {
-  FlutterError.onError = (FlutterErrorDetails errorDetails) {
-    final e = errorDetails.exception;
-
+  PlatformDispatcher.instance.onError = (e, s) {
     if (e is DioError && e.type == DioErrorType.cancel) {
-      return;
+      return false;
     }
-    log.e(
-      'Caught unhandled exception: $e',
-      e,
-      errorDetails.stack,
-    );
-    WidgetsBinding.instance.scheduleFrameCallback((timeStamp) {
-      MyDialog.toast('$e');
-    });
+    logger.warning('Caught unhandled exception: $e', e, s);
+    MyDialog.toast('$e');
+    return true;
   };
   ErrorWidget.builder = (FlutterErrorDetails d) {
-    log.e(
+    logger.warning(
       'Error has been delivered to the ErrorWidget: ${d.exception}',
       d.exception,
       d.stack,

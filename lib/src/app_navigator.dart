@@ -32,7 +32,7 @@ class AppNavigatorObserver extends NavigatorObserver {
   }
 
   static void _routeLogger(RouteEvent e) {
-    log.d(
+    logger.info(
       '${e.type.name} '
       '${e.route?.settings.name ?? (e.previousRoute == null ? '' : '[empty]')}'
       '${e.route == null && e.previousRoute == null ? '' : ' => '}'

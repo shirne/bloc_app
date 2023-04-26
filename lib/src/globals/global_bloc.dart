@@ -1,9 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:blocapp/src/globals/store_service.dart';
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
+import 'api.dart';
 import 'api_service.dart';
+import 'store_service.dart';
 
 typedef ResultCallback<T> = void Function(bool, T? data);
 

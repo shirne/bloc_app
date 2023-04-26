@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 
 import '../../common.dart';
@@ -168,7 +167,7 @@ class _WebViewPageState extends State<WebViewPage> {
                 },
               ),
               bottom: PreferredSize(
-                preferredSize: Size(375.w, 0),
+                preferredSize: const Size.fromHeight(0),
                 child: SizedBox(
                   height: 0,
                   child: ValueListenableBuilder<int>(

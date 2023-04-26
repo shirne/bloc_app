@@ -2,7 +2,6 @@ import 'package:blocapp/src/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'bloc.dart';
 
@@ -21,7 +20,7 @@ class SettingsPage extends StatelessWidget {
               title: Text(context.l10n.settings),
             ),
             body: Padding(
-              padding: EdgeInsets.all(20.w),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -38,7 +37,7 @@ class SettingsPage extends StatelessWidget {
                               .themeMode
                               .toString()
                               .replaceFirst('ThemeMode.', ''),
-                          style: theme.textTheme.caption,
+                          style: theme.textTheme.bodySmall,
                         ),
                         const Icon(Icons.arrow_forward_ios),
                       ],

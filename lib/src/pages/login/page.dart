@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:blocapp/src/common.dart';
 import 'bloc.dart';
@@ -72,32 +71,34 @@ class _LoginPageState extends State<LoginPage> {
             body: Center(
               child: Card(
                 child: Container(
-                  width: 800.w,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 60.w, vertical: 30.w),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        height: 60.w,
+                        height: 20,
                         child: OverflowBox(
                           alignment: Alignment.bottomCenter,
-                          maxHeight: 200.w,
+                          maxHeight: 80,
                           child: SizedBox(
-                            width: 200.w,
-                            height: 200.w,
+                            width: 80,
+                            height: 80,
                             child: CircleAvatar(
                               backgroundColor: Colors.transparent,
                               child: Image.asset(
                                 'assets/images/logo.png',
-                                width: 200.w,
-                                height: 200.w,
+                                width: 80,
+                                height: 80,
                               ),
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 20.w),
+                      const SizedBox(height: 8),
                       Text(
                         context.l10n.userLogin,
                         style: theme.textTheme.titleLarge?.copyWith(
@@ -105,28 +106,28 @@ class _LoginPageState extends State<LoginPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 20.w),
+                      const SizedBox(height: 8),
                       TextField(
                         decoration: InputDecoration(
                           hintText: context.l10n.labelUsername,
                           prefixIcon: const Icon(Icons.person),
                         ),
                       ),
-                      SizedBox(height: 40.w),
+                      const SizedBox(height: 16),
                       TextField(
                         decoration: InputDecoration(
                           hintText: context.l10n.labelPassword,
                           prefixIcon: const Icon(Icons.lock),
                         ),
                       ),
-                      SizedBox(height: 40.w),
+                      const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {},
                         child: Center(
                           child: Text(context.l10n.loginButtonText),
                         ),
                       ),
-                      SizedBox(height: 40.w),
+                      const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

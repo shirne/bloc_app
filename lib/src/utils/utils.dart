@@ -9,6 +9,7 @@ import 'package:logging/logging.dart';
 import '../globals/config.dart';
 
 final logger = Logger.root
+  ..level = Config.env == Env.development ? Level.ALL : Level.WARNING
   ..onRecord.listen((record) {
     log(
       record.message,

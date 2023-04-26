@@ -4,7 +4,6 @@ import 'package:appscheme/appscheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletons/skeletons.dart';
 
 import 'package:blocapp/src/common.dart';
@@ -63,7 +62,7 @@ class _HomePageState extends State<HomePage> {
             ),
             body: state.status == Status.initial
                 ? Padding(
-                    padding: EdgeInsets.all(20.w),
+                    padding: const EdgeInsets.all(8),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(3, (index) => SkeletonListTile()),
@@ -79,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                             Routes.login.show(context);
                           },
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 40.w),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(context.l10n.login),
                           ),
                         ),

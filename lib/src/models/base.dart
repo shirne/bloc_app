@@ -11,12 +11,25 @@ T? as<T>(dynamic value) {
   if (value is T) {
     return value;
   }
+
+  logger.info(
+    'Try to cast $value (${value.runtimeType}) to $T',
+    null,
+    StackTrace.current.cast(3),
+  );
+
+  // num 强转
+  if (value is num) {
+    if (T == double) {
+      return value.toDouble() as T;
+    }
+    if (T == int) {
+      return value.toInt() as T;
+    }
+  }
+
+  // String parse
   if (value is String) {
-    logger.warning(
-      'Force case String to $T',
-      'Force case String to $T',
-      StackTrace.current.cast(3),
-    );
     if (T == int) {
       return int.tryParse(value) as T?;
     } else if (T == double) {
@@ -29,15 +42,13 @@ T? as<T>(dynamic value) {
       return DateTime.tryParse(value) as T?;
     }
   }
+
+  // String 强转
   if (value != null) {
     if (T == String) {
       return '$value' as T;
     }
-    logger.warning(
-      'Type $T cast error: $value (${value.runtimeType})',
-      'Type $T cast error: $value (${value.runtimeType})',
-      StackTrace.current.cast(3),
-    );
+    logger.warning('Type $T cast error: $value (${value.runtimeType})');
   }
   return null;
 }

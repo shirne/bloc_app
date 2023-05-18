@@ -16,9 +16,9 @@ class ApiService {
     return _instance!;
   }
 
-  final int? connectTimeout;
-  final int? sendTimeout;
-  final int? receiveTimeout;
+  final Duration? connectTimeout;
+  final Duration? sendTimeout;
+  final Duration? receiveTimeout;
   final String baseUrl;
 
   /// 防止登录询问窗口多次弹出
@@ -147,8 +147,8 @@ class ApiService {
       }
 
       return result;
-    } catch (e) {
-      return ApiResult(-1, (e is DioError) ? e.message : e.toString(), null);
+    } on DioError catch (e) {
+      return ApiResult(-1, e.message ?? '$e', null);
     }
   }
 

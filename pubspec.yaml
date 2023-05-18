@@ -16,7 +16,7 @@ dependencies:
   path:
   intl:                    # 国际化
   logging:                  # 日志工具
-  dio: ^4.0.4                # 网络库
+  dio: ^5.1.2                # 网络库
   bloc: ^8.0.3
   flutter_bloc: ^8.0.1
   shared_preferences: ^2.0.17 # 本地存储
@@ -27,14 +27,14 @@ dependencies:
 
   shirne_dialog: ^4.5.0       # 对话框
 
-  flutter_widget_from_html_core: ^0.9.1 # 简单html全平台解析
+  flutter_widget_from_html_core: ^0.10.1 # 简单html全平台解析
   flutter_inappwebview: ^5.7.2+3  # 内置webview
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.1
+  flutter_lints:
   icons_launcher:
   flutter_native_splash:
   yaml:

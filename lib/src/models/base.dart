@@ -116,10 +116,9 @@ class ModelPage<T extends Base> extends ModelList<T> {
         );
 
   @override
-  Json toJson() {
-    Json json = super.toJson();
-    json['total'] = total;
-    json['page'] = page;
-    return json;
-  }
+  Json toJson() => super.toJson()
+    ..addAll({
+      'total': total,
+      'page': page,
+    });
 }

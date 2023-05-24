@@ -30,6 +30,12 @@ extension ListExtension<E> on List<E> {
   }
 }
 
+extension IntListExt on List<int> {
+  String hex([int width = 2]) {
+    return map<String>((i) => i.toRadixString(16).padLeft(width)).join('');
+  }
+}
+
 /// 时间计算
 extension DateTimeExtension on DateTime {
   DateTime startOfDay() {

@@ -32,7 +32,7 @@ extension ListExtension<E> on List<E> {
 
 extension IntListExt on List<int> {
   String hex([int width = 2]) {
-    return map<String>((i) => i.toRadixString(16).padLeft(width)).join('');
+    return map<String>((i) => i.toRadixString(16).padLeft(width,'0')).join('');
   }
 }
 

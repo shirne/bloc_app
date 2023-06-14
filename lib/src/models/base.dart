@@ -12,11 +12,11 @@ T? as<T>(dynamic value) {
     return value;
   }
 
-  logger.info(
-    'Try to cast $value (${value.runtimeType}) to $T',
-    null,
-    StackTrace.current.cast(3),
-  );
+  // logger.info(
+  //   'Try to cast $value (${value.runtimeType}) to $T',
+  //   null,
+  //   StackTrace.current.cast(3),
+  // );
 
   // num 强转
   if (value is num) {
@@ -26,6 +26,12 @@ T? as<T>(dynamic value) {
     if (T == int) {
       return value.toInt() as T;
     }
+    if (T == BigInt) {
+      return BigInt.from(value) as T;
+    }
+    if (T == bool) {
+      return (value != 0) as T;
+    }
   }
 
   // String parse
@@ -34,12 +40,16 @@ T? as<T>(dynamic value) {
       return int.tryParse(value) as T?;
     } else if (T == double) {
       return double.tryParse(value) as T?;
+    } else if (T == BigInt) {
+      return BigInt.tryParse(value) as T?;
     } else if (T == DateTime) {
       // DateTime.parse不支持 /
       if (value.contains('/')) {
         value = value.replaceAll('/', '-');
       }
       return DateTime.tryParse(value) as T?;
+    } else if (T == bool) {
+      return {'1', '-1', 'true', 'yes'}.contains(value.toLowerCase()) as T;
     }
   }
 
@@ -48,7 +58,11 @@ T? as<T>(dynamic value) {
     if (T == String) {
       return '$value' as T;
     }
-    logger.warning('Type $T cast error: $value (${value.runtimeType})');
+    logger.warning(
+      'Type $T cast error: $value (${value.runtimeType})',
+      null,
+      StackTrace.current.cast(3),
+    );
   }
   return null;
 }

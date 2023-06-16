@@ -271,7 +271,7 @@ class ApiResult<T extends Base> {
     if (data is T) return data;
     if (data is List<dynamic>) {
       if (data.isEmpty) return null;
-      if (T is ModelList) {
+      if (T == ModelList) {
         return ModelList.fromJson({'list': data}) as T;
       }
     }

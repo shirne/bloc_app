@@ -7,9 +7,12 @@ typedef DataParser<T> = T Function(dynamic);
 
 typedef Json = Map<String, dynamic>;
 
-T? as<T>(dynamic value) {
+T? as<T>(dynamic value, [T? defaultValue]) {
   if (value is T) {
     return value;
+  }
+  if (value == null) {
+    return defaultValue;
   }
 
   // logger.info(
@@ -32,7 +35,7 @@ T? as<T>(dynamic value) {
     if (T == bool) {
       return (value != 0) as T;
     }
-  }
+  } else
 
   // String parse
   if (value is String) {
@@ -54,17 +57,16 @@ T? as<T>(dynamic value) {
   }
 
   // String 强转
-  if (value != null) {
-    if (T == String) {
-      return '$value' as T;
-    }
-    logger.warning(
-      'Type $T cast error: $value (${value.runtimeType})',
-      null,
-      StackTrace.current.cast(3),
-    );
+  if (T == String) {
+    return '$value' as T;
   }
-  return null;
+  logger.warning(
+    'Type $T cast error: $value (${value.runtimeType})',
+    null,
+    StackTrace.current.cast(3),
+  );
+
+  return defaultValue;
 }
 
 abstract class Base {

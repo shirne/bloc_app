@@ -40,17 +40,17 @@ T? as<T>(dynamic value, [T? defaultValue]) {
   // String parse
   if (value is String) {
     if (T == int) {
-      return int.tryParse(value) as T?;
+      return int.tryParse(value) as T? ?? defaultValue;
     } else if (T == double) {
-      return double.tryParse(value) as T?;
+      return double.tryParse(value) as T? ?? defaultValue;
     } else if (T == BigInt) {
-      return BigInt.tryParse(value) as T?;
+      return BigInt.tryParse(value) as T? ?? defaultValue;
     } else if (T == DateTime) {
       // DateTime.parse不支持 /
       if (value.contains('/')) {
         value = value.replaceAll('/', '-');
       }
-      return DateTime.tryParse(value) as T?;
+      return DateTime.tryParse(value) as T? ?? defaultValue;
     } else if (T == bool) {
       return {'1', '-1', 'true', 'yes'}.contains(value.toLowerCase()) as T;
     }

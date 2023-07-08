@@ -5,7 +5,36 @@ import '../utils/core.dart';
 
 typedef DataParser<T> = T Function(dynamic);
 
+T defaultParser<T>(data) => as<T>(data) ?? getDefault<T>();
+
 typedef Json = Map<String, dynamic>;
+
+const emptyJson = <String, dynamic>{};
+
+T getDefault<T>() {
+  if (null is T) {
+    return null as T;
+  } else if (T == int) {
+    return 0 as T;
+  } else if (T == double || T == num) {
+    return 0.0 as T;
+  } else if (T == BigInt) {
+    return BigInt.zero as T;
+  } else if (T == String) {
+    return '' as T;
+  } else if (T == bool) {
+    return false as T;
+  } else if (T == DateTime) {
+    return DateTime.fromMillisecondsSinceEpoch(0) as T;
+  } else if (T == List) {
+    return [] as T;
+  } else if (T == Json) {
+    return emptyJson as T;
+  } else if (T == Map) {
+    return {} as T;
+  }
+  throw Exception('Failed to create default value for $T.');
+}
 
 T? as<T>(dynamic value, [T? defaultValue]) {
   if (value is T) {
@@ -15,54 +44,73 @@ T? as<T>(dynamic value, [T? defaultValue]) {
     return defaultValue;
   }
 
-  // logger.info(
-  //   'Try to cast $value (${value.runtimeType}) to $T',
-  //   null,
-  //   StackTrace.current.cast(3),
-  // );
-
   // num 强转
   if (value is num) {
+    dynamic result;
     if (T == double) {
-      return value.toDouble() as T;
+      result = value.toDouble();
+    } else if (T == int) {
+      result = value.toInt() as T;
+    } else if (T == BigInt) {
+      result = BigInt.from(value) as T;
+    } else if (T == bool) {
+      result = (value != 0) as T;
+    } else if (T == DateTime) {
+      if (value < 10000000000) {
+        value *= 1000;
+      }
+      result = DateTime.fromMillisecondsSinceEpoch(value.toInt()) as T;
     }
-    if (T == int) {
-      return value.toInt() as T;
-    }
-    if (T == BigInt) {
-      return BigInt.from(value) as T;
-    }
-    if (T == bool) {
-      return (value != 0) as T;
+    if (result != null) {
+      logger.info(
+        'Force cast $value(${value.runtimeType}) to $T ($result)',
+        StackTrace.current.cast(3),
+      );
+      return result as T;
     }
   } else
 
   // String parse
   if (value is String) {
+    dynamic result;
     if (T == int) {
-      return int.tryParse(value) as T? ?? defaultValue;
+      result = int.tryParse(value);
     } else if (T == double) {
-      return double.tryParse(value) as T? ?? defaultValue;
+      result = double.tryParse(value);
     } else if (T == BigInt) {
-      return BigInt.tryParse(value) as T? ?? defaultValue;
+      result = BigInt.tryParse(value);
     } else if (T == DateTime) {
       // DateTime.parse不支持 /
       if (value.contains('/')) {
         value = value.replaceAll('/', '-');
       }
-      return DateTime.tryParse(value) as T? ?? defaultValue;
+      result = DateTime.tryParse(value);
     } else if (T == bool) {
       return {'1', '-1', 'true', 'yes'}.contains(value.toLowerCase()) as T;
+    } else {
+      logger.warning(
+        'Unsupported type cast from $value (${value.runtimeType}) to $T.',
+        StackTrace.current.cast(3),
+      );
+      return defaultValue;
     }
+    logger.fine(
+      'Force cast $value(${value.runtimeType}) to $T ($result)',
+      StackTrace.current.cast(3),
+    );
+    return result as T? ?? defaultValue;
   }
 
   // String 强转
   if (T == String) {
+    logger.info(
+      'Force cast $value(${value.runtimeType}) to $T',
+      StackTrace.current.cast(3),
+    );
     return '$value' as T;
   }
   logger.warning(
     'Type $T cast error: $value (${value.runtimeType})',
-    null,
     StackTrace.current.cast(3),
   );
 

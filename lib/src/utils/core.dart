@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/gen/l10n.dart';
 import '../app_theme.dart';
+import '../common.dart';
 
 /// 基于核心库的扩展
 
@@ -32,7 +33,7 @@ extension ListExtension<E> on List<E> {
 
 extension IntListExt on List<int> {
   String hex([int width = 2]) {
-    return map<String>((i) => i.toRadixString(16).padLeft(width,'0')).join('');
+    return map<String>((i) => i.toRadixString(16).padLeft(width, '0')).join('');
   }
 }
 
@@ -140,5 +141,49 @@ StackTrace? castStackTrace(StackTrace? trace, [int lines = 3]) {
 extension StackTraceExt on StackTrace {
   StackTrace cast(int lines) {
     return castStackTrace(this, lines)!;
+  }
+}
+
+extension FunctionExt on Function {
+  void Function() debounce([Duration duration = const Duration(seconds: 1)]) {
+    return Debounce(this, duration);
+  }
+}
+
+class Debounce<F extends Function> {
+  F callable;
+  int argCount = 0;
+
+  Duration duration;
+
+  int lastTime = 0;
+
+  Debounce(this.callable, [this.duration = const Duration(milliseconds: 500)]);
+
+  void call([arg1, arg2, arg3, arg4, arg5]) {
+    final time = DateTime.now().millisecondsSinceEpoch;
+    if (time - lastTime < duration.inMilliseconds) {
+      logger.info('debounced $callable');
+      return;
+    }
+    lastTime = time;
+    switch (argCount) {
+      case 1:
+        callable(arg1);
+        return;
+      case 2:
+        callable(arg1, arg2);
+        return;
+      case 3:
+        callable(arg1, arg2, arg3);
+        return;
+      case 4:
+        callable(arg1, arg2, arg3, arg4);
+        return;
+      case 5:
+        callable(arg1, arg2, arg3, arg4, arg5);
+        return;
+    }
+    callable();
   }
 }

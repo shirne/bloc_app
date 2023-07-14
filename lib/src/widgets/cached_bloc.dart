@@ -45,7 +45,6 @@ final _states = <String, dynamic>{};
 abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
   final String globalKey;
 
-  @mustCallSuper
   CachedBloc(
     T Function() createState, [
     this.globalKey = '',
@@ -76,7 +75,6 @@ abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
 abstract class CachedCubit<T> extends Cubit<T> {
   final String globalKey;
 
-  @mustCallSuper
   CachedCubit(
     T Function() createState, [
     this.globalKey = '',

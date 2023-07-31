@@ -1,4 +1,3 @@
-import 'package:blocapp/src/pages/web/page.dart';
 import 'package:flutter/material.dart';
 
 import '../common.dart';
@@ -7,6 +6,7 @@ import '../pages/login/page.dart';
 import '../pages/not_found.dart';
 import '../pages/settings/page.dart';
 import '../pages/splash.dart';
+import '../pages/web/page.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 

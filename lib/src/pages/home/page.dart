@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletons/skeletons.dart';
 
-import 'package:blocapp/src/common.dart';
+import '../../common.dart';
 import 'bloc.dart';
 
 class HomePage extends StatefulWidget {

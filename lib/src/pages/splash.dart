@@ -37,22 +37,20 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> initWeb() async {
     if (!kIsWeb && Platform.isAndroid) {
-      await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+      await InAppWebViewController.setWebContentsDebuggingEnabled(true);
 
-      final swAvailable = await AndroidWebViewFeature.isFeatureSupported(
-        AndroidWebViewFeature.SERVICE_WORKER_BASIC_USAGE,
+      final swAvailable = await WebViewFeature.isFeatureSupported(
+        WebViewFeature.SERVICE_WORKER_BASIC_USAGE,
       );
-      final swInterceptAvailable =
-          await AndroidWebViewFeature.isFeatureSupported(
-        AndroidWebViewFeature.SERVICE_WORKER_SHOULD_INTERCEPT_REQUEST,
+      final swInterceptAvailable = await WebViewFeature.isFeatureSupported(
+        WebViewFeature.SERVICE_WORKER_SHOULD_INTERCEPT_REQUEST,
       );
 
       if (swAvailable && swInterceptAvailable) {
-        final serviceWorkerController =
-            AndroidServiceWorkerController.instance();
+        final serviceWorkerController = ServiceWorkerController.instance();
 
         await serviceWorkerController.setServiceWorkerClient(
-          AndroidServiceWorkerClient(
+          ServiceWorkerClient(
             shouldInterceptRequest: (request) async {
               logger.info(request);
               return null;

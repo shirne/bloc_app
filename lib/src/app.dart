@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'package:blocapp/src/common.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
+
 import 'app_navigator.dart';
+import 'common.dart';
 
 class MainApp extends StatelessWidget {
   final StoreService storeService;

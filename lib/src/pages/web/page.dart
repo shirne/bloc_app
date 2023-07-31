@@ -46,15 +46,15 @@ class _WebViewPageState extends State<WebViewPage> {
     }
     if (Platform.isAndroid || Platform.isIOS) {
       return InAppWebView(
-        initialUrlRequest: URLRequest(url: Uri.tryParse(widget.url)),
+        initialUrlRequest: URLRequest(url: WebUri(widget.url)),
         onWebViewCreated: (controller) {
           this.controller = controller;
         },
         onTitleChanged: (InAppWebViewController controller, String? title) {
           this.title.value = title ?? '';
         },
-        onLoadError: (controller, url, code, message) {
-          logger.warning('onLoadError: $url, $message');
+        onReceivedError: (controller, request, error) {
+          logger.warning('onLoadError: ${request.url}, $error');
         },
         onConsoleMessage: (controller, consoleMessage) {
           logger.info(consoleMessage.message);
@@ -100,16 +100,18 @@ class _WebViewPageState extends State<WebViewPage> {
                 : JsPromptResponseAction.CONFIRM,
           );
         },
-        onLoadHttpError: (controller, url, statusCode, description) {
-          logger.warning('onLoadError: $url, $statusCode, $description');
-        },
-        androidOnPermissionRequest: (controller, origin, resources) async {
-          return PermissionRequestResponse(
-            resources: resources,
-            action: PermissionRequestResponseAction.GRANT,
+        onReceivedHttpError: (controller, request, response) {
+          logger.warning(
+            'onLoadError: ${request.url}, ${response.statusCode}, ${response.reasonPhrase}',
           );
         },
-        androidOnGeolocationPermissionsShowPrompt:
+        onPermissionRequest: (controller, permissionRequest) async {
+          return PermissionResponse(
+            resources: permissionRequest.resources,
+            action: PermissionResponseAction.GRANT,
+          );
+        },
+        onGeolocationPermissionsShowPrompt:
             (InAppWebViewController controller, String origin) async {
           return GeolocationPermissionShowPromptResponse(
             origin: origin,
@@ -120,33 +122,28 @@ class _WebViewPageState extends State<WebViewPage> {
         onProgressChanged: (InAppWebViewController controller, int progress) {
           this.progress.value = progress;
         },
-        initialOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(
-            applicationNameForUserAgent: "All Blue APP",
-            cacheEnabled: true,
-            javaScriptEnabled: true,
+        initialSettings: InAppWebViewSettings(
+          applicationNameForUserAgent: "All Blue APP",
+          cacheEnabled: true,
+          javaScriptEnabled: true,
 
-            /// 设置false 解决IOS webview 因为拦截Ajax请求而导致显示问题
-            //useShouldInterceptAjaxRequest: !Platform.isIOS,
-            javaScriptCanOpenWindowsAutomatically: true,
-            clearCache: false,
-            useShouldOverrideUrlLoading: true,
-            useOnLoadResource: true,
-            mediaPlaybackRequiresUserGesture: true,
-            allowFileAccessFromFileURLs: true,
-            allowUniversalAccessFromFileURLs: true,
-          ),
-          android: AndroidInAppWebViewOptions(
-            mixedContentMode:
-                AndroidMixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
-            //appCachePath: state.appCachePath,
-            cacheMode: AndroidCacheMode.LOAD_NO_CACHE,
-            useHybridComposition: true,
-            safeBrowsingEnabled: false,
-          ),
-          ios: IOSInAppWebViewOptions(
-            allowsInlineMediaPlayback: true,
-          ),
+          /// 设置false 解决IOS webview 因为拦截Ajax请求而导致显示问题
+          //useShouldInterceptAjaxRequest: !Platform.isIOS,
+          javaScriptCanOpenWindowsAutomatically: true,
+          clearCache: false,
+          useShouldOverrideUrlLoading: true,
+          useOnLoadResource: true,
+          mediaPlaybackRequiresUserGesture: true,
+          allowFileAccessFromFileURLs: true,
+          allowUniversalAccessFromFileURLs: true,
+
+          mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+          //appCachePath: state.appCachePath,
+          cacheMode: CacheMode.LOAD_NO_CACHE,
+          useHybridComposition: true,
+          safeBrowsingEnabled: false,
+
+          allowsInlineMediaPlayback: true,
         ),
       );
     }

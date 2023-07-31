@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class StickyObserver extends StatefulWidget {
-  const StickyObserver(
-      {super.key, required this.child, this.axis = Axis.vertical});
+  const StickyObserver({
+    super.key,
+    required this.child,
+    this.axis = Axis.vertical,
+  });
 
   final Widget child;
   final Axis axis;
@@ -91,20 +94,22 @@ class _StickyWidgetState extends State<StickyWidget> {
 
   void showOverlay() {
     if (overlay == null) {
-      overlay = OverlayEntry(builder: (context) {
-        return Flex(
-          direction: state?.widget.axis ?? Axis.vertical,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: state?.widget.axis == Axis.horizontal
-                  ? EdgeInsets.only(left: widget.offset)
-                  : EdgeInsets.only(top: widget.offset),
-              child: Material(child: widget.child),
-            ),
-          ],
-        );
-      });
+      overlay = OverlayEntry(
+        builder: (context) {
+          return Flex(
+            direction: state?.widget.axis ?? Axis.vertical,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: state?.widget.axis == Axis.horizontal
+                    ? EdgeInsets.only(left: widget.offset)
+                    : EdgeInsets.only(top: widget.offset),
+                child: Material(child: widget.child),
+              ),
+            ],
+          );
+        },
+      );
       Overlay.of(context).insert(overlay!);
     }
   }

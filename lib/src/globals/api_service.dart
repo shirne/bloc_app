@@ -147,7 +147,7 @@ class ApiService {
       }
 
       return result;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return ApiResult(-1, e.message ?? '$e', null);
     }
   }
@@ -333,7 +333,7 @@ class ApiInterceptor extends Interceptor {
   }
 
   @override
-  Future onError(DioError err, ErrorInterceptorHandler handler) async {
+  Future onError(DioException err, ErrorInterceptorHandler handler) async {
     logger.warning('网络请求错误', err.error, StackTrace.current.cast(5));
     return super.onError(err, handler);
   }

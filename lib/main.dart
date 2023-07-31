@@ -19,7 +19,7 @@ void main() async {
 
 void handleError() {
   PlatformDispatcher.instance.onError = (e, s) {
-    if (e is DioError && e.type == DioErrorType.cancel) {
+    if (e is DioException && e.type == DioExceptionType.cancel) {
       return false;
     }
     logger.warning('Caught unhandled exception: $e', e, s);

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../l10n/gen/l10n.dart';
-import '../app_theme.dart';
 import '../common.dart';
 
 /// 基于核心库的扩展

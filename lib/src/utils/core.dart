@@ -93,6 +93,25 @@ extension StringExtension on String {
   double? toDoubleOrNull() => double.tryParse(this);
 }
 
+extension LocaleExt on Locale {
+  String translate() {
+    switch (languageCode) {
+      case 'zh':
+        switch (countryCode) {
+          case 'CN':
+            return '中文简体';
+          case 'ZH':
+            return '中文繁體';
+          default:
+            return '中文';
+        }
+      case 'en':
+        return 'English';
+    }
+    return 'Unsupported';
+  }
+}
+
 extension BuildContextExtension on BuildContext {
   NavigatorState get navigator => Navigator.of(this);
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../l10n/gen/l10n.dart';
 import '../models/user.dart';
 import '../utils/utils.dart';
 import '../utils/core.dart';
@@ -49,6 +50,20 @@ class StoreService {
         break;
       default:
         sp.remove('theme');
+    }
+  }
+
+  Locale? locale() {
+    final locale = sp.getString('locale');
+    return AppLocalizations.supportedLocales
+        .firstWhereOrNull((l) => locale.toString() == locale);
+  }
+
+  Future<void> updateLocale(Locale? locale) async {
+    if (locale == null) {
+      sp.remove('locale');
+    } else {
+      sp.setString('locale', locale.toString());
     }
   }
 

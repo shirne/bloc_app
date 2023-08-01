@@ -31,12 +31,7 @@ class SettingsPage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          context
-                              .read<GlobalBloc>()
-                              .state
-                              .themeMode
-                              .toString()
-                              .replaceFirst('ThemeMode.', ''),
+                          context.read<GlobalBloc>().state.themeMode.name,
                           style: theme.textTheme.bodySmall,
                         ),
                         const Icon(Icons.arrow_forward_ios),
@@ -80,6 +75,65 @@ class SettingsPage extends StatelessWidget {
                       );
                       if (result != null) {
                         bloc.add(ThemeModeChangedEvent(result));
+                      }
+                    },
+                  ),
+                  ListTile(
+                    title: Text(context.l10n.languages),
+                    subtitle: Text(context.l10n.languagesDesc),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          context
+                                  .read<GlobalBloc>()
+                                  .state
+                                  .locale
+                                  ?.translate() ??
+                              '-',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        const Icon(Icons.arrow_forward_ios),
+                      ],
+                    ),
+                    onTap: () async {
+                      final bloc = context.read<GlobalBloc>();
+                      final result = await showCupertinoModalPopup<Locale>(
+                        context: context,
+                        builder: (context) {
+                          return CupertinoActionSheet(
+                            title: Text(context.l10n.languages),
+                            actions: [
+                              CupertinoActionSheetAction(
+                                onPressed: () {
+                                  Navigator.pop(context, Locale('_'));
+                                },
+                                child: Text(context.l10n.themeSystem),
+                              ),
+                              for (var locale
+                                  in AppLocalizations.supportedLocales)
+                                CupertinoActionSheetAction(
+                                  onPressed: () {
+                                    Navigator.pop(context, locale);
+                                  },
+                                  child: Text(locale.translate()),
+                                ),
+                            ],
+                            cancelButton: CupertinoActionSheetAction(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(context.l10n.cancel),
+                            ),
+                          );
+                        },
+                      );
+                      if (result != null) {
+                        bloc.add(
+                          LocaleChangedEvent(
+                            result.languageCode == '_' ? null : result,
+                          ),
+                        );
                       }
                     },
                   ),

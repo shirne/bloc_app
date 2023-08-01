@@ -16,6 +16,11 @@ class ThemeModeChangedEvent extends GlobalEvent {
   ThemeModeChangedEvent(this.themeMode);
 }
 
+class LocaleChangedEvent extends GlobalEvent {
+  final Locale? locale;
+  LocaleChangedEvent(this.locale);
+}
+
 class InitEvent extends GlobalEvent {
   final ResultCallback? onReady;
   InitEvent([this.onReady]);
@@ -41,17 +46,21 @@ class UserQuitEvent extends GlobalEvent {}
 class GlobalState {
   final User user;
   final ThemeMode themeMode;
-  GlobalState({User? user, this.themeMode = ThemeMode.system})
+  final Locale? locale;
+  GlobalState({User? user, this.themeMode = ThemeMode.system, this.locale})
       : user = user ?? User();
 
   GlobalState clone({
     User? user,
     ThemeMode? themeMode,
+    Locale? locale,
     bool hasUser = false,
+    bool hasLocale = false,
   }) {
     return GlobalState(
       user: user ?? (hasUser ? null : this.user),
       themeMode: themeMode ?? this.themeMode,
+      locale: locale ?? (hasLocale ? null : this.locale),
     );
   }
 }
@@ -62,10 +71,15 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
           GlobalState(
             user: storeService.user(),
             themeMode: storeService.themeMode(),
+            locale: storeService.locale(),
           ),
         ) {
     on<ThemeModeChangedEvent>((event, emit) {
       emit(state.clone(themeMode: event.themeMode));
+    });
+
+    on<LocaleChangedEvent>((event, emit) {
+      emit(state.clone(locale: event.locale, hasLocale: true));
     });
 
     on<StateChangedEvent>((event, emit) {

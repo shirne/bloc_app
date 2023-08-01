@@ -21,6 +21,9 @@
     "themeMode":"Theme mode",
     "themeSystem":"System",
     "themeLight":"Light",
-    "themeDark":"Dark"
+    "themeDark":"Dark",
 
+    "languages":"Language",
+    "languagesDesc":"Set languages",
+    "languagesSystem":"System"
 }

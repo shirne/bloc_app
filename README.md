@@ -24,14 +24,15 @@
 - models目录中新增文件，新建类继承自Base
 ```dart
 class ArticleModel extends Base {
-  int articleId;
-  String title;
-  String content;
   ArticleModel({
     this.articleId = 0,
     this.title = '',
     this.content = '',
   });
+  
+  int articleId;
+  String title;
+  String content;
 
   /// 为了防止数据异常，这里转换可以使用工具类中的数字，日期等转换方法
   ArticleModel.fromJson(Map<String, dynamic>? json)
@@ -85,27 +86,15 @@ print(result.data);
 - 执行命令 `dart bin/bloc.dart Pagename`  添加新页面
 - 执行命令 `dart bin/bloc.dart Pagename dirname` 在目录dirname中添加新页面
 
-    *注意 页面名称为大写开头的驼峰命名法(dart的类名规范)，目录名为全部小写的下划线命名法(dart中的文件名规范)
-- globals/routes.dart 中添加路由配置
-```dart
-class Routes {
-    // ...
+## 生成路由
+- 路由文件 globals/routes.dart
+- 执行命令 `dart bin/route.dart`  重新生成路由
 
-    /// 第一处，定义页面
-    static final pagename = RouteItem(
-        '/pagepath',
-        (RouteSettings settings) => const NewPage(),
-    );
-    // ...
-    static final routes = {
-        for (RouteItem e in [
-        // ...
-        pagename,       // 第二处，页面加入到map中
-        ])
-        e.name: e
-    };
-}
-```
+* 注意
+    * 路由生成脚本自动搜索pages下的目录，目录中的page.dart为页面文件
+    * 页面文件中定义的第一个类为页面类
+    * 页面类可不接收参数，或者接收一个Json? 类型的位置参数（参考login/page.dart)
+
 - 页面状态缓存
 在`page.dart` 中的 Widget build(BuildContext context) 方法中找到创建Bloc的代码，如：
 ```dart

@@ -12,12 +12,13 @@ import '../../utils/html.dart' if (library.html) 'dart:html' as htmllib;
 int webviewId = 0;
 
 class WebViewPage extends StatefulWidget {
+  WebViewPage(Json? config, {Key? key})
+      : url = config?['url'] ?? '',
+        showAppBar = config?['showAppBar'] ?? true,
+        super(key: key);
+
   final String url;
   final bool showAppBar;
-  WebViewPage(Json config, {Key? key})
-      : url = config['url'],
-        showAppBar = config['showAppBar'] ?? true,
-        super(key: key);
 
   @override
   State<WebViewPage> createState() => _WebViewPageState();

@@ -27,9 +27,7 @@ part 'event.dart';
 part 'state.dart';
 
 class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
-  
-  ${page}Bloc([String globalKey = ''])
-      : super(() => ${page}State(), globalKey) {
+  ${page}Bloc([String globalKey = '']) : super(() => ${page}State(), globalKey) {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });
@@ -104,7 +102,7 @@ class ${page}Page extends StatelessWidget {
       child: BlocBuilder<${page}Bloc, ${page}State>(
         builder: (context, state) {
           // 初始化状态可以显示skeleton
-          if (state.isInitial){
+          if (state.isInitial) {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(3, (index) => SkeletonListTile()),
@@ -112,7 +110,7 @@ class ${page}Page extends StatelessWidget {
           }
           return Scaffold(
             appBar: AppBar(),
-            body:Center(
+            body: Center(
               child: Text('$page'),
             ),
           );

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../common.dart';
+import '../pages/splash.dart';
+import '../pages/not_found.dart';
+// ==== GENERATED IMPORT START ====
 import '../pages/home/page.dart';
 import '../pages/login/page.dart';
-import '../pages/not_found.dart';
 import '../pages/settings/page.dart';
-import '../pages/splash.dart';
 import '../pages/web/page.dart';
+// ==== GENERATED END ====
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -15,6 +17,13 @@ class Routes {
     '/',
     (arguments) => const SplashPage(),
   );
+  static final notFound = RouteItem(
+    '/404',
+    (arguments) => NotFoundPage(arguments as String?),
+  );
+
+// ==== GENERATED ROUTES START ====
+
   static final home = RouteItem(
     '/home',
     (arguments) => const HomePage(),
@@ -23,29 +32,26 @@ class Routes {
     '/login',
     (arguments) => LoginPage(arguments as Json?),
   );
-  static final seettings = RouteItem(
+  static final settings = RouteItem(
     '/settings',
     (arguments) => const SettingsPage(),
   );
   static final web = RouteItem(
     '/web',
-    (arguments) => WebViewPage(arguments as Json),
-  );
-  static final notFound = RouteItem(
-    '/404',
-    (arguments) => NotFoundPage(arguments as String?),
+    (arguments) => WebViewPage(arguments as Json?),
   );
 
   static final routes = {
     for (RouteItem e in [
-      home,
       splash,
+      home,
       login,
-      seettings,
+      settings,
       web,
     ])
       e.name: e
   };
+// ==== GENERATED END ====
 
   static RouteItem? matchByName(String? name) {
     return routes[name];

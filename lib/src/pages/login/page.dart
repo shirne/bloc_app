@@ -8,7 +8,7 @@ import 'bloc.dart';
 class LoginPage extends StatefulWidget {
   final String? backPage;
   final Object? arguments;
-  LoginPage(Map<String, dynamic>? args, {Key? key})
+  LoginPage(Json? args, {Key? key})
       : backPage = args?['back'] as String?,
         arguments = args?['arguments'],
         super(key: key);

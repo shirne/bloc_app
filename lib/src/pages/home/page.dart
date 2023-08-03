@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    Routes.seettings.show(context);
+                    Routes.settings.show(context);
                   },
                   icon: const Icon(Icons.settings),
                 )

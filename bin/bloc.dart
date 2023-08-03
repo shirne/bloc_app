@@ -101,18 +101,17 @@ class ${page}Page extends StatelessWidget {
       create: (context) => ${page}Bloc(),
       child: BlocBuilder<${page}Bloc, ${page}State>(
         builder: (context, state) {
-          // 初始化状态可以显示skeleton
-          if (state.isInitial) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(3, (index) => SkeletonListTile()),
-            );
-          }
           return Scaffold(
             appBar: AppBar(),
-            body: Center(
-              child: Text('$page'),
-            ),
+            body: state.isInitial
+                // 初始化状态可以显示skeleton
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(3, (index) => SkeletonListTile()),
+                  )
+                : Center(
+                    child: Text('$page'),
+                  ),
           );
         },
       ),

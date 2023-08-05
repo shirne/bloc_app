@@ -57,13 +57,15 @@ part of 'bloc.dart';
 abstract class ${page}Event {}
 
 class RefreshEvent extends ${page}Event {
-  final void Function(String message)? onError;
   RefreshEvent({this.onError});
+
+  final void Function(String message)? onError;
 }
 
 class StateChangedEvent extends ${page}Event {
-  final ${page}State state;
   StateChangedEvent(this.state);
+  
+  final ${page}State state;
 }
 """);
   File('${pageDir}state.dart').writeAsStringSync("""
@@ -99,21 +101,23 @@ class ${page}Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<${page}Bloc>(
       create: (context) => ${page}Bloc(),
-      child: BlocBuilder<${page}Bloc, ${page}State>(
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(),
-            body: state.isInitial
-                // 初始化状态可以显示skeleton
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(3, (index) => SkeletonListTile()),
-                  )
-                : Center(
-                    child: Text('$page'),
-                  ),
-          );
-        },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: BlocBuilder<${page}Bloc, ${page}State>(
+          builder: (context, state) {
+            // 初始化状态可以显示skeleton
+            if (state.isInitial) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(3, (index) => SkeletonListTile()),
+              );
+            }
+
+            return const Center(
+              child: Text('$page'),
+            );
+          },
+        ),
       ),
     );
   }

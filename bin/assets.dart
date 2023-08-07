@@ -8,7 +8,7 @@ final files = <String, List<String>>{};
 void main(List<String> args) {
   final dir = Directory('${Directory.current.absolute.path}/assets');
 
-  final rootClass = ClassEntity('assets', true);
+  final rootClass = ClassEntity('assets');
   loopDir(dir, rootClass);
 
   File(path).writeAsStringSync(rootClass.toClassCode());
@@ -20,14 +20,16 @@ final xDirReg = RegExp(r'^\d\.\dx$');
 final sufixReg = RegExp(r'\.[a-zA-Z0-9]+$');
 
 class ClassEntity {
-  ClassEntity(this.name, [this.isRoot = false])
+  ClassEntity(this.name, [this.path = ''])
       : properties = [],
         classes = [];
 
   final String name;
-  final bool isRoot;
+  final String path;
   final List<String> properties;
   final List<ClassEntity> classes;
+
+  String get fullPath => '$path$name/';
 
   String? _className;
   String get className => _className ??=
@@ -36,16 +38,16 @@ class ClassEntity {
   String toClassCode() {
     StringBuffer sb = StringBuffer();
 
-    if (isRoot) {
+    if (path.isEmpty) {
       sb.write('class $className {\n');
     } else {
       sb.write('class _\$$className {\n');
       sb.write('  const _\$$className();\n\n');
     }
-    final prefix = isRoot ? '  static const ' : '  final ';
+    final prefix = path.isEmpty ? '  static const ' : '  final ';
     for (var i in properties) {
       sb.write(
-        '$prefix${i.replaceFirst(sufixReg, '').replaceAllMapped(varUpperReg, (m) => m[1]!.toUpperCase())} = \'$i\';\n',
+        '$prefix${i.replaceFirst(sufixReg, '').replaceAllMapped(varUpperReg, (m) => m[1]!.toUpperCase())} = \'$fullPath$i\';\n',
       );
     }
     if (classes.isNotEmpty) {
@@ -54,7 +56,7 @@ class ClassEntity {
       for (var c in classes) {
         final classVar =
             c.className.replaceRange(0, 1, c.className[0].toLowerCase());
-        final clsName = c.isRoot ? c.className : '_\$${c.className}';
+        final clsName = c.path.isEmpty ? c.className : '_\$${c.className}';
         sb.write(
           '$prefix$classVar = $clsName();\n',
         );
@@ -78,7 +80,7 @@ void loopDir(Directory dir, ClassEntity parent, [int depts = 1]) {
 
     if (item is Directory) {
       if ((depts > 1 && !xDirReg.hasMatch(name)) || dirs.contains(name)) {
-        final cls = ClassEntity(name);
+        final cls = ClassEntity(name, parent.fullPath);
         parent.classes.add(cls);
         loopDir(item, cls, depts + 1);
       }

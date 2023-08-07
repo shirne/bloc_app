@@ -1,49 +1,89 @@
 import 'dart:io';
 
-final pdir = RegExp(r'^\d\.\dx$');
-final pfile = RegExp(r'@(\d)x\.(png|jpe?g)$');
+final dirs = ['images', 'svgs'];
+const path = './lib/src/assets.dart';
+final files = <String, List<String>>{};
 
 /// 将assets中的图片按像素比整理
 void main(List<String> args) {
   final dir = Directory('${Directory.current.absolute.path}/assets');
 
-  loopDir(dir);
+  final rootClass = ClassEntity('assets', true);
+  loopDir(dir, rootClass);
+
+  File(path).writeAsStringSync(rootClass.toClassCode());
 }
 
-void loopDir(Directory dir) {
-  final entities = dir.listSync();
-  final dirs = <String, Directory?>{};
-  for (var item in entities) {
-    final name = item.uri.pathSegments.last;
-    if (item is Directory) {
-      if (!pdir.hasMatch(name)) {
-        loopDir(item);
-      }
-    } else if (item is File) {
-      final match = pfile.firstMatch(name);
-      if (match != null) {
-        final ndir = dirs.putIfAbsent(
-          match.group(1)!,
-          () => getXDir(match.group(1)!, dir),
+final classUpperReg = RegExp('(^|_)([a-z])');
+final varUpperReg = RegExp('_([a-z])');
+final xDirReg = RegExp(r'^\d\.\dx$');
+final sufixReg = RegExp(r'\.[a-zA-Z0-9]+$');
+
+class ClassEntity {
+  ClassEntity(this.name, [this.isRoot = false])
+      : properties = [],
+        classes = [];
+
+  final String name;
+  final bool isRoot;
+  final List<String> properties;
+  final List<ClassEntity> classes;
+
+  String? _className;
+  String get className => _className ??=
+      name.replaceAllMapped(classUpperReg, (m) => m[2]!.toUpperCase());
+
+  String toClassCode() {
+    StringBuffer sb = StringBuffer();
+
+    if (isRoot) {
+      sb.write('class $className {\n');
+    } else {
+      sb.write('class _\$$className {\n');
+      sb.write('  const _\$$className();\n\n');
+    }
+    final prefix = isRoot ? '  static const ' : '  final ';
+    for (var i in properties) {
+      sb.write(
+        '$prefix${i.replaceFirst(sufixReg, '').replaceAllMapped(varUpperReg, (m) => m[1]!.toUpperCase())} = \'$i\';\n',
+      );
+    }
+    if (classes.isNotEmpty) {
+      sb.write('\n');
+
+      for (var c in classes) {
+        final classVar =
+            c.className.replaceRange(0, 1, c.className[0].toLowerCase());
+        final clsName = c.isRoot ? c.className : '_\$${c.className}';
+        sb.write(
+          '$prefix$classVar = $clsName();\n',
         );
-        if (ndir != null) {
-          item.renameSync(
-            '${ndir.path}/${name.split('@').first}.${match.group(2)}',
-          );
-        }
       }
     }
+    sb.write('}\n');
+
+    for (var c in classes) {
+      sb.write('\n');
+      sb.write(c.toClassCode());
+    }
+    return sb.toString();
   }
 }
 
-Directory? getXDir(String num, Directory currentDir) {
-  final i = int.tryParse(num);
-  if (i == 0) {
-    return null;
+void loopDir(Directory dir, ClassEntity parent, [int depts = 1]) {
+  final entities = dir.listSync();
+
+  for (var item in entities) {
+    final name = item.uri.pathSegments.lastWhere((e) => e.isNotEmpty);
+
+    if (item is Directory) {
+      if ((depts > 1 && !xDirReg.hasMatch(name)) || dirs.contains(name)) {
+        final cls = ClassEntity(name);
+        parent.classes.add(cls);
+        loopDir(item, cls, depts + 1);
+      }
+    } else if (depts > 1 && item is File) {
+      parent.properties.add(name);
+    }
   }
-  final dir = Directory('${currentDir.path}/$i.0x');
-  if (!dir.existsSync()) {
-    dir.createSync();
-  }
-  return dir;
 }

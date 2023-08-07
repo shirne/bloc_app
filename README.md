@@ -198,6 +198,17 @@ lib
 |- main.dart                // 入口文件
 ```
 
+## 处理assets
+
+* 将文件名后缀 3.0x 等迁移至目录
+```
+dart bin/assetsx.dart
+```
+* 生成assets.dart(默认处理images和svgs目录)
+```
+dart bin/assets.dart
+```
+
 ## 注意事项
 
 * 如发现Bug或使用问题，可以提Issue

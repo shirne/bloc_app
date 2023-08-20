@@ -21,7 +21,7 @@ void main(List<String> args) {
   File('${pageDir}bloc.dart').writeAsStringSync("""
 import 'package:flutter/widgets.dart';
 
-import '../../${pathDeeper}widgets/cached_bloc.dart';
+import '../../${pathDeeper}common.dart';';
 
 part 'event.dart';
 part 'state.dart';
@@ -41,6 +41,7 @@ class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
   }
   
   Future<void> _loadData({void Function(String message)? onError}) async {
+    add(StateChangedEvent(${page}State(status: Status.loading)));
     await Future.delayed(const Duration(milliseconds: 500));
     //TODO load data
     if(isClosed){
@@ -75,14 +76,17 @@ part of 'bloc.dart';
 class ${page}State extends BaseState {
   ${page}State({
     Status status = Status.initial,
-  }) : super(status: status);
+    String? message,
+  }) : super(status: status, message: message);
 
   @override
   ${page}State clone({
     Status? status,
+    String? message,
   }) {
     return ${page}State(
       status: status ?? this.status,
+      message: message,
     );
   }
 }
@@ -92,6 +96,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletons/skeletons.dart';
 
+import '../../${pathDeeper}common.dart';';
 import 'bloc.dart';
 
 class ${page}Page extends StatelessWidget {

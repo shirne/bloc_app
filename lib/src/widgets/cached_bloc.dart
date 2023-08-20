@@ -18,9 +18,10 @@ enum Status {
 }
 
 abstract class BaseState {
-  final Status status;
+  BaseState({this.status = Status.initial, this.message});
 
-  BaseState({this.status = Status.initial});
+  final Status status;
+  final String? message;
 
   bool get isInitial => status == Status.initial;
   bool get isSuccess => status == Status.success;
@@ -29,11 +30,10 @@ abstract class BaseState {
 
   BaseState clone();
 
-  Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'status': status,
+        'message': message,
+      };
 
   @override
   String toString() => jsonEncode(toJson());

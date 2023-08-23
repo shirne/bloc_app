@@ -55,8 +55,8 @@ class GlobalState {
     this.themeMode = ThemeMode.system,
     this.locale,
     this.isAuthed = false,
-  })  : user = user ?? UserModel(),
-        token = token ?? TokenModel();
+  })  : user = user ?? const UserModel(),
+        token = token ?? const TokenModel();
 
   final UserModel user;
   final TokenModel token;
@@ -110,7 +110,7 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
       if (event.authed) {
         emit(state.clone(isAuthed: true));
       } else {
-        emit(state.clone(user: Optional(UserModel())));
+        emit(state.clone(user: Optional(null)));
       }
     });
 
@@ -121,7 +121,7 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
 
     on<UserQuitEvent>((event, emit) {
       ApiService.getInstance().removeToken();
-      emit(state.clone(user: Optional(UserModel())));
+      emit(state.clone(user: Optional(null), token: Optional(null)));
     });
 
     if (state.token.isValid) {

@@ -1,7 +1,7 @@
 import 'base.dart';
 
 class UserModel extends Base {
-  UserModel({
+  const UserModel({
     this.id = 0,
     this.username = '',
     this.nickname = '',
@@ -59,12 +59,12 @@ class UserModel extends Base {
 }
 
 class TokenModel extends Base {
-  TokenModel({
+  const TokenModel({
     this.accessToken = '',
     this.refreshToken = '',
     this.expireIn = 0,
-    DateTime? createTime,
-  }) : createTime = createTime ?? DateTime.fromMillisecondsSinceEpoch(0);
+    this.createTime,
+  });
 
   TokenModel.fromJson(Json json)
       : this(
@@ -77,7 +77,7 @@ class TokenModel extends Base {
   final String accessToken;
   final int expireIn;
   final String refreshToken;
-  final DateTime createTime;
+  final DateTime? createTime;
 
   bool get isValid => accessToken.isNotEmpty;
 
@@ -86,7 +86,7 @@ class TokenModel extends Base {
         'access_token': accessToken,
         'refresh_token': refreshToken,
         'expire_in': expireIn,
-        'create_time': createTime.toString(),
+        'create_time': createTime?.toString(),
       };
 }
 

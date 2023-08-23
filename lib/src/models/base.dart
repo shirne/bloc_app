@@ -118,6 +118,8 @@ T? as<T>(dynamic value, [T? defaultValue]) {
 }
 
 abstract class Base {
+  const Base();
+
   Json toJson();
 
   @override
@@ -126,8 +128,8 @@ abstract class Base {
 
 /// 通用的接口返回模型
 class Model extends Base {
-  Json data;
-  Model(this.data);
+  final Json data;
+  const Model(this.data);
 
   Model.fromJson(Json? json) : this(json ?? {});
 
@@ -145,8 +147,8 @@ class Model extends Base {
 
 /// 列表数据的模型
 class ModelList<T extends Base> extends Base {
-  List<T>? lists;
-  ModelList({this.lists});
+  final List<T>? lists;
+  const ModelList({this.lists});
 
   ModelList.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
@@ -164,9 +166,9 @@ class ModelList<T extends Base> extends Base {
 
 /// 分页数据的模型，以下定义的字段可根据实际情况调整
 class ModelPage<T extends Base> extends ModelList<T> {
-  int total;
-  int page;
-  ModelPage({this.total = 0, this.page = 0, List<T>? lists})
+  final int total;
+  final int page;
+  const ModelPage({this.total = 0, this.page = 0, List<T>? lists})
       : super(lists: lists);
 
   ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])

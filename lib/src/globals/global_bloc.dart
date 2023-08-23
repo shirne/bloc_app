@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
+import '../utils/core.dart';
 import 'api.dart';
 import 'api_service.dart';
 import 'store_service.dart';
@@ -22,45 +23,60 @@ class LocaleChangedEvent extends GlobalEvent {
 }
 
 class InitEvent extends GlobalEvent {
-  final ResultCallback? onReady;
   InitEvent([this.onReady]);
+
+  final ResultCallback? onReady;
 }
 
 class StateChangedEvent extends GlobalEvent {
-  final GlobalState state;
   StateChangedEvent(this.state);
+
+  final GlobalState state;
 }
 
 class UserAuthEvent extends GlobalEvent {
-  final bool authed;
   UserAuthEvent(this.authed);
+
+  final bool authed;
 }
 
 class UserLoginEvent extends GlobalEvent {
-  final User user;
-  UserLoginEvent(this.user);
+  UserLoginEvent(this.token);
+
+  final TokenModel token;
 }
 
 class UserQuitEvent extends GlobalEvent {}
 
 class GlobalState {
-  final User user;
+  GlobalState({
+    UserModel? user,
+    TokenModel? token,
+    this.themeMode = ThemeMode.system,
+    this.locale,
+    this.isAuthed = false,
+  })  : user = user ?? UserModel(),
+        token = token ?? TokenModel();
+
+  final UserModel user;
+  final TokenModel token;
   final ThemeMode themeMode;
   final Locale? locale;
-  GlobalState({User? user, this.themeMode = ThemeMode.system, this.locale})
-      : user = user ?? User();
+  final bool isAuthed;
 
   GlobalState clone({
-    User? user,
+    Optional<UserModel>? user,
+    Optional<TokenModel>? token,
     ThemeMode? themeMode,
-    Locale? locale,
-    bool hasUser = false,
-    bool hasLocale = false,
+    Optional<Locale>? locale,
+    bool? isAuthed,
   }) {
     return GlobalState(
-      user: user ?? (hasUser ? null : this.user),
+      user: user == null ? this.user : user.value,
+      token: token == null ? this.token : token.value,
       themeMode: themeMode ?? this.themeMode,
-      locale: locale ?? (hasLocale ? null : this.locale),
+      locale: locale == null ? this.locale : locale.value,
+      isAuthed: isAuthed ?? this.isAuthed,
     );
   }
 }
@@ -69,7 +85,7 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
   GlobalBloc(StoreService storeService)
       : super(
           GlobalState(
-            user: storeService.user(),
+            token: storeService.token(),
             themeMode: storeService.themeMode(),
             locale: storeService.locale(),
           ),
@@ -79,7 +95,7 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
     });
 
     on<LocaleChangedEvent>((event, emit) {
-      emit(state.clone(locale: event.locale, hasLocale: true));
+      emit(state.clone(locale: Optional(event.locale)));
     });
 
     on<StateChangedEvent>((event, emit) {
@@ -92,32 +108,31 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
 
     on<UserAuthEvent>((event, emit) {
       if (event.authed) {
-        emit(state.clone(user: state.user..isAuthed = true));
+        emit(state.clone(isAuthed: true));
       } else {
-        emit(state.clone(user: User()));
+        emit(state.clone(user: Optional(UserModel())));
       }
     });
 
     on<UserLoginEvent>((event, emit) {
-      ApiService.getInstance().addHeader('token', event.user.token);
-      emit(state.clone(user: event.user));
+      ApiService.getInstance().addToken(event.token.accessToken);
+      emit(state.clone(token: Optional(event.token)));
     });
 
     on<UserQuitEvent>((event, emit) {
-      ApiService.getInstance().removeHeader('token');
-      emit(state.clone(user: User()));
+      ApiService.getInstance().removeToken();
+      emit(state.clone(user: Optional(UserModel())));
     });
 
-    if (state.user.isValid) {
-      ApiService.getInstance().addHeader('token', state.user.token);
+    if (state.token.isValid) {
+      ApiService.getInstance().addToken(state.token.accessToken);
+      _upUserinfo();
     }
   }
   Future<void> _init([ResultCallback? onReady]) async {
-    if (state.user.token.isNotEmpty) {
-      if (state.user.isValid) {
-        ApiService.getInstance().addHeader('token', state.user.token);
-        await _upUserinfo(() {});
-      }
+    if (state.token.isValid) {
+      ApiService.getInstance().addToken(state.token.accessToken);
+      await _upUserinfo(() {});
     }
     onReady?.call(true, null);
   }
@@ -127,7 +142,7 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
     if (!isClosed && result.success) {
       add(
         StateChangedEvent(
-          state.clone(user: result.data!..token = state.user.token),
+          state.clone(user: Optional(result.data!)),
         ),
       );
     }

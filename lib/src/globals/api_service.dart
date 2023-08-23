@@ -9,6 +9,8 @@ import '../utils/core.dart';
 import 'config.dart';
 import 'routes.dart';
 
+const _tokenHeaderKey = 'Authorization';
+
 class ApiService {
   static ApiService? _instance;
   static ApiService getInstance() {
@@ -51,6 +53,14 @@ class ApiService {
     if (_dio.options.headers.containsKey(key)) {
       _dio.options.headers.remove(key);
     }
+  }
+
+  void addToken(String token) {
+    addHeader(_tokenHeaderKey, 'Bearer $token');
+  }
+
+  void removeToken() {
+    removeHeader(_tokenHeaderKey);
   }
 
   Completer<bool>? _locker;
@@ -305,9 +315,9 @@ class ApiInterceptor extends Interceptor {
   ) async {
     logger.fine(
       '网络请求',
-      '${options.path} ${options.method}\n\n'
-          'Header：${options.headers}\n\n'
-          'QueryParameters：${options.queryParameters}\n\n'
+      '${options.uri} ${options.method}\n'
+          'Header：${options.headers}\n'
+          'QueryParameters：${options.queryParameters}\n'
           'RequestData：${options.data}',
     );
 
@@ -323,8 +333,8 @@ class ApiInterceptor extends Interceptor {
 
     logger.fine(
       '网络请求响应',
-      '${requestOptions.path} '
-          '${requestOptions.method} ${response.statusCode}\n\n'
+      '${requestOptions.uri} '
+          '${requestOptions.method} ${response.statusCode}\n'
           'Header：${response.headers}\n'
           'ResponseData：${response.data}',
     );
@@ -334,7 +344,11 @@ class ApiInterceptor extends Interceptor {
 
   @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
-    logger.warning('网络请求错误', err.error, StackTrace.current.cast(5));
+    logger.warning(
+      '网络请求错误: ${err.message}',
+      err.error,
+      StackTrace.current.cast(5),
+    );
     return super.onError(err, handler);
   }
 }

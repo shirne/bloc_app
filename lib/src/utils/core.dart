@@ -204,3 +204,9 @@ class Debounce<F extends Function> {
     callable();
   }
 }
+
+class Optional<T> {
+  Optional(this.value);
+
+  final T? value;
+}

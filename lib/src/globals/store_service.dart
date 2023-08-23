@@ -67,13 +67,13 @@ class StoreService {
     }
   }
 
-  User user() {
+  TokenModel token() {
     String? jsonData = sp.getString(userTokenKey);
     if (jsonData != null && jsonData.isNotEmpty) {
       try {
-        return User.fromJson(jsonDecode(jsonData))..needAuth = needAuth();
+        return TokenModel.fromJson(jsonDecode(jsonData));
       } catch (_) {
-        deleteUser();
+        deleteToken();
         logger.warning(
           'user auth decode failed: $jsonData',
           Exception('user auth decode failed: $jsonData'),
@@ -81,15 +81,15 @@ class StoreService {
         );
       }
     }
-    return User();
+    return TokenModel();
   }
 
-  Future<bool> deleteUser() async {
+  Future<bool> deleteToken() async {
     await sp.remove(needAuthKey);
     return await sp.remove(userTokenKey);
   }
 
-  Future<bool> updateUser(User user) async {
+  Future<bool> updateToken(TokenModel user) async {
     return await sp.setString(userTokenKey, jsonEncode(user.toJson()));
   }
 

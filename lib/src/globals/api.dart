@@ -22,12 +22,13 @@ class Api {
   static const apiSms = 'auth/captcha';
   static const apiCheck = 'auth/check';
 
-  static Future<ApiResult<User>> doLogin(String email, String password) async {
+  static Future<ApiResult<UserModel>> doLogin(
+      String email, String password) async {
     return await apiService
         .post(apiLogin, {'email': email, 'password': password}, skipLock: true);
   }
 
-  static Future<ApiResult<User>> doRegister({
+  static Future<ApiResult<UserModel>> doRegister({
     required String email,
     required String mobile,
     required String smsCode,
@@ -65,7 +66,7 @@ class Api {
   }
 
   static const apiUserinfo = 'user/profile';
-  static Future<ApiResult<User>> getUserinfo([
+  static Future<ApiResult<UserModel>> getUserinfo([
     VoidCallback? onRequireLogin,
   ]) async {
     return await apiService.get(

@@ -41,6 +41,7 @@ void main(List<String> args) {
     "  static final routes = {",
     "    for (RouteItem e in [",
     "      splash,",
+    "      policy,",
     for (var n in routeNames) "      $n,",
     "    ])",
     "      e.name: e",

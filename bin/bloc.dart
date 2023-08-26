@@ -21,7 +21,7 @@ void main(List<String> args) {
   File('${pageDir}bloc.dart').writeAsStringSync("""
 import 'package:flutter/widgets.dart';
 
-import '../../${pathDeeper}common.dart';';
+import '../../${pathDeeper}common.dart';
 
 part 'event.dart';
 part 'state.dart';
@@ -96,7 +96,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletons/skeletons.dart';
 
-import '../../${pathDeeper}common.dart';';
+import '../../${pathDeeper}common.dart';
 import 'bloc.dart';
 
 class ${page}Page extends StatelessWidget {

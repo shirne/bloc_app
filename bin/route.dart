@@ -1,6 +1,7 @@
 import 'dart:io';
 
 final classNames = <String>[];
+const loginDir = 'login';
 
 void main(List<String> args) {
   final pagesPath = "${Directory.current.path}/lib/src/pages/";
@@ -87,6 +88,8 @@ void walkDir(
           routes.addAll([
             "  static final $routeName = RouteItem(",
             "    '/$routeName',",
+            if (pagePath == loginDir || pagePath.startsWith('$loginDir/'))
+              "    isAuth: false,",
             hasArgs
                 ? "    (arguments) => ${useAlias ? '$libName.' : ''}$className(arguments as Json?),"
                 : "    (arguments) => const ${useAlias ? '$libName.' : ''}$className(),",

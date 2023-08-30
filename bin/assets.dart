@@ -85,6 +85,7 @@ void loopDir(Directory dir, ClassEntity parent, [int depts = 1]) {
         loopDir(item, cls, depts + 1);
       }
     } else if (depts > 1 && item is File) {
+      if (item.uri.pathSegments.last.contains('@')) continue;
       parent.properties.add(name);
     }
   }

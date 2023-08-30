@@ -69,9 +69,33 @@ class $className extends Base {
   $className.fromJson(Json json):this(
 ''');
   for (var f in data.properties) {
-    content.writeln(
-      '    ${f.fieldName}: as<${f.type.typeName}>(json[\'${f.name}\']${getDefault(f)})${f.isRequired ? '!' : ''},',
-    );
+    if (f.type.type == 'List') {
+      final isBase = f.type.item?.isBase ?? true;
+      final transType = f.type.item != null
+          ? isBase
+              ? '?.cast<${f.type.item?.type}>()'
+              : '?.map<${f.type.item}>((e)=>${f.type.item?.typeName}.fromJson(e)).toList()'
+          : '';
+      content.writeln(
+        '    ${f.fieldName}: as<${f.type.type}>(json[\'${f.name}\'])$transType${f.isRequired ? ' ?? []' : ''},',
+      );
+    } else {
+      if (f.type.isBase) {
+        content.writeln(
+          '    ${f.fieldName}: as<${f.type.typeName}>(json[\'${f.name}\']${getDefault(f)})${f.isRequired ? '!' : ''},',
+        );
+      } else {
+        if (f.isRequired) {
+          content.writeln(
+            '    ${f.fieldName}: ${f.type.typeName}.fromJson(as<Json>(json[\'${f.name}\']) ?? emptyJson),',
+          );
+        } else {
+          content.writeln(
+            '    ${f.fieldName}: ${f.type.typeName}.tryFromJson(as<Json>(json[\'${f.name}\'])),',
+          );
+        }
+      }
+    }
   }
   content.writeln('  );');
 
@@ -400,15 +424,22 @@ class TypeModel {
     return ref ?? 'String';
   }
 
+  bool get isBase =>
+      type == 'int' || type == 'double' || type == 'String' || type == 'bool';
+
   static String? parseType(String? type) {
     if (type == 'integer') {
       return 'int';
+    } else if (type == 'float' || type == 'double') {
+      return 'double';
     } else if (type == 'string') {
       return 'String';
     } else if (type == 'boolean') {
       return 'bool';
     } else if (type == 'array') {
       return 'List';
+    } else if (type == 'map' || type == 'dictionary') {
+      return 'Map';
     }
     return type;
   }

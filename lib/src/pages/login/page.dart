@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void close() {
-    if (backPage == null) {
+    if (backPage == null || backPage == Routes.login.name) {
       logger.fine("no last route");
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
@@ -57,6 +57,47 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      initialRoute: '/',
+      onGenerateRoute: (RouteSettings routeSettings) {
+        final route = Routes.match(routeSettings);
+        if (route == null ||
+            route.name == Routes.login.name ||
+            route.name == '/') {
+          return MaterialPageRoute<dynamic>(
+            settings: routeSettings,
+            builder: (BuildContext context) {
+              return const LoginScreen();
+            },
+          );
+        }
+
+        if (route.isAuth) {
+          backPage = route.name;
+          close();
+        }
+
+        return MaterialPageRoute<dynamic>(
+          settings: routeSettings,
+          builder: (BuildContext context) {
+            return route.builder.call(routeSettings.arguments);
+          },
+        );
+      },
+    );
+  }
+}
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

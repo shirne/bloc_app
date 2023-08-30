@@ -58,7 +58,7 @@ class MainApp extends StatelessWidget {
                   );
                 }
                 if (route.isAuth) {
-                  if (state.user.isValid) {
+                  if (!state.user.isValid) {
                     logger.info(state.user);
                     return MaterialPageRoute<dynamic>(
                       settings: RouteSettings(
@@ -74,7 +74,7 @@ class MainApp extends StatelessWidget {
                     );
                   }
                   // TODO: 这里是指纹验证逻辑
-                  // } else if (state.needVerify) {
+                  // else if (state.needVerify) {
                   //   Api.lock();
                   //   Auth.isAuthenticate().then((value) {
                   //     bloc.add(UserVerifyEvent(value == authResult.auth));

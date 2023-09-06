@@ -26,8 +26,9 @@ dependencies:
   file_picker: ^5.2.5         # 文件选择
 
   shirne_dialog: ^4.5.0       # 对话框
-
-  flutter_widget_from_html_core: ^0.10.1 # 简单html全平台解析
+  
+  flutter_widget_from_html: ^0.13.0-alpha.1
+  flutter_widget_from_html_core: ^0.13.0-alpha.1 # 简单html全平台解析
   flutter_inappwebview: ^6.0.0-beta.24+1  # 内置webview
 
 dev_dependencies:

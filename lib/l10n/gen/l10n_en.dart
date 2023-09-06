@@ -29,6 +29,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no => 'No';
 
   @override
+  String get policy => 'policy';
+
+  @override
+  String get agree => 'Agree';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
   String get userLogin => 'Login';
 
   @override

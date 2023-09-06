@@ -29,6 +29,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get no => '否';
 
   @override
+  String get policy => 'policy_zh';
+
+  @override
+  String get agree => '同意';
+
+  @override
+  String get reject => '拒绝';
+
+  @override
   String get userLogin => '登录';
 
   @override
@@ -75,4 +84,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languagesSystem => '跟随系统';
+}
+
+/// The translations for Chinese, as used in China (`zh_CN`).
+class AppLocalizationsZhCn extends AppLocalizationsZh {
+  AppLocalizationsZhCn(): super('zh_CN');
+
+
 }

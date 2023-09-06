@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../common.dart';
+import '../pages/policy.dart';
 import '../pages/splash.dart';
 import '../pages/not_found.dart';
 // ==== GENERATED IMPORT START ====
@@ -11,11 +12,16 @@ import '../pages/web/page.dart';
 // ==== GENERATED END ====
 
 final navigatorKey = GlobalKey<NavigatorState>();
+final l10n = AppLocalizations.of(navigatorKey.currentContext!)!;
 
 class Routes {
   static final splash = RouteItem(
     '/',
     (arguments) => const SplashPage(),
+  );
+  static final policy = RouteItem(
+    '/policy',
+    (arguments) => PolicyPage(arguments as Json?),
   );
   static final notFound = RouteItem(
     '/404',
@@ -30,6 +36,7 @@ class Routes {
   );
   static final login = RouteItem(
     '/login',
+    isAuth: false,
     (arguments) => LoginPage(arguments as Json?),
   );
   static final settings = RouteItem(
@@ -44,6 +51,7 @@ class Routes {
   static final routes = {
     for (RouteItem e in [
       splash,
+      policy,
       home,
       login,
       settings,

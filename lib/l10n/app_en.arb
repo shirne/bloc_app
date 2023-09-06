@@ -7,6 +7,9 @@
     "confirm":"Confirm",
     "yes":"Yes",
     "no":"No",
+    "policy":"policy",
+    "agree":"Agree",
+    "reject":"Reject",
 
     "userLogin":"Login",
     "labelUsername":"Username",

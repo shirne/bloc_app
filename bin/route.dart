@@ -65,7 +65,7 @@ void walkDir(
     if (entity is Directory) {
       final index = File('${entity.path}/page.dart');
       final path = entity.path.replaceAll('\\', '/');
-      var pagePath = path.split("/src/pages/").last;
+      final pagePath = path.split("/src/pages/").last;
       if (index.existsSync()) {
         final (className, hasArgs) = getClassName(index);
         if (className.isEmpty) {
@@ -87,7 +87,7 @@ void walkDir(
           );
           routes.addAll([
             "  static final $routeName = RouteItem(",
-            "    '/$routeName',",
+            "    '/$pagePath',",
             if (pagePath == loginDir || pagePath.startsWith('$loginDir/'))
               "    isAuth: false,",
             hasArgs

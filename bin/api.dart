@@ -130,16 +130,21 @@ String getDefault(FieldModel f) {
   }
   String typeValue = '';
   switch (f.type.type) {
-    case 'integer':
+    case 'int':
+      typeValue = '0';
+    case 'double':
       typeValue = '0';
     case 'DateTime':
       typeValue = 'DateTime.now()';
-    case 'List':
-      typeValue = '[]';
+
     case 'bool':
       typeValue = 'false';
     case 'String':
       typeValue = "''";
+    case 'List':
+      typeValue = '[]';
+    case 'Map':
+      typeValue = '{}';
   }
   return ', $typeValue';
 }
@@ -425,7 +430,11 @@ class TypeModel {
   }
 
   bool get isBase =>
-      type == 'int' || type == 'double' || type == 'String' || type == 'bool';
+      type == 'int' ||
+      type == 'double' ||
+      type == 'String' ||
+      type == 'bool' ||
+      type == 'DateTime';
 
   static String? parseType(String? type) {
     if (type == 'integer') {

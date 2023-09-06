@@ -1,4 +1,5 @@
 export 'app_theme.dart';
+export 'assets.dart';
 export '../l10n/gen/l10n.dart';
 export 'utils/core.dart';
 export 'utils/utils.dart';

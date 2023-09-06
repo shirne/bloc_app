@@ -3,9 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:shirne_dialog/shirne_dialog.dart';
 
 import '../common.dart';
 
@@ -24,15 +27,32 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> init(_) async {
-    // TODO 此处可加入协议弹窗
+    // 协议弹窗
+    final size = MediaQuery.of(context).size;
+    final assets = 'assets/html/${context.l10n.policy}.html';
+    final content = await rootBundle.loadString(assets);
+
+    final confirmed = await MyDialog.confirm(
+      SizedBox(
+        height: size.height * 0.6,
+        child: SingleChildScrollView(child: HtmlWidget(content)),
+      ),
+      barrierDismissible: false,
+      buttonText: l10n.agree,
+      cancelText: l10n.reject,
+    );
+    if (confirmed != true) {
+      exit(0);
+    }
 
     await Future.wait([
       initWeb(),
       initGlobal(),
       Future.delayed(const Duration(seconds: 1)),
     ]);
-    // ignore: use_build_context_synchronously
-    Routes.home.replace(context);
+    if (context.mounted) {
+      Routes.home.replace(context);
+    }
   }
 
   Future<void> initWeb() async {
@@ -81,17 +101,15 @@ class _SplashPageState extends State<SplashPage> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage(
-                  'assets/images/background.png',
-                ),
+                image: AssetImage(Assets.images.background),
               ),
             ),
             alignment: Alignment.center,
             child: Image.asset(
-              'assets/images/splash_logo.png',
+              Assets.images.splashLogo,
               width: 90.25,
               height: 128.75,
             ),
@@ -101,7 +119,7 @@ class _SplashPageState extends State<SplashPage> {
             left: 0,
             right: 0,
             child: Image.asset(
-              'assets/images/text.png',
+              Assets.images.text,
               width: 150.25,
               height: 50,
             ),

@@ -1,4 +1,5 @@
 {
+    "@@locale": "zh",
     "appTitle": "BlocApp",
     "login": "登录",
     "loginDialogTitle":"请登录",
@@ -7,6 +8,9 @@
     "confirm":"确定",
     "yes":"是",
     "no":"否",
+    "policy":"policy_zh",
+    "agree":"同意",
+    "reject":"拒绝",
 
     "userLogin":"登录",
     "labelUsername":"用户名",

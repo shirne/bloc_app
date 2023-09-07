@@ -210,3 +210,9 @@ class Optional<T> {
 
   final T? value;
 }
+
+extension OptionalExt<T> on Optional<T>? {
+  T? absent(T? value) {
+    return this == null ? value : this?.value;
+  }
+}

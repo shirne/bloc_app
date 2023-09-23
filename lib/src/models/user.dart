@@ -1,6 +1,8 @@
 import 'base.dart';
 
 class UserModel extends Base {
+  static const empty = UserModel();
+
   const UserModel({
     this.id = 0,
     this.username = '',
@@ -59,6 +61,8 @@ class UserModel extends Base {
 }
 
 class TokenModel extends Base {
+  static const empty = TokenModel();
+
   const TokenModel({
     this.accessToken = '',
     this.refreshToken = '',

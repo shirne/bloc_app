@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../common.dart';
 
@@ -27,6 +28,13 @@ extension ListExtension<E> on List<E> {
     }
     return matched;
   }
+
+  int indexOr(bool Function(E) test, [int dft = 0]) {
+    if (isEmpty) return -1;
+    final index = indexWhere(test);
+    if (index < 0) return dft;
+    return index;
+  }
 }
 
 extension IntListExt on List<int> {
@@ -37,6 +45,8 @@ extension IntListExt on List<int> {
 
 /// 时间计算
 extension DateTimeExtension on DateTime {
+  int get secondsSinceEpoch => millisecondsSinceEpoch ~/ 1000;
+
   DateTime startOfDay() {
     return DateTime(year, month, day, 0, 0, 0, 0, 0);
   }
@@ -81,6 +91,10 @@ extension DateTimeExtension on DateTime {
     }
     return DateTime(year, month, endDay, 23, 59, 59, 999, 999);
   }
+
+  String format([DateFormat? formater]) {
+    return (formater ?? datetimeFmt).format(this);
+  }
 }
 
 extension StringExtension on String {
@@ -105,6 +119,8 @@ extension LocaleExt on Locale {
           default:
             return '中文';
         }
+      case 'fr':
+        return 'Français';
       case 'en':
         return 'English';
     }
@@ -144,6 +160,8 @@ extension BuildContextExtension on BuildContext {
   Color get surfaceColor => colorScheme.surface;
 
   AppLocalizations get l10n => AppLocalizations.of(this)!;
+
+  Locale get locale => Localizations.localeOf(this);
 }
 
 StackTrace? castStackTrace(StackTrace? trace, [int lines = 3]) {
@@ -211,6 +229,9 @@ class Optional<T> {
   final T? value;
 }
 
+/// different of
+/// option?.value ?? value
+/// option.absent(value)
 extension OptionalExt<T> on Optional<T>? {
   T? absent(T? value) {
     return this == null ? value : this?.value;

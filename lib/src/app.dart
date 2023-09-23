@@ -9,8 +9,8 @@ import 'app_navigator.dart';
 import 'common.dart';
 
 class MainApp extends StatelessWidget {
-  final StoreService storeService;
-  const MainApp(this.storeService, {Key? key}) : super(key: key);
+  final storeService = StoreService();
+  MainApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +58,7 @@ class MainApp extends StatelessWidget {
                   );
                 }
                 if (route.isAuth) {
-                  if (!state.user.isValid) {
-                    logger.info(state.user);
+                  if (!GlobalBloc.instance.state.user.isValid) {
                     return MaterialPageRoute<dynamic>(
                       settings: RouteSettings(
                         name: Routes.login.name,

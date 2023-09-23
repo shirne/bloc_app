@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shirne_dialog/shirne_dialog.dart';
 
 import '../models/base.dart';
 import '../utils/utils.dart';
 import '../utils/core.dart';
 import 'config.dart';
+import 'global_bloc.dart';
+import 'localizations.dart';
 import 'routes.dart';
 
 const _tokenHeaderKey = 'Authorization';
@@ -25,6 +28,8 @@ class ApiService {
 
   /// 防止登录询问窗口多次弹出
   bool _isLoginShow = false;
+
+  String? get defaultLang => GlobalBloc.instance.langTag;
 
   Dio get dio => _dio;
   final Dio _dio;
@@ -56,7 +61,7 @@ class ApiService {
   }
 
   void addToken(String token) {
-    addHeader(_tokenHeaderKey, 'Bearer $token');
+    addHeader(_tokenHeaderKey, token);
   }
 
   void removeToken() {
@@ -88,33 +93,18 @@ class ApiService {
     final context = navigatorKey.currentContext;
     if (context == null) return;
     _isLoginShow = true;
-    await showCupertinoDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(context.l10n.loginDialogTitle),
-          content: Text(context.l10n.loginDialogContent),
-          actions: [
-            CupertinoDialogAction(
-              child: Text(context.l10n.no),
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-            ),
-            CupertinoDialogAction(
-              child: Text(context.l10n.yes),
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-            ),
-          ],
-        );
-      },
-    ).then((goLogin) {
-      if (goLogin ?? false) {
-        Routes.login.show(context);
-      }
-    });
+    final toLogin = await MyDialog.confirm(
+      Column(
+        children: [
+          Text(context.l10n.loginDialogTitle),
+          Text(context.l10n.loginDialogContent),
+        ],
+      ),
+    );
+    if (toLogin == true && context.mounted) {
+      Routes.login.show(context);
+    }
+
     _isLoginShow = false;
   }
 
@@ -133,12 +123,15 @@ class ApiService {
       logger.info('api is locked');
       final isPass = await _locker!.future;
       if (!isPass) {
-        return ApiResult<T>(500, 'Request canceled');
+        return ApiResult<T>(0, 'Request canceled');
       }
     }
     Options options = Options(
       method: method,
-      headers: header,
+      headers: {
+        'lang': defaultLang,
+        ...?header,
+      },
       sendTimeout: sendTimeout,
       receiveTimeout: receiveTimeout,
     );
@@ -155,10 +148,32 @@ class ApiService {
       if (result.needLogin) {
         (onRequireLogin ?? _onRequireLogin).call();
       }
+      if (result.invalidToken) {
+        GlobalBloc.instance.add(UserQuitEvent());
+      }
 
       return result;
     } on DioException catch (e) {
-      return ApiResult(-1, e.message ?? '$e', null);
+      final errmsg = globalL10n.requestError;
+      if (e.response != null) {
+        final data = e.response!.data is String
+            ? {'msg': e.response!.data}
+            : as<Json>(e.response!.data) ?? emptyJson;
+        final result = ApiResult<T>(
+          data['code'] ?? e.response!.statusCode,
+          as<String>(data['msg'] ?? data['message'] ?? errmsg)!.trim(),
+          null,
+        );
+        if (result.needLogin) {
+          (onRequireLogin ?? _onRequireLogin).call();
+        }
+        if (result.invalidToken) {
+          GlobalBloc.instance.add(UserQuitEvent());
+        }
+        return result;
+      }
+      MyDialog.toast(errmsg, iconType: IconType.error);
+      return ApiResult<T>(-1, '', null);
     }
   }
 
@@ -267,22 +282,26 @@ class ApiResult<T extends Base> {
   ApiResult.fromResponse(
     Response<Json> response, [
     DataParser<T>? dataParser,
-  ])  : status = response.data?['status'] ?? -1,
-        message = response.data?['message'] ?? '',
-        data = response.data?['data'] == null
+  ])  : status = response.statusCode ?? -1,
+        message = response.statusMessage ?? '',
+        data = response.data == null
             ? null
-            : dataParser?.call(response.data?['data']) ??
-                transData<T>(response.data?['data']),
+            : dataParser?.call(response.data) ?? transData<T>(response.data),
         debug = response.data?['debug'];
 
   static T? transData<T>(dynamic data) {
     if (data == null) return null;
+
     // 基本类型或List,Map
     if (data is T) return data;
     if (data is List<dynamic>) {
       if (data.isEmpty) return null;
       if (T == ModelList) {
         return ModelList.fromJson({'list': data}) as T;
+      }
+    } else if (data is Json) {
+      if (T == Model) {
+        return Model.fromJson(data) as T;
       }
     }
     logger.warning(
@@ -345,10 +364,17 @@ class ApiInterceptor extends Interceptor {
   @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
     logger.warning(
-      '网络请求错误: ${err.message}',
+      '网络请求错误: ${err.message ?? err.error}',
       err.error,
       StackTrace.current.cast(5),
     );
+    if (err.response?.data != null) {
+      logger.fine(
+        '错误数据',
+        '${err.response?.data}',
+      );
+    }
+
     return super.onError(err, handler);
   }
 }

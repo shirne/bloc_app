@@ -29,13 +29,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get no => '否';
 
   @override
-  String get policy => 'policy_zh';
-
-  @override
   String get agree => '同意';
 
   @override
   String get reject => '拒绝';
+
+  @override
+  String get policy => 'policy_zh';
+
+  @override
+  String get requestError => '网络错误';
+
+  @override
+  String get locationRequestFail => '定位失败';
+
+  @override
+  String get tabHome => '首页';
+
+  @override
+  String get tabProduct => '产品';
+
+  @override
+  String get tabMine => '我的';
 
   @override
   String get userLogin => '登录';

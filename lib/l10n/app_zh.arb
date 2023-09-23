@@ -8,9 +8,15 @@
     "confirm":"确定",
     "yes":"是",
     "no":"否",
-    "policy":"policy_zh",
     "agree":"同意",
     "reject":"拒绝",
+    "policy": "policy_zh",
+    "requestError": "网络错误",
+    "locationRequestFail": "定位失败",
+
+    "tabHome":"首页",
+    "tabProduct":"产品",
+    "tabMine":"我的",
 
     "userLogin":"登录",
     "labelUsername":"用户名",

@@ -1,4 +1,5 @@
 {
+    "@@locale": "en",
     "appTitle": "BlocApp",
     "login": "Login",
     "loginDialogTitle":"Login please",
@@ -7,9 +8,15 @@
     "confirm":"Confirm",
     "yes":"Yes",
     "no":"No",
-    "policy":"policy",
     "agree":"Agree",
     "reject":"Reject",
+    "policy": "policy",
+    "requestError": "Network Error",
+    "locationRequestFail": "Locate Fail",
+
+    "tabHome":"Home",
+    "tabProduct":"Products",
+    "tabMine":"Mine",
 
     "userLogin":"Login",
     "labelUsername":"Username",

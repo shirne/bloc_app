@@ -29,13 +29,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no => 'No';
 
   @override
-  String get policy => 'policy';
-
-  @override
   String get agree => 'Agree';
 
   @override
   String get reject => 'Reject';
+
+  @override
+  String get policy => 'policy';
+
+  @override
+  String get requestError => 'Network Error';
+
+  @override
+  String get locationRequestFail => 'Locate Fail';
+
+  @override
+  String get tabHome => 'Home';
+
+  @override
+  String get tabProduct => 'Products';
+
+  @override
+  String get tabMine => 'Mine';
 
   @override
   String get userLogin => 'Login';

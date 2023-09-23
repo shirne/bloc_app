@@ -7,5 +7,6 @@ export 'globals/api_service.dart';
 export 'globals/routes.dart';
 export 'globals/global_bloc.dart' hide StateChangedEvent;
 export 'globals/store_service.dart';
+export 'globals/api.dart';
 export 'models/base.dart';
 export 'widgets/cached_bloc.dart';

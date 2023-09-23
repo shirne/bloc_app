@@ -10,7 +10,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 
+import '../assets.dart';
 import '../common.dart';
+import '../globals/localizations.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -20,6 +22,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  Alignment alignment = Alignment.center;
   @override
   void initState() {
     super.initState();
@@ -27,31 +30,44 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> init(_) async {
-    // 协议弹窗
-    final size = MediaQuery.of(context).size;
-    final assets = 'assets/html/${context.l10n.policy}.html';
-    final content = await rootBundle.loadString(assets);
+    final agreed = StoreService().getAgreed();
+    if (!agreed) {
+      final size = MediaQuery.of(context).size;
+      final assets = 'assets/json/${context.l10n.policy}.html';
+      final content = await rootBundle.loadString(assets);
 
-    final confirmed = await MyDialog.confirm(
-      SizedBox(
-        height: size.height * 0.6,
-        child: SingleChildScrollView(child: HtmlWidget(content)),
-      ),
-      barrierDismissible: false,
-      buttonText: l10n.agree,
-      cancelText: l10n.reject,
-    );
-    if (confirmed != true) {
-      exit(0);
+      final confirmed = await MyDialog.confirm(
+        SizedBox(
+          height: size.height * 0.6,
+          child: SingleChildScrollView(child: HtmlWidget(content)),
+        ),
+        barrierDismissible: false,
+        buttonText: globalL10n.agree,
+        cancelText: globalL10n.reject,
+      );
+      if (confirmed != true) {
+        exit(0);
+      }
+      StoreService().setAgreed(true);
     }
-
-    await Future.wait([
-      initWeb(),
-      initGlobal(),
-      Future.delayed(const Duration(seconds: 1)),
-    ]);
+    await Future.delayed(Duration.zero);
     if (context.mounted) {
-      Routes.home.replace(context);
+      setState(() {
+        alignment = const Alignment(0, -0.5);
+      });
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (context.mounted) {
+        //LocatorUtil().init();
+        await Future.wait([
+          initWeb(),
+          initGlobal(),
+          initChat(),
+          Future.delayed(const Duration(seconds: 1)),
+        ]);
+        if (context.mounted) {
+          Routes.main.replace(context);
+        }
+      }
     }
   }
 
@@ -94,10 +110,16 @@ class _SplashPageState extends State<SplashPage> {
     return completer.future;
   }
 
+  Future<dynamic> initChat() async {
+    if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
+      return;
+    }
+    // return context.findRootAncestorStateOfType<MainAppState>()?.initChat();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff3778FB),
       body: Stack(
         children: [
           Container(

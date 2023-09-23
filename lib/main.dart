@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 
 import 'src/app.dart';
+import 'src/assets.dart';
 import 'src/globals/store_service.dart';
+import 'src/utils/device_info.dart';
 import 'src/utils/utils.dart';
 
 void main() async {
@@ -12,9 +14,12 @@ void main() async {
 
   handleError();
 
-  final storeService = await StoreService.getInstance();
-  await preloadAssetsImage(const AssetImage('assets/images/background.png'));
-  runApp(MainApp(storeService));
+  await Future.wait([
+    StoreService().init(),
+    preloadAssetsImage(AssetImage(Assets.images.background)),
+    DeviceInfo().init(),
+  ]);
+  runApp(MainApp());
 }
 
 void handleError() {

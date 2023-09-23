@@ -142,12 +142,6 @@ abstract class AppLocalizations {
   /// **'No'**
   String get no;
 
-  /// No description provided for @policy.
-  ///
-  /// In en, this message translates to:
-  /// **'policy'**
-  String get policy;
-
   /// No description provided for @agree.
   ///
   /// In en, this message translates to:
@@ -159,6 +153,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reject'**
   String get reject;
+
+  /// No description provided for @policy.
+  ///
+  /// In en, this message translates to:
+  /// **'policy'**
+  String get policy;
+
+  /// No description provided for @requestError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Error'**
+  String get requestError;
+
+  /// No description provided for @locationRequestFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Locate Fail'**
+  String get locationRequestFail;
+
+  /// No description provided for @tabHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get tabHome;
+
+  /// No description provided for @tabProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get tabProduct;
+
+  /// No description provided for @tabMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Mine'**
+  String get tabMine;
 
   /// No description provided for @userLogin.
   ///

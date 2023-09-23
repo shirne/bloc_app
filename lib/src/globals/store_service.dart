@@ -11,6 +11,7 @@ import '../utils/core.dart';
 class StoreService {
   static const userTokenKey = 'user_token';
   static const needAuthKey = 'need_auth';
+  static const agreedKey = 'pricity_agreed';
 
   late SharedPreferences _sp;
   Future<void> init() async {
@@ -19,14 +20,20 @@ class StoreService {
 
   SharedPreferences get sp => _sp;
 
+  @visibleForTesting
+  set sp(SharedPreferences store) => _sp = store;
+
   static StoreService? _instance;
-  static Future<StoreService> getInstance() async {
-    if (_instance == null) {
-      _instance = StoreService();
-      await _instance!.init();
-    }
-    return _instance!;
+
+  factory StoreService() {
+    return _instance ??= StoreService._();
   }
+
+  StoreService._();
+
+  bool getAgreed() => _sp.getBool(agreedKey) ?? false;
+
+  Future<void> setAgreed(bool val) => _sp.setBool(agreedKey, val);
 
   ThemeMode themeMode() {
     String? theme = sp.getString('theme');
@@ -89,8 +96,8 @@ class StoreService {
     return await sp.remove(userTokenKey);
   }
 
-  Future<bool> updateToken(TokenModel user) async {
-    return await sp.setString(userTokenKey, jsonEncode(user.toJson()));
+  Future<bool> updateToken(TokenModel token) async {
+    return await sp.setString(userTokenKey, jsonEncode(token.toJson()));
   }
 
   bool needAuth() => sp.getBool(needAuthKey) ?? false;

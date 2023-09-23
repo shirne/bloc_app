@@ -166,25 +166,29 @@ class ModelList<T extends Base> extends Base {
 
 /// 分页数据的模型，以下定义的字段可根据实际情况调整
 class ModelPage<T extends Base> extends ModelList<T> {
-  final int total;
-  final int page;
-  const ModelPage({this.total = 0, this.page = 0, List<T>? lists})
-      : super(lists: lists);
+  const ModelPage({
+    this.total = 0,
+    this.page = 0,
+    this.pageSize = 12,
+    List<T>? lists,
+  }) : super(lists: lists);
 
   ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
           total: json?['total'] ?? 0,
           page: json?['page'] ?? 0,
+          pageSize: json?['page_size'] ?? 0,
           lists: (json?['lists'] as List<dynamic>?)
               ?.map<T?>(dataParser ?? (item) => item as T?)
               .whereType<T>()
               .toList(),
         );
 
+  final int total;
+  final int page;
+  final int pageSize;
+
   @override
   Json toJson() => super.toJson()
-    ..addAll({
-      'total': total,
-      'page': page,
-    });
+    ..addAll({'total': total, 'page': page, 'page_size': pageSize});
 }

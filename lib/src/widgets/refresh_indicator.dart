@@ -248,10 +248,11 @@ class EnhanceRefreshIndicatorState extends State<EnhanceRefreshIndicator>
   @override
   void didChangeDependencies() {
     final ThemeData theme = Theme.of(context);
+    final color = widget.color ?? theme.colorScheme.primary;
     _valueColor = _positionController.drive(
       ColorTween(
-        begin: (widget.color ?? theme.colorScheme.primary).withOpacity(0.0),
-        end: (widget.color ?? theme.colorScheme.primary).withOpacity(1.0),
+        begin: color.withOpacity(0.0),
+        end: color.withOpacity(1.0 * color.alpha / 255),
       ).chain(
         CurveTween(
           curve: const Interval(0.0, 1.0 / _kDragSizeFactorLimit),
@@ -266,10 +267,11 @@ class EnhanceRefreshIndicatorState extends State<EnhanceRefreshIndicator>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.color != widget.color) {
       final ThemeData theme = Theme.of(context);
+      final color = widget.color ?? theme.colorScheme.primary;
       _valueColor = _positionController.drive(
         ColorTween(
-          begin: (widget.color ?? theme.colorScheme.primary).withOpacity(0.0),
-          end: (widget.color ?? theme.colorScheme.primary).withOpacity(1.0),
+          begin: color.withOpacity(0.0),
+          end: color.withOpacity(1.0 * color.alpha / 255),
         ).chain(
           CurveTween(
             curve: const Interval(0.0, 1.0 / _kDragSizeFactorLimit),

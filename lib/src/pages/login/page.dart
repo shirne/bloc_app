@@ -33,18 +33,23 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void close() {
+    if (isMarkedClose) return;
+    isMarkedClose = true;
+    final navigator = Navigator.of(context);
     if (backPage == null || backPage == Routes.login.name) {
       logger.fine("no last route");
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
+      if (navigator.canPop()) {
+        navigator.pop();
       } else {
-        Routes.home.replace(context);
+        Routes.main.replace(context);
       }
     } else {
-      logger.fine("last route $backPage");
+      logger.fine("last route $backPage ${widget.arguments}");
 
-      Navigator.of(context)
-          .pushReplacementNamed(backPage!, arguments: widget.arguments);
+      navigator.pushReplacementNamed(
+        backPage!,
+        arguments: widget.arguments,
+      );
     }
   }
 

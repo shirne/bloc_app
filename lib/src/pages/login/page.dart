@@ -1,17 +1,19 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../common.dart';
 import 'bloc.dart';
 
 class LoginPage extends StatefulWidget {
-  final String? backPage;
-  final Object? arguments;
   LoginPage(Json? args, {Key? key})
       : backPage = args?['back'] as String?,
         arguments = args?['arguments'],
         super(key: key);
+
+  final String? backPage;
+  final Object? arguments;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -47,42 +49,40 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  void didUpdateWidget(covariant LoginPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (canClose &&
-        !isMarkedClose &&
-        context.read<GlobalBloc>().state.user.isValid) {
-      isMarkedClose = true;
-      SchedulerBinding.instance.addPostFrameCallback((v) => close());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Navigator(
-      initialRoute: '/',
-      onGenerateRoute: (RouteSettings routeSettings) {
-        final route = Routes.match(routeSettings);
-        if (route == null ||
-            route.name == Routes.login.name ||
-            route.name == '/') {
-          return MaterialPageRoute<dynamic>(
-            settings: routeSettings,
-            builder: (BuildContext context) {
-              return const LoginScreen();
-            },
-          );
-        }
-
-        if (route.isAuth) {
-          backPage = route.name;
+    return BlocConsumer<GlobalBloc, GlobalState>(
+      listener: (context, globalState) {
+        if (canClose && globalState.token.isValid) {
           close();
         }
+      },
+      builder: (context, state) {
+        return Navigator(
+          initialRoute: '/',
+          onGenerateRoute: (RouteSettings routeSettings) {
+            final route = Routes.match(routeSettings);
+            if (route == null ||
+                route.name == Routes.login.name ||
+                route.name == '/') {
+              return MaterialPageRoute<dynamic>(
+                settings: routeSettings,
+                builder: (BuildContext context) {
+                  return const LoginScreen();
+                },
+              );
+            }
 
-        return MaterialPageRoute<dynamic>(
-          settings: routeSettings,
-          builder: (BuildContext context) {
-            return route.builder.call(routeSettings.arguments);
+            if (route.isAuth) {
+              backPage = route.name;
+              close();
+            }
+
+            return MaterialPageRoute<dynamic>(
+              settings: routeSettings,
+              builder: (BuildContext context) {
+                return route.builder.call(routeSettings.arguments);
+              },
+            );
           },
         );
       },
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
             body: Center(
               child: Card(
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  width: math.min(MediaQuery.of(context).size.width * 0.8, 450),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 16,
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: CircleAvatar(
                               backgroundColor: Colors.transparent,
                               child: Image.asset(
-                                'assets/images/logo.png',
+                                Assets.images.logo,
                                 width: 80,
                                 height: 80,
                               ),
@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const Gap.v(8),
                       Text(
                         context.l10n.userLogin,
                         style: theme.textTheme.titleLarge?.copyWith(
@@ -147,28 +147,41 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const Gap.v(8),
                       TextField(
                         decoration: InputDecoration(
                           hintText: context.l10n.labelUsername,
                           prefixIcon: const Icon(Icons.person),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const Gap.v(16),
                       TextField(
                         decoration: InputDecoration(
                           hintText: context.l10n.labelPassword,
                           prefixIcon: const Icon(Icons.lock),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Center(
-                          child: Text(context.l10n.loginButtonText),
-                        ),
+                      const Gap.v(16),
+                      BlocBuilder<LoginBloc, LoginState>(
+                        buildWhen: (previous, current) {
+                          return previous.status != current.status;
+                        },
+                        builder: (context, state) {
+                          return ElevatedButton(
+                            onPressed: state.isLoading
+                                ? null
+                                : () {
+                                    context
+                                        .read<LoginBloc>()
+                                        .add(SubmitEvent());
+                                  },
+                            child: Center(
+                              child: Text(context.l10n.loginButtonText),
+                            ),
+                          );
+                        },
                       ),
-                      const SizedBox(height: 16),
+                      const Gap.v(16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

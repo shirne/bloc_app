@@ -1,6 +1,10 @@
+import 'dart:async';
+
+import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../widgets/cached_bloc.dart';
+import '../../common.dart';
+import '../../models/user.dart';
 
 part 'event.dart';
 part 'state.dart';
@@ -13,14 +17,23 @@ class LoginBloc extends CachedBloc<LoginEvent, LoginState> {
 
     on<RefreshEvent>((event, emit) {
       emit(state.clone(status: Status.loading));
-      _loadData(onError: event.onError);
     });
-
-    _loadData();
+    on<SubmitEvent>(_submit);
   }
 
-  Future<void> _loadData({void Function(String message)? onError}) async {
+  FutureOr<void> _submit(SubmitEvent event, Emitter<LoginState> emit) async {
+    emit(state.clone(status: Status.loading));
     await Future.delayed(const Duration(milliseconds: 500));
-    //TODO load data
+    if (isClosed) return;
+    GlobalBloc.instance.add(
+      UserLoginEvent(
+        TokenModel(
+          accessToken: 'aaa',
+          refreshToken: 'bbb',
+          expireIn: 1000,
+          createTime: DateTime.now(),
+        ),
+      ),
+    );
   }
 }

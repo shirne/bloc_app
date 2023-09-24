@@ -10,7 +10,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 
-import '../assets.dart';
 import '../common.dart';
 import '../globals/localizations.dart';
 

@@ -106,7 +106,7 @@ class SettingsPage extends StatelessWidget {
                             actions: [
                               CupertinoActionSheetAction(
                                 onPressed: () {
-                                  Navigator.pop(context, Locale('_'));
+                                  Navigator.pop(context, const Locale('_'));
                                 },
                                 child: Text(context.l10n.themeSystem),
                               ),

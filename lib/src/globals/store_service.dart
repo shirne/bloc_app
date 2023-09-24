@@ -88,7 +88,7 @@ class StoreService {
         );
       }
     }
-    return TokenModel();
+    return TokenModel.empty;
   }
 
   Future<bool> deleteToken() async {

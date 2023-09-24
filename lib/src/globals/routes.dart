@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../common.dart';
 import '../pages/policy.dart';
 import '../pages/splash.dart';
-import '../pages/policy.dart';
 import '../pages/not_found.dart';
 // ==== GENERATED IMPORT START ====
 import '../pages/product/page.dart';

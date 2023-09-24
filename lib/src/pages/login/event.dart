@@ -4,11 +4,15 @@ part of 'bloc.dart';
 abstract class LoginEvent {}
 
 class RefreshEvent extends LoginEvent {
-  final void Function(String message)? onError;
   RefreshEvent({this.onError});
+
+  final void Function(String message)? onError;
 }
 
 class StateChangedEvent extends LoginEvent {
-  final LoginState state;
   StateChangedEvent(this.state);
+
+  final LoginState state;
 }
+
+class SubmitEvent extends LoginEvent {}

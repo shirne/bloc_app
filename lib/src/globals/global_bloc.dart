@@ -52,11 +52,9 @@ class UserAuthEvent extends GlobalEvent {
 }
 
 class UserLoginEvent extends GlobalEvent {
-  UserLoginEvent(this.token, {this.hasPassword = true, this.hasProfile = true});
+  UserLoginEvent(this.token);
 
   final TokenModel token;
-  final bool hasPassword;
-  final bool hasProfile;
 }
 
 class TokenRefreshEvent extends GlobalEvent {
@@ -172,12 +170,7 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
 
     on<UserLoginEvent>((event, emit) async {
       state.token = event.token;
-      if (!event.hasPassword || !event.hasProfile) {
-        emit(state.clone(
-          hasPassword: event.hasPassword,
-          hasProfile: event.hasProfile,
-        ));
-      }
+
       await upUserinfo(() {});
     });
 

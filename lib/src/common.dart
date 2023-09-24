@@ -10,3 +10,4 @@ export 'globals/store_service.dart';
 export 'globals/api.dart';
 export 'models/base.dart';
 export 'widgets/cached_bloc.dart';
+export 'widgets/gap.dart';

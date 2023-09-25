@@ -11,10 +11,11 @@ import '../../utils/html.dart' if (library.html) 'dart:html' as htmllib;
 
 int webviewId = 0;
 
+/// 加载web页(url = 链接, show_app_bar = 是否显示appbar)
 class WebViewPage extends StatefulWidget {
   WebViewPage(Json? config, {Key? key})
       : url = config?['url'] ?? '',
-        showAppBar = config?['showAppBar'] ?? true,
+        showAppBar = config?['show_app_bar'] ?? true,
         super(key: key);
 
   final String url;

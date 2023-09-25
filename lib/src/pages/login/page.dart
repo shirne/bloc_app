@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../common.dart';
 import 'bloc.dart';
 
+/// 登录页
 class LoginPage extends StatefulWidget {
   LoginPage(Json? args, {Key? key})
       : backPage = args?['back'] as String?,

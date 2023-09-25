@@ -5,6 +5,7 @@ import 'package:skeletons/skeletons.dart';
 import '../../../common.dart';
 import 'bloc.dart';
 
+/// 我的资料
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 

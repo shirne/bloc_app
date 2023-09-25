@@ -9,6 +9,7 @@ import 'package:skeletons/skeletons.dart';
 import '../../common.dart';
 import 'bloc.dart';
 
+/// 首页
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 

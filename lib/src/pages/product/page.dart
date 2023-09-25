@@ -5,6 +5,7 @@ import 'package:skeletons/skeletons.dart';
 import '../../common.dart';
 import 'bloc.dart';
 
+/// 产品主页
 class ProductPage extends StatelessWidget {
   const ProductPage({Key? key}) : super(key: key);
 

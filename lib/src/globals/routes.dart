@@ -5,13 +5,13 @@ import '../pages/policy.dart';
 import '../pages/splash.dart';
 import '../pages/not_found.dart';
 // ==== GENERATED IMPORT START ====
-import '../pages/product/page.dart';
+import '../pages/home/page.dart';
+import '../pages/login/page.dart';
+import '../pages/main/page.dart';
 import '../pages/mine/page.dart';
 import '../pages/mine/profile/page.dart';
-import '../pages/home/page.dart';
+import '../pages/product/page.dart';
 import '../pages/settings/page.dart';
-import '../pages/main/page.dart';
-import '../pages/login/page.dart';
 import '../pages/web/page.dart';
 // ==== GENERATED END ====
 
@@ -41,9 +41,18 @@ class Routes {
 
 // ==== GENERATED ROUTES START ====
 
-  static final product = RouteItem(
-    '/product',
-    (arguments) => const ProductPage(),
+  static final home = RouteItem(
+    '/home',
+    (arguments) => const HomePage(),
+  );
+  static final login = RouteItem(
+    '/login',
+    isAuth: false,
+    (arguments) => LoginPage(arguments as Json?),
+  );
+  static final main = RouteItem(
+    '/main',
+    (arguments) => const MainPage(),
   );
   static final mine = RouteItem(
     '/mine',
@@ -53,22 +62,13 @@ class Routes {
     '/mine/profile',
     (arguments) => const ProfilePage(),
   );
-  static final home = RouteItem(
-    '/home',
-    (arguments) => const HomePage(),
+  static final product = RouteItem(
+    '/product',
+    (arguments) => const ProductPage(),
   );
   static final settings = RouteItem(
     '/settings',
     (arguments) => const SettingsPage(),
-  );
-  static final main = RouteItem(
-    '/main',
-    (arguments) => const MainPage(),
-  );
-  static final login = RouteItem(
-    '/login',
-    isAuth: false,
-    (arguments) => LoginPage(arguments as Json?),
   );
   static final web = RouteItem(
     '/web',
@@ -79,13 +79,13 @@ class Routes {
     for (RouteItem e in [
       splash,
       policy,
-      product,
+      home,
+      login,
+      main,
       mine,
       mineProfile,
-      home,
+      product,
       settings,
-      main,
-      login,
       web,
     ])
       e.name: e

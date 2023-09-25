@@ -41,13 +41,22 @@ class _MainPageState extends State<MainPage> {
     appScheme?.registerSchemeListener().listen(onScheme);
   }
 
-  void onScheme(value) {
+  void onScheme(SchemeEntity? value) {
     if (value != null) {
       logger.info('Init  ${value.dataString}');
       if (value.path != null &&
           value.path != Routes.main.name &&
           value.path != Routes.login.name) {
-        Navigator.of(context).pushNamed(value.path!, arguments: value.query);
+        /// 处理首页tab
+        if (value.path == Routes.home.name) {
+          homeTabIndex.value = 0;
+        } else if (value.path == Routes.product.name) {
+          homeTabIndex.value = 1;
+        } else if (value.path == Routes.mine.name) {
+          homeTabIndex.value = 2;
+        } else {
+          Navigator.of(context).pushNamed(value.path!, arguments: value.query);
+        }
       }
     }
   }
@@ -94,9 +103,7 @@ class _MainPageState extends State<MainPage> {
             ),
             bottomNavigationBar: BottomNavigationBar(
               onTap: (int i) {
-                setState(() {
-                  index = i;
-                });
+                homeTabIndex.value = i;
               },
               currentIndex: index,
               unselectedItemColor: Colors.grey,

@@ -158,4 +158,9 @@ class _CustomScrollBehavior extends MaterialScrollBehavior {
         PointerDeviceKind.trackpad,
         PointerDeviceKind.unknown,
       };
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const BouncingScrollPhysics()
+          .applyTo(const AlwaysScrollableScrollPhysics());
 }

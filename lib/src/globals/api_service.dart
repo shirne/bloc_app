@@ -2,35 +2,51 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:shirne_dialog/shirne_dialog.dart';
 
 import '../models/base.dart';
 import '../utils/utils.dart';
 import '../utils/core.dart';
 import 'config.dart';
+import 'global_bloc.dart';
 import 'routes.dart';
 
 const _tokenHeaderKey = 'Authorization';
 
 class ApiService {
-  static ApiService? _instance;
-  static ApiService getInstance() {
-    _instance ??= ApiService._(Config.serverUrl);
-    return _instance!;
+  static final _instances = <String, ApiService>{};
+  static ApiService get instance => _instances['_default'] ??= ApiService._(
+        Config.serverUrl[0],
+        connectTimeout: const Duration(seconds: 10),
+      );
+  factory ApiService([String? baseUrl, Duration? connectTimeout]) {
+    return baseUrl == null
+        ? instance
+        : _instances.putIfAbsent(
+            baseUrl,
+            () => ApiService._(baseUrl, connectTimeout: connectTimeout),
+          );
   }
 
   final Duration? connectTimeout;
   final Duration? sendTimeout;
   final Duration? receiveTimeout;
-  final String baseUrl;
+
+  String get baseUrl => _dio.options.baseUrl;
+
+  FutureOr<void> Function()? onRequest;
 
   /// 防止登录询问窗口多次弹出
   bool _isLoginShow = false;
+
+  String? get defaultLang => GlobalBloc.instance.langTag;
 
   Dio get dio => _dio;
   final Dio _dio;
 
   ApiService._(
-    this.baseUrl, {
+    String baseUrl, {
     this.connectTimeout,
     this.sendTimeout,
     this.receiveTimeout,
@@ -45,6 +61,10 @@ class ApiService {
     _dio.interceptors.add(ApiInterceptor());
   }
 
+  void setBaseUrl(String baseUrl) {
+    _dio.options.baseUrl = baseUrl;
+  }
+
   void addHeader(String key, String value) {
     _dio.options.headers[key] = value;
   }
@@ -56,7 +76,7 @@ class ApiService {
   }
 
   void addToken(String token) {
-    addHeader(_tokenHeaderKey, 'Bearer $token');
+    addHeader(_tokenHeaderKey, token);
   }
 
   void removeToken() {
@@ -88,33 +108,18 @@ class ApiService {
     final context = navigatorKey.currentContext;
     if (context == null) return;
     _isLoginShow = true;
-    await showCupertinoDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(context.l10n.loginDialogTitle),
-          content: Text(context.l10n.loginDialogContent),
-          actions: [
-            CupertinoDialogAction(
-              child: Text(context.l10n.no),
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-            ),
-            CupertinoDialogAction(
-              child: Text(context.l10n.yes),
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-            ),
-          ],
-        );
-      },
-    ).then((goLogin) {
-      if (goLogin ?? false) {
-        Routes.login.show(context);
-      }
-    });
+    final toLogin = await MyDialog.confirm(
+      Column(
+        children: [
+          Text(context.l10n.loginDialogTitle),
+          Text(context.l10n.loginDialogContent),
+        ],
+      ),
+    );
+    if (toLogin == true && context.mounted) {
+      Routes.login.show(context);
+    }
+
     _isLoginShow = false;
   }
 
@@ -133,12 +138,18 @@ class ApiService {
       logger.info('api is locked');
       final isPass = await _locker!.future;
       if (!isPass) {
-        return ApiResult<T>(500, 'Request canceled');
+        return ApiResult<T>(0, 'Request canceled');
       }
     }
+
+    await onRequest?.call();
+
     Options options = Options(
       method: method,
-      headers: header,
+      headers: {
+        'lang': defaultLang,
+        ...?header,
+      },
       sendTimeout: sendTimeout,
       receiveTimeout: receiveTimeout,
     );
@@ -155,11 +166,47 @@ class ApiService {
       if (result.needLogin) {
         (onRequireLogin ?? _onRequireLogin).call();
       }
+      if (result.invalidToken) {
+        GlobalBloc.instance.add(UserQuitEvent());
+      }
 
       return result;
     } on DioException catch (e) {
-      return ApiResult(-1, e.message ?? '$e', null);
+      if (e.response != null) {
+        final data = e.response!.data is Json ? e.response!.data : emptyJson;
+        final result = ApiResult<T>(
+          as<int>(data['code']) ?? e.response!.statusCode ?? 0,
+          as<String>(data['msg'] ?? data['message'])?.trim(),
+          dataParser?.call(data) ?? ApiResult.transData(data),
+          transErrorMsg(e.response!.data),
+        );
+        if (result.needLogin) {
+          (onRequireLogin ?? _onRequireLogin).call();
+        }
+        if (result.invalidToken) {
+          GlobalBloc.instance.add(UserQuitEvent());
+        }
+        return result;
+      }
+
+      return ApiResult<T>(-1, globalL10n.requestError, null);
     }
+  }
+
+  dynamic transErrorMsg(dynamic msg) {
+    if (msg is String) {
+      if (msg.startsWith('<html>')) {
+        final tIndex = msg.indexOf('<title>');
+        if (tIndex > -1) {
+          var eIndex = msg.indexOf('</title>', tIndex + 7);
+          return msg.substring(tIndex + 7, eIndex);
+        } else {
+          return msg.replaceAll(RegExp(r'<[a-zA-Z0-9\-]+[^>]+>'), '');
+        }
+      }
+      return msg.trim();
+    }
+    return msg;
   }
 
   /// get请求
@@ -251,9 +298,12 @@ class ApiService {
 
 class ApiResult<T extends Base> {
   final int status;
-  final String message;
+  final String? _message;
   final T? data;
-  final Json? debug;
+  final dynamic origin;
+
+  String get message =>
+      _message ?? (kReleaseMode ? globalL10n.requestError : '$origin');
 
   bool get failed => status != 200;
   bool get success => status == 200;
@@ -262,21 +312,21 @@ class ApiResult<T extends Base> {
   bool get needLogin => status == 401;
   bool get unauthorized => status == 403;
 
-  ApiResult(this.status, this.message, [this.data, this.debug]);
+  ApiResult(this.status, this._message, [this.data, this.origin]);
 
   ApiResult.fromResponse(
     Response<Json> response, [
     DataParser<T>? dataParser,
-  ])  : status = response.data?['status'] ?? -1,
-        message = response.data?['message'] ?? '',
-        data = response.data?['data'] == null
+  ])  : status = response.statusCode ?? -1,
+        _message = response.statusMessage,
+        data = response.data == null
             ? null
-            : dataParser?.call(response.data?['data']) ??
-                transData<T>(response.data?['data']),
-        debug = response.data?['debug'];
+            : dataParser?.call(response.data) ?? transData<T>(response.data),
+        origin = response.data;
 
   static T? transData<T>(dynamic data) {
     if (data == null) return null;
+
     // 基本类型或List,Map
     if (data is T) return data;
     if (data is List<dynamic>) {
@@ -284,11 +334,17 @@ class ApiResult<T extends Base> {
       if (T == ModelList) {
         return ModelList.fromJson({'list': data}) as T;
       }
+    } else if (data is Json) {
+      if (T == Model) {
+        return Model.fromJson(data) as T;
+      } else if (T == ActionResult) {
+        return ActionResult.fromJson(data) as T;
+      }
     }
     logger.warning(
       'Data parse error: $T from $data',
       Exception('Data parse error: $T from $data'),
-      StackTrace.current.cast(3),
+      StackTrace.current.cast(5),
     );
 
     return null;
@@ -296,9 +352,9 @@ class ApiResult<T extends Base> {
 
   Json toJson() => {
         'status': status,
-        'message': message,
+        'message': _message,
         'data': data,
-        'debug': debug,
+        'origin': origin,
       };
 
   @override
@@ -345,10 +401,17 @@ class ApiInterceptor extends Interceptor {
   @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
     logger.warning(
-      '网络请求错误: ${err.message}',
+      '网络请求错误: ${err.message ?? err.error}\n${err.requestOptions.uri}',
       err.error,
       StackTrace.current.cast(5),
     );
+    if (err.response?.data != null) {
+      logger.fine(
+        '错误数据',
+        '${err.response?.data}',
+      );
+    }
+
     return super.onError(err, handler);
   }
 }

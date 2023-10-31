@@ -1,25 +1,49 @@
+import 'dart:io';
+import 'dart:math' as math;
 import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../globals/config.dart';
+import 'device_info.dart';
 
 final logger = Logger.root
-  ..level = Config.env == Env.development ? Level.ALL : Level.WARNING
+  ..level = Config.env == Env.dev ? Level.ALL : Level.WARNING
   ..onRecord.listen((record) {
     log(
       record.message,
       time: record.time,
       level: record.level.value,
+      name: record.loggerName,
       error: record.error,
       stackTrace: record.stackTrace,
       sequenceNumber: record.sequenceNumber,
     );
   });
+
+final datetimeFmt = DateFormat('yyyy-MM-dd HH:mm:ss');
+final dateHmFmt = DateFormat('yyyy-MM-dd HH:mm');
+final dateHmWFmt = DateFormat('yyyy-MM-dd HH:mm EEE');
+final dateFmt = DateFormat('yyyy-MM-dd');
+final dtFmt = DateFormat('MM-dd');
+final dtWFmt = DateFormat('MM-dd EEE');
+final dtmFmt = DateFormat('MM-dd HH:mm');
+final dateWFmt = DateFormat('yyyy-MM-dd EEE');
+final timeFmt = DateFormat('HH:mm:ss');
+final hmFmt = DateFormat('HH:mm');
+
+extension DateFormatExt on DateFormat {
+  DateFormat withLocale(Locale locale) {
+    return DateFormat(pattern, locale.toString());
+  }
+}
 
 class Utils {
   static final mobileExp = RegExp(r'^1[3-9][0-9]{9}$');
@@ -115,6 +139,163 @@ class Utils {
       green < 0 ? 0 : (green > 255 ? 255 : green),
       blue < 0 ? 0 : (blue > 255 ? 255 : blue),
     );
+  }
+
+  static Alignment parseAlign(String align) {
+    switch (align.toLowerCase()) {
+      case 'left':
+      case 'centerleft':
+      case 'leftcenter':
+        return Alignment.centerLeft;
+      case 'top':
+      case 'centertop':
+      case 'topcenter':
+        return Alignment.topCenter;
+      case 'right':
+      case 'centerright':
+      case 'rightcenter':
+        return Alignment.centerRight;
+      case 'bottom':
+      case 'centerbottom':
+      case 'bottomcenter':
+        return Alignment.bottomCenter;
+      case 'topleft':
+      case 'lefttop':
+        return Alignment.topLeft;
+      case 'topright':
+      case 'righttop':
+        return Alignment.topRight;
+      case 'bottomleft':
+      case 'leftbottom':
+        return Alignment.bottomLeft;
+      case 'bottomright':
+      case 'rightbottom':
+        return Alignment.bottomRight;
+      case 'center':
+        return Alignment.center;
+      default:
+        if (align.contains(',')) {
+          final parts = align.split(',');
+          return Alignment(
+            double.tryParse(parts[0]) ?? 0,
+            double.tryParse(parts[1]) ?? 0,
+          );
+        }
+    }
+    return Alignment.topLeft;
+  }
+
+  static Color parseHex(String color) {
+    if (color.startsWith('#')) {
+      color = color.substring(1);
+    }
+    if (color.startsWith('0x')) {
+      color = color.substring(2);
+    }
+    if (color.length == 3) {
+      color =
+          '${color[0]}${color[0]}${color[1]}${color[1]}${color[2]}${color[2]}';
+    }
+    if (color.length == 6) {
+      color = 'FF$color';
+    }
+    if (color.length != 8) {
+      return const Color(0xFF000000);
+    }
+    return Color(int.parse(color, radix: 16));
+  }
+
+  static bool isNetwork(String url) {
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  static const _alphas = 'abcdefghijklmnopqrstuvwxyz';
+  static const _upperAlphas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  static const _numbers = '0123456789';
+
+  static String randomString(
+    int length, {
+    String? prefix,
+    bool isName = true,
+    bool withUpperCase = true,
+    bool withLowerCase = true,
+    bool withNumber = true,
+  }) {
+    final builder = StringBuffer(prefix ?? '');
+    final rand = math.Random();
+    final baseStr =
+        '${withUpperCase ? _upperAlphas : ''}${withLowerCase ? _alphas : ''}${withNumber ? _numbers : ''}';
+    if (baseStr.isEmpty) {
+      throw Exception('no any word to use.');
+    }
+    if (isName && (prefix == null || prefix.isEmpty)) {
+      final base2Str =
+          '${withUpperCase ? _upperAlphas : ''}${withLowerCase ? _alphas : ''}';
+      if (base2Str.isNotEmpty) {
+        int randIndex = rand.nextInt(base2Str.length);
+        builder.write(base2Str[randIndex]);
+      }
+    }
+
+    while (builder.length < length) {
+      int randIndex = rand.nextInt(baseStr.length);
+      builder.write(baseStr[randIndex]);
+    }
+
+    return builder.toString();
+  }
+
+  static Future<String> getDir(
+    Future<Directory> Function() onFetch, {
+    String name = '',
+  }) async {
+    try {
+      final tempPath = await onFetch();
+      final path = '${tempPath.path}/$name';
+      if (DeviceInfo().lowerAndroidQ) {
+        if (!await Permission.storage.isGranted) {
+          try {
+            final status = await Permission.storage.request();
+            if (!status.isGranted) {
+              throw Exception('Access denied');
+            }
+          } catch (_) {}
+        }
+      }
+      if (!Directory(path).existsSync()) {
+        Directory(path).createSync(recursive: true);
+      }
+      return path;
+    } catch (e) {
+      logger.warning(e);
+    }
+    final path = '${Directory.systemTemp.path}/$name';
+    try {
+      if (!Directory(path).existsSync()) {
+        Directory(path).createSync(recursive: true);
+      }
+    } catch (_) {}
+    return path;
+  }
+
+  static Future<String> getTempDir({String name = ''}) async {
+    return getDir(getTemporaryDirectory, name: name);
+  }
+
+  static Future<String> getCacheDir({String name = ''}) async {
+    return getDir(getApplicationCacheDirectory, name: name);
+  }
+
+  static Future<String> getDocDir({String name = ''}) async {
+    return getDir(getApplicationDocumentsDirectory, name: name);
+  }
+
+  static Future<String> getSupportDir({String name = ''}) async {
+    return getDir(getApplicationSupportDirectory, name: name);
+  }
+
+  static bool isUrl(String result) {
+    return result.startsWith('http://') || result.startsWith('https://');
   }
 }
 

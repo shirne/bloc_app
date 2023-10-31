@@ -3,11 +3,12 @@ import 'dart:convert';
 import '../utils/utils.dart';
 import '../utils/core.dart';
 
-typedef DataParser<T> = T Function(dynamic);
+typedef DataParser<T> = T Function(dynamic m);
 
 T defaultParser<T>(data) => as<T>(data) ?? getDefault<T>();
 
 typedef Json = Map<String, dynamic>;
+typedef JsonList = List<dynamic>;
 
 const emptyJson = <String, dynamic>{};
 
@@ -62,16 +63,15 @@ T? as<T>(dynamic value, [T? defaultValue]) {
       result = DateTime.fromMillisecondsSinceEpoch(value.toInt()) as T;
     }
     if (result != null) {
-      logger.info(
-        'Force cast $value(${value.runtimeType}) to $T ($result)',
-        StackTrace.current.cast(3),
-      );
       return result as T;
     }
   } else
 
   // String parse
   if (value is String) {
+    if (value.isEmpty) {
+      return defaultValue;
+    }
     dynamic result;
     if (T == int) {
       result = int.tryParse(value);
@@ -87,6 +87,15 @@ T? as<T>(dynamic value, [T? defaultValue]) {
       result = DateTime.tryParse(value);
     } else if (T == bool) {
       return {'1', '-1', 'true', 'yes'}.contains(value.toLowerCase()) as T;
+    } else if (T == JsonList || T == Json) {
+      try {
+        return jsonDecode(value) as T;
+      } catch (e) {
+        logger.warning(
+          'Json decode error: $e',
+          StackTrace.current.cast(3),
+        );
+      }
     } else {
       logger.warning(
         'Unsupported type cast from $value (${value.runtimeType}) to $T.',
@@ -94,10 +103,12 @@ T? as<T>(dynamic value, [T? defaultValue]) {
       );
       return defaultValue;
     }
-    logger.fine(
-      'Force cast $value(${value.runtimeType}) to $T ($result)',
-      StackTrace.current.cast(3),
-    );
+    if (result == null) {
+      logger.fine(
+        'Cast $value(${value.runtimeType}) to $T failed',
+        StackTrace.current.cast(3),
+      );
+    }
     return result as T? ?? defaultValue;
   }
 
@@ -128,8 +139,8 @@ abstract class Base {
 
 /// 通用的接口返回模型
 class Model extends Base {
-  final Json data;
-  const Model(this.data);
+  Json data;
+  Model(this.data);
 
   Model.fromJson(Json? json) : this(json ?? {});
 
@@ -147,44 +158,73 @@ class Model extends Base {
 
 /// 列表数据的模型
 class ModelList<T extends Base> extends Base {
-  final List<T>? lists;
-  const ModelList({this.lists});
+  ModelList({this.items});
 
   ModelList.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
-          lists: (json?['list'] as List<dynamic>?)
+          items: as<List>(json?['items'] ?? json?['list'])
               ?.map<T?>(dataParser ?? (item) => item as T?)
               .whereType<T>()
               .toList(),
         );
 
+  List<T>? items;
+
+  bool get isEmpty => items?.isEmpty ?? true;
+  bool get isNotEmpty => !isEmpty;
+
   @override
   Json toJson() => {
-        'lists': lists?.map<Json>((item) => item.toJson()).toList(),
+        'items': items?.map<Json>((item) => item.toJson()).toList(),
       };
 }
 
 /// 分页数据的模型，以下定义的字段可根据实际情况调整
 class ModelPage<T extends Base> extends ModelList<T> {
-  final int total;
-  final int page;
-  const ModelPage({this.total = 0, this.page = 0, List<T>? lists})
-      : super(lists: lists);
+  ModelPage({this.total = 0, this.page = 0, this.pageSize = 10, List<T>? items})
+      : super(items: items);
 
   ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
-          total: json?['total'] ?? 0,
-          page: json?['page'] ?? 0,
-          lists: (json?['lists'] as List<dynamic>?)
+          total: as<int>(json?['total'], 0)!,
+          page: as<int>(json?['page'], 0)!,
+          pageSize: as<int>(json?['page_size'] ?? json?['pageSize'], 8)!,
+          items: as<List>(json?['items'] ?? json?['list'])
               ?.map<T?>(dataParser ?? (item) => item as T?)
               .whereType<T>()
               .toList(),
         );
+
+  final int total;
+  final int page;
+  final int pageSize;
 
   @override
   Json toJson() => super.toJson()
     ..addAll({
       'total': total,
       'page': page,
+      'page_size': pageSize,
     });
+}
+
+class ActionResult extends Base {
+  ActionResult(this.state);
+
+  ActionResult.fromJson(Json json) : this(as<int>(json['state'], 0)!);
+
+  final int state;
+
+  bool get isSuccess => state == 1;
+
+  @override
+  Json toJson() => {
+        'state': state,
+      };
+}
+
+abstract class UserInfoModel {
+  int get id;
+  String get nickname;
+  String get avator;
 }

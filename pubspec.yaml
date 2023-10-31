@@ -15,12 +15,17 @@ dependencies:
 
   path:
   intl:                    # 国际化
+  path_provider:
   logging:                  # 日志工具
   dio: ^5.1.2                # 网络库
   bloc: ^8.0.3
   flutter_bloc: ^8.0.1
   shared_preferences: ^2.0.17 # 本地存储
   flutter_secure_storage: ^8.0.0
+  permission_handler: ^10.0.0
+  device_info_plus:
+  geolocator:
+
   skeletons: ^0.0.3          # 骨架页构造工具
   appscheme: ^1.0.8          # applink处理
   file_picker: ^5.2.5         # 文件选择
@@ -52,6 +57,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/json/
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

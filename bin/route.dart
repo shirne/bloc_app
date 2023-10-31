@@ -2,16 +2,18 @@ import 'dart:io';
 
 final classNames = <String>[];
 const loginDir = 'login';
+const export = 'route.md';
 
 void main(List<String> args) {
   final pagesPath = "${Directory.current.path}/lib/src/pages/";
   final path = "${Directory.current.path}/lib/src/globals/routes.dart";
 
+  final exports = <String>[];
   final imports = <String>[];
   final routes = <String>[];
   final routeNames = <String>[];
 
-  walkDir(pagesPath, imports, routes, routeNames);
+  walkDir(pagesPath, imports, routes, routeNames, exports);
 
   final contents = File(path).readAsLinesSync();
   final newContents = <String>[];
@@ -45,13 +47,15 @@ void main(List<String> args) {
     "      policy,",
     for (var n in routeNames) "      $n,",
     "    ])",
-    "      e.name: e",
+    "      e.name: e,",
     "  };",
   ]);
   newContents.addAll(contents.sublist(routeEnd));
   newContents.add("");
 
   File(path).writeAsStringSync(newContents.join("\n"));
+
+  File(export).writeAsStringSync(exports.join("\n"));
   stdout.write('update routes ok');
 }
 
@@ -60,6 +64,7 @@ void walkDir(
   List<String> imports,
   List<String> routes,
   List<String> routeNames,
+  List<String> exports,
 ) {
   for (var entity in Directory(pagesPath).listSync()) {
     if (entity is Directory) {
@@ -67,10 +72,15 @@ void walkDir(
       final path = entity.path.replaceAll('\\', '/');
       final pagePath = path.split("/src/pages/").last;
       if (index.existsSync()) {
-        final (className, hasArgs) = getClassName(index);
+        final (className, hasArgs, comment) = getClassName(index);
         if (className.isEmpty) {
           stdout.addError("Unfound class in ${index.path}");
         } else {
+          exports.add('');
+          if (comment.isNotEmpty) {
+            exports.add('// $comment');
+          }
+          exports.add('/$pagePath${hasArgs ? '?' : ''}');
           bool useAlias = false;
           final libName = pagePath.replaceAll('/', '_');
           if (classNames.contains(className)) {
@@ -98,21 +108,27 @@ void walkDir(
           routeNames.add(routeName);
         }
       }
-      walkDir(entity.path, imports, routes, routeNames);
+      walkDir(entity.path, imports, routes, routeNames, exports);
     }
   }
 }
 
-(String, bool) getClassName(File index) {
+(String, bool, String) getClassName(File index) {
   String className = '';
   bool hasArgs = false;
+  String lastLine = '';
+  String comment = '';
   for (var s in index.readAsLinesSync()) {
     if (className.isEmpty && s.startsWith('class ')) {
       className = s.substring(6, s.indexOf(' ', 7));
+      if (lastLine.startsWith('///')) {
+        comment = lastLine.substring(3).trim();
+      }
     } else if (s.trim().startsWith('$className(Json?')) {
       hasArgs = true;
       break;
     }
+    lastLine = s;
   }
-  return (className, hasArgs);
+  return (className, hasArgs, comment);
 }

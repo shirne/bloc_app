@@ -26,7 +26,7 @@ class _PolicyPageState extends State<PolicyPage> {
   }
 
   void loadHtml() async {
-    final assets = 'assets/html/${widget.name}.html';
+    final assets = 'assets/json/${widget.name}.html';
     final content = await rootBundle.loadString(assets);
     setState(() {
       html = content;

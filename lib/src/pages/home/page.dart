@@ -9,6 +9,7 @@ import 'package:skeletons/skeletons.dart';
 import '../../common.dart';
 import 'bloc.dart';
 
+/// 首页
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -57,7 +58,7 @@ class _HomePageState extends State<HomePage> {
                     Routes.settings.show(context);
                   },
                   icon: const Icon(Icons.settings),
-                )
+                ),
               ],
             ),
             body: state.status == Status.initial

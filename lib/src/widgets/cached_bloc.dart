@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 
+import '../models/base.dart';
+
 enum Status {
   initial('initial'),
   loading('loading'),
@@ -19,7 +21,10 @@ enum Status {
 }
 
 abstract class BaseState {
-  BaseState({this.status = Status.initial, this.message});
+  static const messageError = '_ERROR';
+
+  BaseState({this.status = Status.initial, String? message})
+      : message = message == null || message.isEmpty ? null : message;
 
   final Status status;
   final String? message;
@@ -41,12 +46,14 @@ abstract class BaseState {
 }
 
 @immutable
-class QueryModel {
+class QueryModel<T, S> {
   const QueryModel({
-    this.page = 1,
+    this.page = 0,
     this.pageSize = 10,
     this.total = 0,
     this.keyword = '',
+    this.type,
+    this.status,
   });
 
   static const _default = QueryModel();
@@ -55,18 +62,34 @@ class QueryModel {
   final int pageSize;
   final int total;
   final String keyword;
+  final T? type;
+  final S? status;
 
-  QueryModel clone({
+  QueryModel<T, S> clone({
     int? page,
     int? pageSize,
     int? total,
     String? keyword,
+    T? type,
+    S? status,
   }) {
     return QueryModel(
       page: page ?? this.page,
       pageSize: pageSize ?? this.pageSize,
       total: total ?? this.total,
       keyword: keyword ?? this.keyword,
+      type: type ?? this.type,
+      status: status ?? this.status,
+    );
+  }
+
+  QueryModel<T, S> fromPaged({
+    ModelPage? paged,
+  }) {
+    return clone(
+      page: paged?.page,
+      pageSize: paged?.pageSize,
+      total: paged?.total,
     );
   }
 
@@ -75,6 +98,8 @@ class QueryModel {
         'pageSize': pageSize,
         'total': total,
         'keyword': keyword,
+        'type': '$type',
+        'status': '$status',
       };
 }
 
@@ -96,9 +121,11 @@ class PagedState<T, S extends QueryModel> extends BaseState {
 
   final List<T> lists;
 
-  bool get hasMore => lists.length < query.total;
-  bool get isFirstLoading => isLoading && lists.isEmpty;
-  bool get isEmpty => (isSuccess || isError) & lists.isEmpty;
+  bool get hasMore =>
+      lists.length < query.total && query.page < query.total / query.pageSize;
+  bool get isFirstLoading => (isInitial || isLoading) && lists.isEmpty;
+  bool get isMoreLoading => isLoading && lists.isNotEmpty;
+  bool get isEmpty => (isSuccess || isError) && lists.isEmpty;
 
   @override
   PagedState<T, S> clone({
@@ -126,8 +153,6 @@ class PagedState<T, S extends QueryModel> extends BaseState {
 final _states = <String, dynamic>{};
 
 abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
-  final String globalKey;
-
   CachedBloc(
     T Function() createState, [
     this.globalKey = '',
@@ -139,6 +164,12 @@ abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
                   ? _states.putIfAbsent(globalKey, createState)
                   : fromCache.call(_states.putIfAbsent(globalKey, createState)),
         );
+
+  final String globalKey;
+
+  static void clearCache() {
+    _states.clear();
+  }
 
   @override
   Future<void> close() async {

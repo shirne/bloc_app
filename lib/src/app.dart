@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
@@ -9,8 +10,8 @@ import 'app_navigator.dart';
 import 'common.dart';
 
 class MainApp extends StatelessWidget {
-  final StoreService storeService;
-  const MainApp(this.storeService, {Key? key}) : super(key: key);
+  final storeService = StoreService();
+  MainApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +59,7 @@ class MainApp extends StatelessWidget {
                   );
                 }
                 if (route.isAuth) {
-                  if (!state.user.isValid) {
-                    logger.info(state.user);
+                  if (!GlobalBloc.instance.state.token.isValid) {
                     return MaterialPageRoute<dynamic>(
                       settings: RouteSettings(
                         name: Routes.login.name,
@@ -99,6 +99,11 @@ class MainApp extends StatelessWidget {
     return base.copyWith(
       useMaterial3: true,
       visualDensity: VisualDensity.standard,
+      appBarTheme: AppBarTheme(
+        systemOverlayStyle: base.brightness == Brightness.dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+      ),
       cardTheme: const CardTheme(
         elevation: 20,
       ),
@@ -153,4 +158,9 @@ class _CustomScrollBehavior extends MaterialScrollBehavior {
         PointerDeviceKind.trackpad,
         PointerDeviceKind.unknown,
       };
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const BouncingScrollPhysics()
+          .applyTo(const AlwaysScrollableScrollPhysics());
 }

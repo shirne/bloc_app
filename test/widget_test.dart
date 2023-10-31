@@ -14,10 +14,9 @@ import 'package:blocapp/src/app.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    final service = await StoreService.getInstance();
-
+    await StoreService().init();
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MainApp(service));
+    await tester.pumpWidget(MainApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

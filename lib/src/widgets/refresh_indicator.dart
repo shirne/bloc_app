@@ -6,8 +6,8 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show clampDouble;
-import 'package:flutter/material.dart'
-    hide RefreshIndicator, RefreshIndicatorState, RefreshProgressIndicator;
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
 
 // The over-scroll distance that moves the indicator to its maximum
 // displacement, as a percentage of the scrollable's container extent.
@@ -36,6 +36,8 @@ enum _RefreshIndicatorMode {
   canceled, // Animating the indicator's fade-out after not arming.
 }
 
+enum _IndicatorType { material, cupertino, adaptive }
+
 /// A widget that supports the Material "swipe to refresh" idiom.
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=ORApMlzwMdM}
@@ -47,7 +49,7 @@ enum _RefreshIndicatorMode {
 /// scrollable's contents and then complete the [Future] it returns. The refresh
 /// indicator disappears after the callback's [Future] has completed.
 ///
-/// The trigger mode is configured by [EnhanceRefreshIndicator.triggerMode].
+/// The trigger mode is configured by [RefreshIndicator.triggerMode].
 ///
 /// {@tool dartpad}
 /// This example shows how [EnhanceRefreshIndicator] can be triggered in different ways.
@@ -75,7 +77,7 @@ enum _RefreshIndicatorMode {
 /// ```dart
 /// ListView(
 ///   physics: const AlwaysScrollableScrollPhysics(),
-///   children: ...
+///   // ...
 /// )
 /// ```
 ///
@@ -84,7 +86,7 @@ enum _RefreshIndicatorMode {
 /// See also:
 ///
 ///  * <https://material.io/design/platform-guidance/android-swipe-to-refresh.html>
-///  * [EnhanceRefreshIndicatorState], can be used to programmatically show the refresh indicator.
+///  * [RefreshIndicatorState], can be used to programmatically show the refresh indicator.
 ///  * [EnhanceRefreshProgressIndicator], widget used by [EnhanceRefreshIndicator] to show
 ///    the inner circular progress spinner during refreshes.
 ///  * [CupertinoSliverRefreshControl], an iOS equivalent of the pull-to-refresh pattern.
@@ -113,11 +115,44 @@ class EnhanceRefreshIndicator extends StatefulWidget {
     this.notificationPredicate = defaultScrollNotificationPredicate,
     this.semanticsLabel,
     this.semanticsValue,
-    this.strokeWidth = EnhanceRefreshProgressIndicator.defaultStrokeWidth,
+    this.strokeWidth = RefreshProgressIndicator.defaultStrokeWidth,
     this.triggerMode = RefreshIndicatorTriggerMode.onEdge,
     this.indicatorBuilder,
-    this.elevation = 2.0,
-  });
+    bool useCupertino = false,
+  }) : _indicatorType =
+            useCupertino ? _IndicatorType.cupertino : _IndicatorType.material;
+
+  /// Creates an adaptive [RefreshIndicator] based on whether the target
+  /// platform is iOS or macOS, following Material design's
+  /// [Cross-platform guidelines](https://material.io/design/platform-guidance/cross-platform-adaptation.html).
+  ///
+  /// When the descendant overscrolls, a different spinning progress indicator
+  /// is shown depending on platform. On iOS and macOS,
+  /// [CupertinoActivityIndicator] is shown, but on all other platforms,
+  /// [CircularProgressIndicator] appears.
+  ///
+  /// If a [CupertinoActivityIndicator] is shown, the following parameters are ignored:
+  /// [backgroundColor], [semanticsLabel], [semanticsValue], [strokeWidth].
+  ///
+  /// The target platform is based on the current [Theme]: [ThemeData.platform].
+  ///
+  /// Noteably the scrollable widget itself will have slightly different behavior
+  /// from [CupertinoSliverRefreshControl], due to a difference in structure.
+  const EnhanceRefreshIndicator.adaptive({
+    super.key,
+    required this.child,
+    this.displacement = 40.0,
+    this.edgeOffset = 0.0,
+    required this.onRefresh,
+    this.color,
+    this.backgroundColor,
+    this.notificationPredicate = defaultScrollNotificationPredicate,
+    this.semanticsLabel,
+    this.semanticsValue,
+    this.strokeWidth = RefreshProgressIndicator.defaultStrokeWidth,
+    this.triggerMode = RefreshIndicatorTriggerMode.onEdge,
+    this.indicatorBuilder,
+  }) : _indicatorType = _IndicatorType.adaptive;
 
   /// The widget below this widget in the tree.
   ///
@@ -181,10 +216,12 @@ class EnhanceRefreshIndicator extends StatefulWidget {
   /// {@macro flutter.progress_indicator.ProgressIndicator.semanticsValue}
   final String? semanticsValue;
 
-  /// Defines `strokeWidth` for `RefreshIndicator`.
+  /// Defines [strokeWidth] for `RefreshIndicator`.
   ///
-  /// By default, the value of `strokeWidth` is 2.0 pixels.
+  /// By default, the value of [strokeWidth] is 2.0 pixels.
   final double strokeWidth;
+
+  final _IndicatorType _indicatorType;
 
   /// Defines how this [EnhanceRefreshIndicator] can be triggered when users overscroll.
   ///
@@ -202,8 +239,6 @@ class EnhanceRefreshIndicator extends StatefulWidget {
   final RefreshIndicatorTriggerMode triggerMode;
 
   final TransitionBuilder? indicatorBuilder;
-
-  final double elevation;
 
   @override
   EnhanceRefreshIndicatorState createState() => EnhanceRefreshIndicatorState();
@@ -248,10 +283,11 @@ class EnhanceRefreshIndicatorState extends State<EnhanceRefreshIndicator>
   @override
   void didChangeDependencies() {
     final ThemeData theme = Theme.of(context);
+    final color = widget.color ?? theme.colorScheme.primary;
     _valueColor = _positionController.drive(
       ColorTween(
-        begin: (widget.color ?? theme.colorScheme.primary).withOpacity(0.0),
-        end: (widget.color ?? theme.colorScheme.primary).withOpacity(1.0),
+        begin: color.withOpacity(0.0),
+        end: color.withOpacity(1.0 * color.alpha / 255),
       ).chain(
         CurveTween(
           curve: const Interval(0.0, 1.0 / _kDragSizeFactorLimit),
@@ -266,10 +302,11 @@ class EnhanceRefreshIndicatorState extends State<EnhanceRefreshIndicator>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.color != widget.color) {
       final ThemeData theme = Theme.of(context);
+      final color = widget.color ?? theme.colorScheme.primary;
       _valueColor = _positionController.drive(
         ColorTween(
-          begin: (widget.color ?? theme.colorScheme.primary).withOpacity(0.0),
-          end: (widget.color ?? theme.colorScheme.primary).withOpacity(1.0),
+          begin: color.withOpacity(0.0),
+          end: color.withOpacity(1.0 * color.alpha / 255),
         ).chain(
           CurveTween(
             curve: const Interval(0.0, 1.0 / _kDragSizeFactorLimit),
@@ -495,7 +532,6 @@ class EnhanceRefreshIndicatorState extends State<EnhanceRefreshIndicator>
         });
 
         final Future<void> refreshResult = widget.onRefresh();
-
         refreshResult.whenComplete(() {
           if (mounted && _mode == _RefreshIndicatorMode.refresh) {
             completer.complete();
@@ -583,7 +619,8 @@ class EnhanceRefreshIndicatorState extends State<EnhanceRefreshIndicator>
                     animation: _positionController,
                     builder: widget.indicatorBuilder ??
                         (BuildContext context, Widget? child) {
-                          return EnhanceRefreshProgressIndicator(
+                          final Widget materialIndicator =
+                              RefreshProgressIndicator(
                             semanticsLabel: widget.semanticsLabel ??
                                 MaterialLocalizations.of(context)
                                     .refreshIndicatorSemanticLabel,
@@ -594,8 +631,35 @@ class EnhanceRefreshIndicatorState extends State<EnhanceRefreshIndicator>
                             valueColor: _valueColor,
                             backgroundColor: widget.backgroundColor,
                             strokeWidth: widget.strokeWidth,
-                            elevation: widget.elevation,
                           );
+
+                          final Widget cupertinoIndicator =
+                              CupertinoActivityIndicator(
+                            color: widget.color,
+                          );
+
+                          switch (widget._indicatorType) {
+                            case _IndicatorType.material:
+                              return materialIndicator;
+
+                            case _IndicatorType.cupertino:
+                              return cupertinoIndicator;
+
+                            case _IndicatorType.adaptive:
+                              {
+                                final ThemeData theme = Theme.of(context);
+                                switch (theme.platform) {
+                                  case TargetPlatform.android:
+                                  case TargetPlatform.fuchsia:
+                                  case TargetPlatform.linux:
+                                  case TargetPlatform.windows:
+                                    return materialIndicator;
+                                  case TargetPlatform.iOS:
+                                  case TargetPlatform.macOS:
+                                    return cupertinoIndicator;
+                                }
+                              }
+                          }
                         },
                   ),
                 ),
@@ -604,363 +668,5 @@ class EnhanceRefreshIndicatorState extends State<EnhanceRefreshIndicator>
           ),
       ],
     );
-  }
-}
-
-/// An indicator for the progress of refreshing the contents of a widget.
-///
-/// Typically used for swipe-to-refresh interactions. See [EnhanceRefreshIndicator] for
-/// a complete implementation of swipe-to-refresh driven by a [Scrollable]
-/// widget.
-///
-/// The indicator arc is displayed with [valueColor], an animated value. To
-/// specify a constant color use: `AlwaysStoppedAnimation<Color>(color)`.
-///
-/// See also:
-///
-///  * [EnhanceRefreshIndicator], which automatically displays a [CircularProgressIndicator]
-///    when the underlying vertical scrollable is overscrolled.
-class EnhanceRefreshProgressIndicator extends CircularProgressIndicator {
-  /// Creates a refresh progress indicator.
-  ///
-  /// Rather than creating a refresh progress indicator directly, consider using
-  /// a [EnhanceRefreshIndicator] together with a [Scrollable] widget.
-  ///
-  /// {@macro flutter.material.ProgressIndicator.ProgressIndicator}
-  const EnhanceRefreshProgressIndicator({
-    super.key,
-    super.value,
-    super.backgroundColor,
-    super.color,
-    super.valueColor,
-    super.strokeWidth =
-        defaultStrokeWidth, // Different default than CircularProgressIndicator.
-    super.semanticsLabel,
-    super.semanticsValue,
-    this.elevation = 2.0,
-  });
-
-  /// Default stroke width.
-  static const double defaultStrokeWidth = 2.5;
-
-  final double elevation;
-
-  /// {@template flutter.material.RefreshProgressIndicator.backgroundColor}
-  /// Background color of that fills the circle under the refresh indicator.
-  ///
-  /// If [EnhanceRefreshIndicator.backgroundColor] is null then the
-  /// ambient [ProgressIndicatorThemeData.refreshBackgroundColor] will be used.
-  /// If that is null, then the ambient theme's [ThemeData.canvasColor]
-  /// will be used.
-  /// {@endtemplate}
-  @override
-  Color? get backgroundColor => super.backgroundColor;
-
-  Color _getValueColor(BuildContext context) {
-    return valueColor?.value ??
-        color ??
-        ProgressIndicatorTheme.of(context).color ??
-        Theme.of(context).colorScheme.primary;
-  }
-
-  Widget _buildSemanticsWrapper({
-    required BuildContext context,
-    required Widget child,
-  }) {
-    String? expandedSemanticsValue = semanticsValue;
-    if (value != null) {
-      expandedSemanticsValue ??= '${(value! * 100).round()}%';
-    }
-    return Semantics(
-      label: semanticsLabel,
-      value: expandedSemanticsValue,
-      child: child,
-    );
-  }
-
-  @override
-  State<EnhanceRefreshProgressIndicator> createState() =>
-      _RefreshProgressIndicatorState();
-}
-
-const int _kIndeterminateCircularDuration = 1333 * 2222;
-
-class _RefreshProgressIndicatorState
-    extends State<EnhanceRefreshProgressIndicator>
-    with SingleTickerProviderStateMixin {
-  static const int _pathCount = _kIndeterminateCircularDuration ~/ 1333;
-  static const int _rotationCount = _kIndeterminateCircularDuration ~/ 2222;
-
-  static final Animatable<double> _strokeHeadTween = CurveTween(
-    curve: const Interval(0.0, 0.5, curve: Curves.fastOutSlowIn),
-  ).chain(
-    CurveTween(
-      curve: const SawTooth(_pathCount),
-    ),
-  );
-  static final Animatable<double> _strokeTailTween = CurveTween(
-    curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-  ).chain(
-    CurveTween(
-      curve: const SawTooth(_pathCount),
-    ),
-  );
-  static final Animatable<double> _offsetTween =
-      CurveTween(curve: const SawTooth(_pathCount));
-  static final Animatable<double> _rotationTween =
-      CurveTween(curve: const SawTooth(_rotationCount));
-
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: _kIndeterminateCircularDuration),
-      vsync: this,
-    );
-    if (widget.value == null) {
-      _controller.repeat();
-    }
-  }
-
-  @override
-  void didUpdateWidget(EnhanceRefreshProgressIndicator oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.value == null && !_controller.isAnimating) {
-      _controller.repeat();
-    } else if (widget.value != null && _controller.isAnimating) {
-      _controller.stop();
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  static const double _indicatorSize = 41.0;
-
-  /// Interval for arrow head to fully grow.
-  static const double _strokeHeadInterval = 0.33;
-
-  late final Animatable<double> _convertTween = CurveTween(
-    curve: const Interval(0.1, _strokeHeadInterval),
-  );
-
-  late final Animatable<double> _additionalRotationTween =
-      TweenSequence<double>(
-    <TweenSequenceItem<double>>[
-      // Makes arrow to expand a little bit earlier, to match the Android look.
-      TweenSequenceItem<double>(
-        tween: Tween<double>(begin: -0.1, end: -0.2),
-        weight: _strokeHeadInterval,
-      ),
-      // Additional rotation after the arrow expanded
-      TweenSequenceItem<double>(
-        tween: Tween<double>(begin: -0.2, end: 1.35),
-        weight: 1 - _strokeHeadInterval,
-      ),
-    ],
-  );
-
-  // Last value received from the widget before null.
-  double? _lastValue;
-
-  // Always show the indeterminate version of the circular progress indicator.
-  //
-  // When value is non-null the sweep of the progress indicator arrow's arc
-  // varies from 0 to about 300 degrees.
-  //
-  // When value is null the arrow animation starting from wherever we left it.
-  @override
-  Widget build(BuildContext context) {
-    final double? value = widget.value;
-    if (value != null) {
-      _lastValue = value;
-      _controller.value = _convertTween.transform(value) *
-          (1333 / 2 / _kIndeterminateCircularDuration);
-    }
-    return _buildAnimation();
-  }
-
-  Widget _buildAnimation() {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (BuildContext context, Widget? child) {
-        return _buildMaterialIndicator(
-          context,
-          // Lengthen the arc a little
-          1.05 * _strokeHeadTween.evaluate(_controller),
-          _strokeTailTween.evaluate(_controller),
-          _offsetTween.evaluate(_controller),
-          _rotationTween.evaluate(_controller),
-        );
-      },
-    );
-  }
-
-  Widget _buildMaterialIndicator(
-    BuildContext context,
-    double headValue,
-    double tailValue,
-    double offsetValue,
-    double rotationValue,
-  ) {
-    final double? value = widget.value;
-    final double arrowheadScale = value == null
-        ? 0.0
-        : const Interval(0.1, _strokeHeadInterval).transform(value);
-    final double rotation;
-
-    if (value == null && _lastValue == null) {
-      rotation = 0.0;
-    } else {
-      rotation =
-          math.pi * _additionalRotationTween.transform(value ?? _lastValue!);
-    }
-
-    Color valueColor = widget._getValueColor(context);
-    final double opacity = valueColor.opacity;
-    valueColor = valueColor.withOpacity(1.0);
-
-    final Color backgroundColor = widget.backgroundColor ??
-        ProgressIndicatorTheme.of(context).refreshBackgroundColor ??
-        Theme.of(context).canvasColor;
-
-    return widget._buildSemanticsWrapper(
-      context: context,
-      child: Container(
-        width: _indicatorSize,
-        height: _indicatorSize,
-        margin: const EdgeInsets.all(4.0), // accommodate the shadow
-        child: Material(
-          type: MaterialType.circle,
-          color: backgroundColor,
-          elevation: widget.elevation,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Opacity(
-              opacity: opacity,
-              child: Transform.rotate(
-                angle: rotation,
-                child: CustomPaint(
-                  painter: _RefreshProgressIndicatorPainter(
-                    valueColor: valueColor,
-                    value: null, // Draw the indeterminate progress indicator.
-                    headValue: headValue,
-                    tailValue: tailValue,
-                    offsetValue: offsetValue,
-                    rotationValue: rotationValue,
-                    strokeWidth: widget.strokeWidth,
-                    arrowheadScale: arrowheadScale,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RefreshProgressIndicatorPainter extends CustomPainter {
-  _RefreshProgressIndicatorPainter({
-    required this.valueColor,
-    required this.value,
-    required this.headValue,
-    required this.tailValue,
-    required this.offsetValue,
-    required this.rotationValue,
-    required this.strokeWidth,
-    required this.arrowheadScale,
-  })  : arcStart = value != null
-            ? _startAngle
-            : _startAngle +
-                tailValue * 3 / 2 * math.pi +
-                rotationValue * math.pi * 2.0 +
-                offsetValue * 0.5 * math.pi,
-        arcSweep = value != null
-            ? clampDouble(value, 0.0, 1.0) * _sweep
-            : math.max(
-                headValue * 3 / 2 * math.pi - tailValue * 3 / 2 * math.pi,
-                _epsilon,
-              );
-
-  final Color valueColor;
-  final double? value;
-  final double headValue;
-  final double tailValue;
-  final double offsetValue;
-  final double rotationValue;
-  final double strokeWidth;
-  final double arcStart;
-  final double arcSweep;
-  final double arrowheadScale;
-
-  static const double _twoPi = math.pi * 2.0;
-  static const double _epsilon = .001;
-  // Canvas.drawArc(r, 0, 2*PI) doesn't draw anything, so just get close.
-  static const double _sweep = _twoPi - _epsilon;
-  static const double _startAngle = -math.pi / 2.0;
-
-  void paintArrowhead(Canvas canvas, Size size) {
-    // ux, uy: a unit vector whose direction parallels the base of the arrowhead.
-    // (So ux, -uy points in the direction the arrowhead points.)
-    final double arcEnd = arcStart + arcSweep;
-    final double ux = math.cos(arcEnd);
-    final double uy = math.sin(arcEnd);
-
-    assert(size.width == size.height);
-    final double radius = size.width / 2.0;
-    final double arrowheadPointX =
-        radius + ux * radius + -uy * strokeWidth * 2.0 * arrowheadScale;
-    final double arrowheadPointY =
-        radius + uy * radius + ux * strokeWidth * 2.0 * arrowheadScale;
-    final double arrowheadRadius = strokeWidth * 2.0 * arrowheadScale;
-    final double innerRadius = radius - arrowheadRadius;
-    final double outerRadius = radius + arrowheadRadius;
-
-    final Path path = Path()
-      ..moveTo(radius + ux * innerRadius, radius + uy * innerRadius)
-      ..lineTo(radius + ux * outerRadius, radius + uy * outerRadius)
-      ..lineTo(arrowheadPointX, arrowheadPointY)
-      ..close();
-    final Paint paint = Paint()
-      ..color = valueColor
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.fill;
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = valueColor
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    if (value == null) {
-      // Indeterminate
-      paint.strokeCap = StrokeCap.square;
-    }
-
-    canvas.drawArc(Offset.zero & size, arcStart, arcSweep, false, paint);
-    if (arrowheadScale > 0.0) {
-      paintArrowhead(canvas, size);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_RefreshProgressIndicatorPainter oldPainter) {
-    return oldPainter.valueColor != valueColor ||
-        oldPainter.value != value ||
-        oldPainter.headValue != headValue ||
-        oldPainter.tailValue != tailValue ||
-        oldPainter.offsetValue != offsetValue ||
-        oldPainter.rotationValue != rotationValue ||
-        oldPainter.strokeWidth != strokeWidth;
   }
 }

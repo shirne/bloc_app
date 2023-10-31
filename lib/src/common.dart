@@ -9,5 +9,6 @@ export 'globals/global_bloc.dart' hide StateChangedEvent;
 export 'globals/store_service.dart';
 export 'globals/api.dart';
 export 'models/base.dart';
+export 'models/enums.dart';
 export 'widgets/cached_bloc.dart';
 export 'widgets/gap.dart';

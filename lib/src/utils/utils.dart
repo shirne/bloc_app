@@ -21,6 +21,7 @@ final logger = Logger.root
       record.message,
       time: record.time,
       level: record.level.value,
+      name: record.loggerName,
       error: record.error,
       stackTrace: record.stackTrace,
       sequenceNumber: record.sequenceNumber,
@@ -28,8 +29,21 @@ final logger = Logger.root
   });
 
 final datetimeFmt = DateFormat('yyyy-MM-dd HH:mm:ss');
+final dateHmFmt = DateFormat('yyyy-MM-dd HH:mm');
+final dateHmWFmt = DateFormat('yyyy-MM-dd HH:mm EEE');
 final dateFmt = DateFormat('yyyy-MM-dd');
+final dtFmt = DateFormat('MM-dd');
+final dtWFmt = DateFormat('MM-dd EEE');
+final dtmFmt = DateFormat('MM-dd HH:mm');
+final dateWFmt = DateFormat('yyyy-MM-dd EEE');
 final timeFmt = DateFormat('HH:mm:ss');
+final hmFmt = DateFormat('HH:mm');
+
+extension DateFormatExt on DateFormat {
+  DateFormat withLocale(Locale locale) {
+    return DateFormat(pattern, locale.toString());
+  }
+}
 
 class Utils {
   static final mobileExp = RegExp(r'^1[3-9][0-9]{9}$');
@@ -157,6 +171,8 @@ class Utils {
       case 'bottomright':
       case 'rightbottom':
         return Alignment.bottomRight;
+      case 'center':
+        return Alignment.center;
       default:
         if (align.contains(',')) {
           final parts = align.split(',');
@@ -229,20 +245,53 @@ class Utils {
     return builder.toString();
   }
 
-  static Future<String> getTempDir({String name = ''}) async {
-    final tempPath = await getTemporaryDirectory();
-    final path = '${tempPath.path}/$name';
-    if (DeviceInfo().lowerAndroidQ) {
-      if (!await Permission.storage.isGranted) {
-        final status = await Permission.storage.request();
-        if (!status.isGranted) {
-          throw Exception('Access denied');
+  static Future<String> getDir(
+    Future<Directory> Function() onFetch, {
+    String name = '',
+  }) async {
+    try {
+      final tempPath = await onFetch();
+      final path = '${tempPath.path}/$name';
+      if (DeviceInfo().lowerAndroidQ) {
+        if (!await Permission.storage.isGranted) {
+          try {
+            final status = await Permission.storage.request();
+            if (!status.isGranted) {
+              throw Exception('Access denied');
+            }
+          } catch (_) {}
         }
       }
+      if (!Directory(path).existsSync()) {
+        Directory(path).createSync(recursive: true);
+      }
+      return path;
+    } catch (e) {
+      logger.warning(e);
     }
-
-    Directory(path).createSync(recursive: true);
+    final path = '${Directory.systemTemp.path}/$name';
+    try {
+      if (!Directory(path).existsSync()) {
+        Directory(path).createSync(recursive: true);
+      }
+    } catch (_) {}
     return path;
+  }
+
+  static Future<String> getTempDir({String name = ''}) async {
+    return getDir(getTemporaryDirectory, name: name);
+  }
+
+  static Future<String> getCacheDir({String name = ''}) async {
+    return getDir(getApplicationCacheDirectory, name: name);
+  }
+
+  static Future<String> getDocDir({String name = ''}) async {
+    return getDir(getApplicationDocumentsDirectory, name: name);
+  }
+
+  static Future<String> getSupportDir({String name = ''}) async {
+    return getDir(getApplicationSupportDirectory, name: name);
   }
 
   static bool isUrl(String result) {

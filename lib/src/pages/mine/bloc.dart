@@ -10,22 +10,22 @@ class MineBloc extends CachedBloc<MineEvent, MineState> {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });
-    
+
     on<RefreshEvent>((event, emit) {
       emit(state.clone(status: Status.loading));
       _loadData(onError: event.onError);
     });
-    
+
     _loadData();
   }
-  
+
   Future<void> _loadData({void Function(String message)? onError}) async {
-    add(StateChangedEvent(MineState(status: Status.loading)));
+    add(StateChangedEvent(state.clone(status: Status.loading)));
     await Future.delayed(const Duration(milliseconds: 500));
     //TODO load data
-    if(isClosed){
+    if (isClosed) {
       return;
     }
-    add(StateChangedEvent(MineState(status: Status.success)));
+    add(StateChangedEvent(state.clone(status: Status.success)));
   }
 }

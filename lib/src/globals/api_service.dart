@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 
 import '../models/base.dart';
@@ -9,22 +10,32 @@ import '../utils/utils.dart';
 import '../utils/core.dart';
 import 'config.dart';
 import 'global_bloc.dart';
-import 'localizations.dart';
 import 'routes.dart';
 
 const _tokenHeaderKey = 'Authorization';
 
 class ApiService {
-  static ApiService? _instance;
-  static ApiService getInstance() {
-    _instance ??= ApiService._(Config.serverUrl);
-    return _instance!;
+  static final _instances = <String, ApiService>{};
+  static ApiService get instance => _instances['_default'] ??= ApiService._(
+        Config.serverUrl[0],
+        connectTimeout: const Duration(seconds: 10),
+      );
+  factory ApiService([String? baseUrl, Duration? connectTimeout]) {
+    return baseUrl == null
+        ? instance
+        : _instances.putIfAbsent(
+            baseUrl,
+            () => ApiService._(baseUrl, connectTimeout: connectTimeout),
+          );
   }
 
   final Duration? connectTimeout;
   final Duration? sendTimeout;
   final Duration? receiveTimeout;
-  final String baseUrl;
+
+  String get baseUrl => _dio.options.baseUrl;
+
+  FutureOr<void> Function()? onRequest;
 
   /// 防止登录询问窗口多次弹出
   bool _isLoginShow = false;
@@ -35,7 +46,7 @@ class ApiService {
   final Dio _dio;
 
   ApiService._(
-    this.baseUrl, {
+    String baseUrl, {
     this.connectTimeout,
     this.sendTimeout,
     this.receiveTimeout,
@@ -48,6 +59,10 @@ class ApiService {
           ),
         ) {
     _dio.interceptors.add(ApiInterceptor());
+  }
+
+  void setBaseUrl(String baseUrl) {
+    _dio.options.baseUrl = baseUrl;
   }
 
   void addHeader(String key, String value) {
@@ -126,6 +141,9 @@ class ApiService {
         return ApiResult<T>(0, 'Request canceled');
       }
     }
+
+    await onRequest?.call();
+
     Options options = Options(
       method: method,
       headers: {
@@ -154,15 +172,13 @@ class ApiService {
 
       return result;
     } on DioException catch (e) {
-      final errmsg = globalL10n.requestError;
       if (e.response != null) {
-        final data = e.response!.data is String
-            ? {'msg': e.response!.data}
-            : as<Json>(e.response!.data) ?? emptyJson;
+        final data = e.response!.data is Json ? e.response!.data : emptyJson;
         final result = ApiResult<T>(
-          data['code'] ?? e.response!.statusCode,
-          as<String>(data['msg'] ?? data['message'] ?? errmsg)!.trim(),
-          null,
+          as<int>(data['code']) ?? e.response!.statusCode ?? 0,
+          as<String>(data['msg'] ?? data['message'])?.trim(),
+          dataParser?.call(data) ?? ApiResult.transData(data),
+          transErrorMsg(e.response!.data),
         );
         if (result.needLogin) {
           (onRequireLogin ?? _onRequireLogin).call();
@@ -172,9 +188,25 @@ class ApiService {
         }
         return result;
       }
-      MyDialog.toast(errmsg, iconType: IconType.error);
-      return ApiResult<T>(-1, '', null);
+
+      return ApiResult<T>(-1, globalL10n.requestError, null);
     }
+  }
+
+  dynamic transErrorMsg(dynamic msg) {
+    if (msg is String) {
+      if (msg.startsWith('<html>')) {
+        final tIndex = msg.indexOf('<title>');
+        if (tIndex > -1) {
+          var eIndex = msg.indexOf('</title>', tIndex + 7);
+          return msg.substring(tIndex + 7, eIndex);
+        } else {
+          return msg.replaceAll(RegExp(r'<[a-zA-Z0-9\-]+[^>]+>'), '');
+        }
+      }
+      return msg.trim();
+    }
+    return msg;
   }
 
   /// get请求
@@ -266,9 +298,12 @@ class ApiService {
 
 class ApiResult<T extends Base> {
   final int status;
-  final String message;
+  final String? _message;
   final T? data;
-  final Json? debug;
+  final dynamic origin;
+
+  String get message =>
+      _message ?? (kReleaseMode ? globalL10n.requestError : '$origin');
 
   bool get failed => status != 200;
   bool get success => status == 200;
@@ -277,17 +312,17 @@ class ApiResult<T extends Base> {
   bool get needLogin => status == 401;
   bool get unauthorized => status == 403;
 
-  ApiResult(this.status, this.message, [this.data, this.debug]);
+  ApiResult(this.status, this._message, [this.data, this.origin]);
 
   ApiResult.fromResponse(
     Response<Json> response, [
     DataParser<T>? dataParser,
   ])  : status = response.statusCode ?? -1,
-        message = response.statusMessage ?? '',
+        _message = response.statusMessage,
         data = response.data == null
             ? null
             : dataParser?.call(response.data) ?? transData<T>(response.data),
-        debug = response.data?['debug'];
+        origin = response.data;
 
   static T? transData<T>(dynamic data) {
     if (data == null) return null;
@@ -302,12 +337,14 @@ class ApiResult<T extends Base> {
     } else if (data is Json) {
       if (T == Model) {
         return Model.fromJson(data) as T;
+      } else if (T == ActionResult) {
+        return ActionResult.fromJson(data) as T;
       }
     }
     logger.warning(
       'Data parse error: $T from $data',
       Exception('Data parse error: $T from $data'),
-      StackTrace.current.cast(3),
+      StackTrace.current.cast(5),
     );
 
     return null;
@@ -315,9 +352,9 @@ class ApiResult<T extends Base> {
 
   Json toJson() => {
         'status': status,
-        'message': message,
+        'message': _message,
         'data': data,
-        'debug': debug,
+        'origin': origin,
       };
 
   @override
@@ -364,7 +401,7 @@ class ApiInterceptor extends Interceptor {
   @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
     logger.warning(
-      '网络请求错误: ${err.message ?? err.error}',
+      '网络请求错误: ${err.message ?? err.error}\n${err.requestOptions.uri}',
       err.error,
       StackTrace.current.cast(5),
     );

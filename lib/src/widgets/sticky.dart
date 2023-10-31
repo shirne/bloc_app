@@ -73,7 +73,7 @@ class _StickyWidgetState extends State<StickyWidget> {
 
   void checkPosition() {
     if (state == null) return;
-    if (!context.mounted) {
+    if (!mounted) {
       showOverlay();
       return;
     }

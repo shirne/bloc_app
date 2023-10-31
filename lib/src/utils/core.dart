@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -6,7 +9,7 @@ import '../common.dart';
 /// 基于核心库的扩展
 
 /// 获取可空的元素
-extension ListExtension<E> on List<E> {
+extension ListExt<E> on List<E> {
   E? get firstOrNull => isEmpty ? null : this[0];
 
   E? firstWhereOrNull(bool Function(E) test) {
@@ -95,9 +98,52 @@ extension DateTimeExtension on DateTime {
   String format([DateFormat? formater]) {
     return (formater ?? datetimeFmt).format(this);
   }
+
+  String friendly() {
+    var today = DateTime.now().startOfDay();
+    if (isAfter(today)) {
+      return format(hmFmt);
+    }
+    if (isAfter(today.subtract(const Duration(days: 3)))) {
+      return format(dtWFmt);
+    }
+    if (year == DateTime.now().year) {
+      return format(dtFmt);
+    }
+    return format(dateFmt);
+  }
+
+  /// return the earlier date
+  DateTime beforeIf(DateTime? other) {
+    if (other == null) return this;
+    final diff = difference(other);
+    if (diff.isNegative) {
+      return this;
+    }
+    return other;
+  }
+
+  /// return the later date
+  DateTime afterIf(DateTime? other) {
+    if (other == null) return this;
+    final diff = difference(other);
+    if (diff.isNegative) {
+      return other;
+    }
+    return this;
+  }
 }
 
-extension StringExtension on String {
+extension IntExt on int {
+  DateTime toDate([bool isMillion = false]) {
+    if (isMillion) {
+      return DateTime.fromMillisecondsSinceEpoch(this);
+    }
+    return DateTime.fromMillisecondsSinceEpoch(this * 1000);
+  }
+}
+
+extension StringExt on String {
   int toInt() => int.parse(this);
 
   double toDouble() => double.parse(this);
@@ -105,6 +151,45 @@ extension StringExtension on String {
   int? toIntOrNull() => int.tryParse(this);
 
   double? toDoubleOrNull() => double.tryParse(this);
+
+  String addPrefix(String prefix) {
+    return '$prefix$this';
+  }
+
+  String addSuffix(String suffix) {
+    return '$this$suffix';
+  }
+
+  ImageProvider<Object>? toImage() {
+    if (isEmpty) return null;
+    if (Utils.isNetwork(this)) {
+      return NetworkImage(this);
+    }
+    return FileImage(File(this));
+  }
+
+  String cut(int len, {String suffix = '...'}) {
+    if (length <= len) {
+      return this;
+    }
+    return '${substring(0, len)}$suffix';
+  }
+
+  String? notEmpty() {
+    if (isEmpty) {
+      return null;
+    }
+    return this;
+  }
+}
+
+extension StringNullExt on String? {
+  String ifEmpty(String other) {
+    if (this == null || this?.isEmpty == true) {
+      return other;
+    }
+    return this!;
+  }
 }
 
 extension LocaleExt on Locale {
@@ -166,8 +251,9 @@ extension BuildContextExtension on BuildContext {
 
 StackTrace? castStackTrace(StackTrace? trace, [int lines = 3]) {
   if (trace != null) {
+    final errors = trace.toString().split('\n');
     return StackTrace.fromString(
-      trace.toString().split('\n').sublist(0, lines).join('\n'),
+      errors.sublist(0, math.min(lines, errors.length)).join('\n'),
     );
   }
   return null;
@@ -229,9 +315,6 @@ class Optional<T> {
   final T? value;
 }
 
-/// different of
-/// option?.value ?? value
-/// option.absent(value)
 extension OptionalExt<T> on Optional<T>? {
   T? absent(T? value) {
     return this == null ? value : this?.value;

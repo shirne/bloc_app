@@ -11,7 +11,6 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 
 import '../common.dart';
-import '../globals/localizations.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});

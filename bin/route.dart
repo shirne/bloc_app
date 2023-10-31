@@ -47,7 +47,7 @@ void main(List<String> args) {
     "      policy,",
     for (var n in routeNames) "      $n,",
     "    ])",
-    "      e.name: e",
+    "      e.name: e,",
     "  };",
   ]);
   newContents.addAll(contents.sublist(routeEnd));

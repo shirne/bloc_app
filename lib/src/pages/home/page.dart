@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
                     Routes.settings.show(context);
                   },
                   icon: const Icon(Icons.settings),
-                )
+                ),
               ],
             ),
             body: state.status == Status.initial

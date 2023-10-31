@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
 
-import '../globals/localizations.dart';
+import '../globals/global_bloc.dart';
 import 'utils.dart';
 
 class LocatorUtil {
@@ -16,6 +16,19 @@ class LocatorUtil {
   factory LocatorUtil() {
     return _instance ??= LocatorUtil._().._init();
   }
+
+  Position defaultPosition = Position(
+    longitude: -61.3953734,
+    latitude: -32.8211646,
+    timestamp: DateTime.now(),
+    accuracy: 0,
+    altitude: 0,
+    altitudeAccuracy: 0,
+    heading: 0,
+    headingAccuracy: 0,
+    speed: 0,
+    speedAccuracy: 0,
+  );
 
   final _geolocatorPlatform = GeolocatorPlatform.instance;
   Position? current;
@@ -28,6 +41,7 @@ class LocatorUtil {
 
   Future<void> _init() async {
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) return;
+    logger.info('locate permission start...');
 
     /// 动态申请定位权限
     if (!await requestLocationPermission()) {
@@ -35,7 +49,11 @@ class LocatorUtil {
       return;
     }
 
+    logger.info('locate start...');
+
     await _getCurrentPosition();
+
+    logger.info('locate end $current');
 
     _initCompleter.complete(true);
   }
@@ -68,11 +86,11 @@ class LocatorUtil {
     if (_updated != null && !_updated!.isCompleted) return;
     _updated = Completer();
     try {
-      final position = await _geolocatorPlatform.getCurrentPosition();
-      logger.info(position);
-      _updated!.complete(position);
+      current = await _geolocatorPlatform.getCurrentPosition();
+      logger.info(current);
+      _updated!.complete(current);
     } catch (e) {
-      logger.warning(e);
+      logger.warning('locator failed: $e');
       if (!_updated!.isCompleted) {
         _updated!.completeError(e);
       }

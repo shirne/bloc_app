@@ -9,6 +9,8 @@ class StarWidget extends StatefulWidget {
     this.size = 24,
     double? spacing,
     this.rate = 0,
+    this.count = 5,
+    this.isHalf = false,
     this.onChanged,
   })  : spacing = spacing ?? size / 2,
         assert(rate >= 0 && rate <= 5);
@@ -16,6 +18,8 @@ class StarWidget extends StatefulWidget {
   final double size;
   final double rate;
   final double spacing;
+  final bool isHalf;
+  final int count;
   final Function(double)? onChanged;
 
   @override
@@ -23,6 +27,8 @@ class StarWidget extends StatefulWidget {
 }
 
 class _StarWidgetState extends State<StarWidget> {
+  late final maxWidth =
+      widget.size * widget.count + widget.spacing * (widget.count - 1);
   late double currentPos = widget.rate > 0
       ? (widget.rate * widget.size + (widget.rate.ceil() - 1) * widget.spacing)
       : 0;
@@ -31,19 +37,48 @@ class _StarWidgetState extends State<StarWidget> {
   double tmpPosition = 0;
 
   double getRate() {
-    final intRate = currentPos ~/ (widget.size + widget.spacing);
+    final intRate = (currentPos ~/ (widget.size + widget.spacing))
+        .clamp(0, widget.count - 1);
     final r = currentPos % (widget.size + widget.spacing);
-    if (r > widget.size) {
+
+    if (!widget.isHalf) {
+      if (r > 0) {
+        return intRate + 1.0;
+      } else {
+        return intRate.toDouble();
+      }
+    }
+    if (r >= widget.size / 2) {
       return intRate + 1.0;
     }
     final half = (r * 2 / widget.size).round() / 2;
     clipWidth.value =
         intRate * (widget.size + widget.spacing) + widget.size * half;
-    return intRate + half;
+    return (intRate + half).clamp(0, widget.count.toDouble());
+  }
+
+  double fixRate(double pos) {
+    final intRate =
+        (pos ~/ (widget.size + widget.spacing)).clamp(0, widget.count - 1);
+    final r = pos % (widget.size + widget.spacing);
+
+    double half = 0;
+    if (r >= widget.size / 2) {
+      half = 1.0;
+    } else if (r > 0) {
+      half = widget.isHalf ? 0.5 : 1.0;
+    }
+    return intRate * (widget.size + widget.spacing) + half * widget.size;
   }
 
   @override
   Widget build(BuildContext context) {
+    final stars = <Widget>[
+      for (int i = 0; i < widget.count; i++) ...[
+        const Icon(Icons.star_rounded),
+        if (i < widget.count - 1) SizedBox(width: widget.spacing),
+      ],
+    ];
     final child = Stack(
       children: [
         IconTheme(
@@ -53,17 +88,7 @@ class _StarWidgetState extends State<StarWidget> {
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.star_rounded),
-              SizedBox(width: widget.spacing),
-              const Icon(Icons.star_rounded),
-              SizedBox(width: widget.spacing),
-              const Icon(Icons.star_rounded),
-              SizedBox(width: widget.spacing),
-              const Icon(Icons.star_rounded),
-              SizedBox(width: widget.spacing),
-              const Icon(Icons.star_rounded),
-            ],
+            children: stars,
           ),
         ),
         ValueListenableBuilder(
@@ -87,17 +112,7 @@ class _StarWidgetState extends State<StarWidget> {
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.star_rounded),
-                  SizedBox(width: widget.spacing),
-                  const Icon(Icons.star_rounded),
-                  SizedBox(width: widget.spacing),
-                  const Icon(Icons.star_rounded),
-                  SizedBox(width: widget.spacing),
-                  const Icon(Icons.star_rounded),
-                  SizedBox(width: widget.spacing),
-                  const Icon(Icons.star_rounded),
-                ],
+                children: stars,
               ),
             ),
           ),
@@ -111,19 +126,22 @@ class _StarWidgetState extends State<StarWidget> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTapUp: (d) {
-        currentPos = tmpPosition = d.localPosition.dx;
+        tmpPosition = d.localPosition.dx;
+        currentPos = fixRate(tmpPosition);
+        clipWidth.value = currentPos;
         widget.onChanged?.call(getRate());
       },
       onPanDown: (d) {
         tmpPosition = d.localPosition.dx;
-        clipWidth.value = tmpPosition;
+        clipWidth.value = tmpPosition.clamp(0, maxWidth);
       },
       onPanUpdate: (d) {
         tmpPosition = d.localPosition.dx;
-        clipWidth.value = tmpPosition;
+        clipWidth.value = tmpPosition.clamp(0, maxWidth);
       },
       onPanEnd: (d) {
-        currentPos = tmpPosition;
+        currentPos = fixRate(tmpPosition);
+        clipWidth.value = currentPos;
         widget.onChanged?.call(getRate());
       },
       onPanCancel: () {

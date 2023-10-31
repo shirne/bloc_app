@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -23,6 +24,13 @@ class DeviceInfo {
   bool get isMacOS => !kIsWeb && Platform.isMacOS;
   bool get isWindows => !kIsWeb && Platform.isWindows;
   bool get isLinux => !kIsWeb && Platform.isLinux;
+  bool get isIPad =>
+      isIOS && iosInfo.utsname.machine.toLowerCase().contains('ipad');
+  // ignore: deprecated_member_use
+  bool get isAndroidPad => isAndroid && window.physicalSize.shortestSide > 600;
+  bool get isTV =>
+      isAndroid &&
+      androidInfo.systemFeatures.contains('android.software.leanback');
 
   bool get lowerAndroidQ => isAndroid && androidInfo.version.sdkInt < 29;
 

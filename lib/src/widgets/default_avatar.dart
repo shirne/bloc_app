@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import '../utils/core.dart';
 
 class DefaultAvatar extends StatelessWidget {
-  const DefaultAvatar(this.size, {super.key});
+  const DefaultAvatar(this.size, {super.key, this.radius});
 
   final double size;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,8 @@ class DefaultAvatar extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         color: context.colorScheme.outlineVariant,
-        shape: BoxShape.circle,
+        shape: radius == null ? BoxShape.circle : BoxShape.rectangle,
+        borderRadius: radius == null ? null : BorderRadius.circular(radius!),
       ),
       alignment: Alignment.center,
       child: Icon(

@@ -191,7 +191,7 @@ class _WebViewPageState extends State<WebViewPage> {
                     controller?.reload();
                   },
                   icon: const Icon(Icons.refresh),
-                )
+                ),
               ],
             )
           : null,

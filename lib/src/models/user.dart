@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import '../utils/core.dart';
 import 'base.dart';
 
 class UserModel extends Base {
@@ -8,7 +11,10 @@ class UserModel extends Base {
     this.username = '',
     this.nickname = '',
     this.avatar = '',
-    this.rate = 0,
+    this.password = '',
+    this.followCount = 0,
+    this.fansCount = 0,
+    this.score = 0,
     this.expire = 0,
     this.points = 0,
     this.level = 0,
@@ -23,7 +29,10 @@ class UserModel extends Base {
           username: json?['username'] ?? '',
           nickname: json?['nickname'] ?? '',
           avatar: json?['avatar'] ?? '',
-          rate: as<double>(json?['rate']) ?? 0,
+          password: json?['password'] ?? '',
+          followCount: as<int>(json?['follow_num']) ?? 0,
+          fansCount: as<int>(json?['fans_num']) ?? 0,
+          score: as<double>(json?['score']) ?? 0,
           points: as<int>(json?['points']) ?? 0,
           level: as<int>(json?['level']) ?? 0,
           status: as<int>(json?['status']) ?? 0,
@@ -35,7 +44,10 @@ class UserModel extends Base {
   final String username;
   final String nickname;
   final String avatar;
-  final double rate;
+  final String password;
+  final int followCount;
+  final int fansCount;
+  final double score;
   final int expire;
   final int points;
   final int level;
@@ -51,7 +63,10 @@ class UserModel extends Base {
         'username': username,
         'nickname': nickname,
         'avatar': avatar,
-        'rate': rate,
+        'password': password,
+        'follow_num': followCount,
+        'fans_num': fansCount,
+        'score': score,
         'points': points,
         'level': level,
         'status': status,
@@ -60,10 +75,44 @@ class UserModel extends Base {
       };
 }
 
-class TokenModel extends Base {
-  static const empty = TokenModel();
+class JwtToken extends Base {
+  JwtToken(this.token) : data = parseData(token);
 
-  const TokenModel({
+  final String token;
+  final Json data;
+
+  int get uid => as<int>(data['uid'], 0)!;
+  int get status => as<int>(data['status'], 0)!;
+  int get expire => as<int>(data['exp'], 0)!;
+
+  bool get isExpire => expire <= DateTime.now().secondsSinceEpoch + 10;
+  bool get isValid => token.isNotEmpty;
+
+  static Json parseData(String token) {
+    if (token.isEmpty) return emptyJson;
+    final part = token.split('.');
+    if (part.length != 3) return emptyJson;
+    if (part[1].length % 4 != 0) {
+      part[1] += '=' * (4 - part[1].length % 4);
+    }
+    final json = utf8.decode(base64Decode(part[1]));
+
+    return jsonDecode(json);
+  }
+
+  @override
+  Json toJson() => {
+        'value': token,
+      };
+
+  @override
+  String toString() => token;
+}
+
+class TokenModel extends Base {
+  static final empty = TokenModel();
+
+  TokenModel({
     this.accessToken = '',
     this.refreshToken = '',
     this.expireIn = 0,
@@ -84,6 +133,10 @@ class TokenModel extends Base {
   final DateTime? createTime;
 
   bool get isValid => accessToken.isNotEmpty;
+
+  bool get isExpire =>
+      createTime == null ||
+      DateTime.now().difference(createTime!).inSeconds > expireIn;
 
   @override
   Json toJson() => {

@@ -12,6 +12,14 @@ class ApiUcenter extends ApiBase {
     );
   }
 
+  Future<ApiResult<TokenModel>> doRefresh(String refreshToken) async {
+    return await apiService.post(
+      '$basePath/refresh',
+      {'refresh_token': refreshToken},
+      skipLock: true,
+    );
+  }
+
   Future<ApiResult<UserModel>> doRegister({
     required String email,
     required String mobile,
@@ -54,6 +62,15 @@ class ApiUcenter extends ApiBase {
   ]) async {
     return await apiService.get(
       'user/profile',
+      skipLock: true,
+    );
+  }
+
+  Future<ApiResult<Model>> getNoticeCount([
+    VoidCallback? onRequireLogin,
+  ]) async {
+    return await apiService.get(
+      'user/notice_count',
       skipLock: true,
     );
   }

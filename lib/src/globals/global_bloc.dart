@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
+import '../../l10n/gen/l10n.dart';
 import '../models/user.dart';
 import '../utils/core.dart';
+import '../utils/utils.dart';
+import '../widgets/cached_bloc.dart';
 import 'api.dart';
 import 'api_service.dart';
 import 'routes.dart';
@@ -13,8 +16,9 @@ import 'store_service.dart';
 typedef ResultCallback<T> = void Function(bool, T? data);
 
 final _noticeBadge = ValueNotifier(0);
-//final _chatStateNotifier = ValueNotifier(ConnectState.init);
 final _tokenNotifier = ValueNotifier(TokenModel.empty);
+
+AppLocalizations get globalL10n => GlobalBloc.l10n;
 
 @immutable
 abstract class GlobalEvent {}
@@ -87,7 +91,7 @@ class GlobalState {
   Locale? get currentLocale => locale ?? navigatorKey.currentContext?.locale;
 
   ValueNotifier<int> get noticeBadge => _noticeBadge;
-  //ValueNotifier<ConnectState> get chatConnectState => _chatStateNotifier;
+  // ValueNotifier<ConnectState> get chatConnectState => _chatStateNotifier;
 
   TokenModel get token => _tokenNotifier.value;
   set token(TokenModel? token) =>
@@ -139,10 +143,14 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
     });
 
     on<LocaleChangedEvent>((event, emit) {
+      _l10n = null;
       emit(state.clone(locale: Optional(event.locale)));
     });
 
     on<StateChangedEvent>((event, emit) {
+      if (state.locale != event.state.locale) {
+        _l10n = null;
+      }
       emit(event.state);
     });
 
@@ -180,22 +188,50 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
 
     on<UserQuitEvent>((event, emit) {
       state.token = null;
+      CachedBloc.clearCache();
       emit(state.clone(user: Optional(null)));
+    });
+
+    on<UpdateNoticeBadgeEvent>((event, emit) {
+      updateBadge();
     });
 
     _tokenNotifier.addListener(_onTokenChange);
 
     state.token = storeService.token();
+
+    ApiService.instance.onRequest = _checkToken;
   }
 
   static GlobalBloc? _instance;
   static GlobalBloc get instance => _instance!;
   String? get langTag => state.currentLocale?.toLanguageTag();
 
+  AppLocalizations? _l10n;
+  static AppLocalizations get l10n =>
+      instance._l10n ??= AppLocalizations.of(navigatorKey.currentContext!)!;
+
   @override
   Future<void> close() {
     _tokenNotifier.removeListener(_onTokenChange);
     return super.close();
+  }
+
+  Future<void> _checkToken() async {
+    if (state.token.isValid) {
+      if (state.token.isExpire) {
+        final result = await Api.ucenter.doRefresh(
+          state.token.refreshToken,
+        );
+        if (result.success && result.data != null) {
+          add(TokenRefreshEvent(result.data!));
+          return;
+        } else {
+          logger.warning(result.message);
+        }
+      }
+      add(UserQuitEvent());
+    }
   }
 
   void _onTokenChange() {
@@ -204,10 +240,10 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
 
   Future<void> setToken(TokenModel? token) async {
     if (token != null && token.isValid) {
-      ApiService.getInstance().addToken(token.accessToken.toString());
+      ApiService.instance.addToken(token.accessToken.toString());
       await storeService.updateToken(token);
     } else {
-      ApiService.getInstance().removeToken();
+      ApiService.instance.removeToken();
       await storeService.deleteToken();
     }
   }
@@ -215,20 +251,35 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
   Future<void> _init([ResultCallback? onReady]) async {
     if (state.token.isValid) {
       await Future.wait([
-        upUserinfo(),
+        upUserinfo(() {}),
       ]);
     }
     onReady?.call(true, null);
   }
 
-  Future<void> upUserinfo([VoidCallback? onRequireLogin]) async {
+  Future<void> upUserinfo([
+    VoidCallback? onRequireLogin,
+    bool isComplete = false,
+  ]) async {
     final result = await Api.ucenter.getUserinfo(onRequireLogin);
     if (!isClosed && result.success) {
       add(
-        StateChangedEvent(
-          state.clone(user: Optional(result.data)),
-        ),
+        StateChangedEvent(state.clone(user: Optional(result.data))),
       );
     }
   }
+
+  Future<void> updateBadge([VoidCallback? onRequireLogin]) async {
+    final result = await Api.ucenter.getNoticeCount(
+      onRequireLogin,
+    );
+    if (result.success) {
+      _noticeBadge.value = result.data?['unread_count'] ?? 0;
+    }
+  }
+}
+
+extension BaseStateExt on BaseState {
+  UserModel get user => GlobalBloc.instance.state.user;
+  TokenModel get token => GlobalBloc.instance.state.token;
 }

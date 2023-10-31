@@ -41,13 +41,13 @@ class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
   }
   
   Future<void> _loadData({void Function(String message)? onError}) async {
-    add(StateChangedEvent(${page}State(status: Status.loading)));
+    add(StateChangedEvent(state.clone(status: Status.loading)));
     await Future.delayed(const Duration(milliseconds: 500));
     //TODO load data
     if(isClosed){
       return;
     }
-    add(StateChangedEvent(${page}State(status: Status.success)));
+    add(StateChangedEvent(state.clone(status: Status.success)));
   }
 }
 """);

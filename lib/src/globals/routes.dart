@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../common.dart';
-import '../pages/policy.dart';
 import '../pages/splash.dart';
+import '../pages/policy.dart';
 import '../pages/not_found.dart';
 // ==== GENERATED IMPORT START ====
 import '../pages/home/page.dart';
@@ -13,13 +13,44 @@ import '../pages/mine/profile/page.dart';
 import '../pages/product/page.dart';
 import '../pages/settings/page.dart';
 import '../pages/web/page.dart';
+import 'config.dart';
 // ==== GENERATED END ====
 
 final navigatorKey = GlobalKey<NavigatorState>();
-final l10n = AppLocalizations.of(navigatorKey.currentContext!)!;
 
 bool notLoginPage(Route<dynamic> route) {
   return !(route.settings.name?.startsWith('login') ?? false);
+}
+
+String? processRoutes(String? url) {
+  if (url != null && Config.shareRegexp.hasMatch(url)) {
+    if (url.contains('/mine/activity/')) {
+      url = url.replaceAll('/mine/activity/', '/mine/activities/');
+    } else if (url.contains('/mine/carpool/')) {
+      url = url.replaceAll('/mine/carpool/', '/mine/carpools/');
+    }
+    logger.info('tourl: $url');
+    final uri = Uri.parse(url);
+
+    if (uri.path == Routes.main.name) {
+      homeTabIndex.value = 0;
+    } else if (uri.path == Routes.home.name) {
+      homeTabIndex.value = 0;
+    } else if (uri.path == Routes.product.name) {
+      homeTabIndex.value = 1;
+    } else if (uri.path == Routes.mine.name) {
+      homeTabIndex.value = 2;
+    } else {
+      Routes.matchByName(uri.path)
+          ?.show(navigatorKey.currentContext!, arguments: uri.queryParameters);
+      return null;
+    }
+    navigatorKey.currentState
+        ?.popUntil((route) => route.settings.name == Routes.main.name);
+
+    return null;
+  }
+  return url;
 }
 
 class Routes {
@@ -88,7 +119,7 @@ class Routes {
       settings,
       web,
     ])
-      e.name: e
+      e.name: e,
   };
 // ==== GENERATED END ====
 

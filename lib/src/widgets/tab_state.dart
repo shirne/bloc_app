@@ -21,14 +21,24 @@ mixin TabPageState<T extends StatefulWidget> on State<T> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final newController = DefaultTabController.of(context);
+    if (newController == tabController) return;
     if (tabController != null) {
       tabController!.removeListener(_onTabChange);
     }
-    tabController = DefaultTabController.of(context);
+    tabController = newController;
     tabController?.addListener(_onTabChange);
+    _onTabChange();
   }
 
   void _onTabChange() {
+    if (tabController!.indexIsChanging) {
+      if (isActived) {
+        onStateChange(false);
+      }
+      return;
+    }
+
     final index = tabController!.index;
     final key = context
         .findAncestorWidgetOfExactType<TabBarView>()

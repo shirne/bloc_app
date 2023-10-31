@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../utils/core.dart';
 
+Widget noImage(BuildContext context) => FractionallySizedBox(
+      widthFactor: 0.5,
+      heightFactor: 0.5,
+      child: FittedBox(
+        child: Icon(
+          Icons.image,
+          color: context.colorScheme.tertiary,
+        ),
+      ),
+    );
+
 class ImageBox extends StatelessWidget {
   const ImageBox({
     super.key,
@@ -12,15 +23,17 @@ class ImageBox extends StatelessWidget {
     this.margin,
     this.borderRadius,
     this.fit,
+    this.errorBuilder,
   }) : height = height ?? width;
 
-  final ImageProvider image;
+  final ImageProvider? image;
   final double? width;
   final double? height;
   final EdgeInsetsGeometry? margin;
   final BorderRadiusGeometry? borderRadius;
   final double radius;
   final BoxFit? fit;
+  final ImageErrorWidgetBuilder? errorBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -33,24 +46,18 @@ class ImageBox extends StatelessWidget {
         borderRadius: borderRadius ?? BorderRadius.circular(radius),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Image(
-        image: image,
-        width: width,
-        height: height,
-        fit: fit,
-        errorBuilder: (context, error, stackTrace) {
-          return FractionallySizedBox(
-            widthFactor: 0.5,
-            heightFactor: 0.5,
-            child: FittedBox(
-              child: Icon(
-                Icons.image,
-                color: context.colorScheme.tertiary,
-              ),
+      child: image == null
+          ? noImage(context)
+          : Image(
+              image: image!,
+              width: width,
+              height: height,
+              fit: fit,
+              errorBuilder: errorBuilder ??
+                  (context, error, stackTrace) {
+                    return noImage(context);
+                  },
             ),
-          );
-        },
-      ),
     );
   }
 }

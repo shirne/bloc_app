@@ -62,13 +62,9 @@ T? as<T>(dynamic value, [T? defaultValue]) {
       }
       result = DateTime.fromMillisecondsSinceEpoch(value.toInt()) as T;
     }
-    if (result == null) {
-      logger.warning(
-        'Unsupported type cast from $value (${value.runtimeType}) to $T.',
-        StackTrace.current.cast(3),
-      );
+    if (result != null) {
+      return result as T;
     }
-    return result as T;
   } else
 
   // String parse
@@ -210,4 +206,25 @@ class ModelPage<T extends Base> extends ModelList<T> {
       'page': page,
       'page_size': pageSize,
     });
+}
+
+class ActionResult extends Base {
+  ActionResult(this.state);
+
+  ActionResult.fromJson(Json json) : this(as<int>(json['state'], 0)!);
+
+  final int state;
+
+  bool get isSuccess => state == 1;
+
+  @override
+  Json toJson() => {
+        'state': state,
+      };
+}
+
+abstract class UserInfoModel {
+  int get id;
+  String get nickname;
+  String get avator;
 }

@@ -11,7 +11,7 @@ class Api {
 }
 
 abstract class ApiBase {
-  final apiService = ApiService.getInstance();
+  final apiService = ApiService();
 
   String? get defaultLang => apiService.defaultLang;
 

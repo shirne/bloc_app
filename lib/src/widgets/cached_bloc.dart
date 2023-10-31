@@ -6,15 +6,18 @@ import 'package:flutter/widgets.dart';
 import '../models/base.dart';
 
 enum Status {
-  initial,
-  loading,
-  success,
-  failure;
+  initial('initial'),
+  loading('loading'),
+  success('success'),
+  failure('failure');
 
-  String toJson() => name;
+  final String value;
+  const Status(this.value);
+
+  String toJson() => value;
 
   @override
-  String toString() => name;
+  String toString() => value;
 }
 
 abstract class BaseState {
@@ -121,6 +124,7 @@ class PagedState<T, S extends QueryModel> extends BaseState {
   bool get hasMore =>
       lists.length < query.total && query.page < query.total / query.pageSize;
   bool get isFirstLoading => (isInitial || isLoading) && lists.isEmpty;
+  bool get isMoreLoading => isLoading && lists.isNotEmpty;
   bool get isEmpty => (isSuccess || isError) && lists.isEmpty;
 
   @override

@@ -17,8 +17,11 @@ const envName = String.fromEnvironment('env');
 class Config {
   Config._();
 
-  static const env = kReleaseMode ? Env.prod : Env.dev;
+  static final shareRegexp = RegExp(r'https?://[a-z0-9\-\.]+\.shirne\.com/');
+
+  static final env = kReleaseMode ? Env.prod : Env.fromName(envName);
 
   static const serverUrl = 'https://www.shirne.com/api/';
+
   static const imgServer = '';
 }

@@ -21,7 +21,9 @@ class Config {
 
   static final env = kReleaseMode ? Env.prod : Env.fromName(envName);
 
-  static const serverUrl = 'https://www.shirne.com/api/';
+  static const serverUrl = [
+    'https://www.shirne.com/api/',
+  ];
 
   static const imgServer = '';
 }

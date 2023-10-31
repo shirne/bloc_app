@@ -21,19 +21,19 @@ dependencies:
   bloc: ^8.0.3
   flutter_bloc: ^8.0.1
   shared_preferences: ^2.0.17 # 本地存储
-  flutter_secure_storage: ^8.0.0
-  permission_handler: ^10.0.0
+  flutter_secure_storage: ^9.0.0
+  permission_handler: ^11.0.1
   device_info_plus:
   geolocator:
 
   skeletons: ^0.0.3          # 骨架页构造工具
   appscheme: ^1.0.8          # applink处理
-  file_picker: ^5.2.5         # 文件选择
+  file_picker: ^6.0.0         # 文件选择
 
   shirne_dialog: ^4.5.0       # 对话框
   
-  flutter_widget_from_html: ^0.13.0-alpha.1
-  flutter_widget_from_html_core: ^0.13.0-alpha.1 # 简单html全平台解析
+  flutter_widget_from_html: ^0.14.6
+  flutter_widget_from_html_core: ^0.14.6 # 简单html全平台解析
   flutter_inappwebview: ^6.0.0-beta.24+1  # 内置webview
 
 dev_dependencies:

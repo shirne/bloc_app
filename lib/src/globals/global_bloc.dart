@@ -220,17 +220,17 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
   Future<void> _checkToken() async {
     if (state.token.isValid) {
       if (state.token.isExpire) {
+        ApiService.instance.onRequest = null;
         final result = await Api.ucenter.doRefresh(
           state.token.refreshToken,
         );
         if (result.success && result.data != null) {
           add(TokenRefreshEvent(result.data!));
-          return;
         } else {
-          logger.warning(result.message);
+          add(UserQuitEvent());
         }
+        ApiService.instance.onRequest = _checkToken;
       }
-      add(UserQuitEvent());
     }
   }
 

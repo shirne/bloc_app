@@ -16,9 +16,12 @@ const _tokenHeaderKey = 'Authorization';
 
 class ApiService {
   static final _instances = <String, ApiService>{};
-  static ApiService get instance => _instances['_default'] ??= ApiService._(
-        Config.serverUrl[0],
-        connectTimeout: const Duration(seconds: 10),
+  static ApiService get instance => _instances.putIfAbsent(
+        '_default',
+        () => ApiService._(
+          Config.serverUrl[0],
+          connectTimeout: const Duration(seconds: 10),
+        ),
       );
   factory ApiService([String? baseUrl, Duration? connectTimeout]) {
     return baseUrl == null

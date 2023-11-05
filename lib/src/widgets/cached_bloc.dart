@@ -106,7 +106,7 @@ class QueryModel<T, S> {
 class PagedState<T, S extends QueryModel> extends BaseState {
   PagedState({
     Status? status,
-    String? message,
+    super.message,
     S? query,
     List<T>? lists,
   })  : assert(
@@ -115,7 +115,7 @@ class PagedState<T, S extends QueryModel> extends BaseState {
         ),
         query = query ?? (QueryModel._default as S),
         lists = lists ?? [],
-        super(status: status ?? Status.initial, message: message);
+        super(status: status ?? Status.initial);
 
   final S query;
 

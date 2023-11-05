@@ -7,7 +7,7 @@ import 'bloc.dart';
 
 /// 我的资料
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {

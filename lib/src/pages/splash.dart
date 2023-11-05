@@ -31,17 +31,29 @@ class _SplashPageState extends State<SplashPage> {
     final agreed = StoreService().getAgreed();
     if (!agreed) {
       final size = MediaQuery.of(context).size;
+      final errorColor = context.colorScheme.error;
       final assets = 'assets/json/${context.l10n.policy}.html';
       final content = await rootBundle.loadString(assets);
 
+      final controller = ScrollController();
       final confirmed = await MyDialog.confirm(
         SizedBox(
           height: size.height * 0.6,
-          child: SingleChildScrollView(child: HtmlWidget(content)),
+          child: Scrollbar(
+            radius: const Radius.circular(4),
+            trackVisibility: true,
+            thumbVisibility: true,
+            controller: controller,
+            child: SingleChildScrollView(
+              controller: controller,
+              child: HtmlWidget(content),
+            ),
+          ),
         ),
         barrierDismissible: false,
         buttonText: globalL10n.agree,
         cancelText: globalL10n.reject,
+        cancelStyle: TextStyle(color: errorColor),
       );
       if (confirmed != true) {
         exit(0);
@@ -96,7 +108,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<bool> initGlobal() async {
-    Completer<bool> completer = Completer<bool>();
+    final completer = Completer<bool>();
     context.read<GlobalBloc>().add(
       InitEvent(
         (isReady, _) {

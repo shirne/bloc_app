@@ -5,9 +5,9 @@ class HomeState extends BaseState {
   final int count;
 
   HomeState({
-    Status status = Status.initial,
+    super.status,
     this.count = 0,
-  }) : super(status: status);
+  });
 
   @override
   HomeState clone({

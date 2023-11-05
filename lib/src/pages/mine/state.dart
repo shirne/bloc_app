@@ -3,9 +3,9 @@ part of 'bloc.dart';
 @immutable
 class MineState extends BaseState {
   MineState({
-    Status status = Status.initial,
-    String? message,
-  }) : super(status: status, message: message);
+    super.status,
+    super.message,
+  });
 
   @override
   MineState clone({

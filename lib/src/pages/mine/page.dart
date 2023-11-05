@@ -7,7 +7,7 @@ import 'bloc.dart';
 
 /// 我的(个人中心)
 class MinePage extends StatelessWidget {
-  const MinePage({Key? key}) : super(key: key);
+  const MinePage({super.key});
 
   @override
   Widget build(BuildContext context) {

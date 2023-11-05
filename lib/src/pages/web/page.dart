@@ -13,10 +13,9 @@ int webviewId = 0;
 
 /// 加载web页(url = 链接, show_app_bar = 是否显示appbar)
 class WebViewPage extends StatefulWidget {
-  WebViewPage(Json? config, {Key? key})
+  WebViewPage(Json? config, {super.key})
       : url = config?['url'] ?? '',
-        showAppBar = config?['show_app_bar'] ?? true,
-        super(key: key);
+        showAppBar = config?['show_app_bar'] ?? true;
 
   final String url;
   final bool showAppBar;

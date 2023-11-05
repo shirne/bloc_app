@@ -3,8 +3,8 @@ part of 'bloc.dart';
 @immutable
 class SettingsState extends BaseState {
   SettingsState({
-    Status status = Status.initial,
-  }) : super(status: status);
+    super.status,
+  });
 
   @override
   SettingsState clone({

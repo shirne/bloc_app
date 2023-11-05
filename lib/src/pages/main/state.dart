@@ -8,10 +8,10 @@ enum FilterType {
 @immutable
 class MainState extends BaseState {
   MainState({
-    Status status = Status.initial,
-    String? message,
+    super.status,
+    super.message,
     this.isSearch = false,
-  }) : super(status: status, message: message);
+  });
 
   final bool isSearch;
 

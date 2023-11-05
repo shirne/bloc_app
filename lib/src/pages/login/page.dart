@@ -8,10 +8,9 @@ import 'bloc.dart';
 
 /// 登录页
 class LoginPage extends StatefulWidget {
-  LoginPage(Json? args, {Key? key})
+  LoginPage(Json? args, {super.key})
       : backPage = args?['back'] as String?,
-        arguments = args?['arguments'],
-        super(key: key);
+        arguments = args?['arguments'];
 
   final String? backPage;
   final Object? arguments;

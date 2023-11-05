@@ -3,9 +3,9 @@ part of 'bloc.dart';
 @immutable
 class ProfileState extends BaseState {
   ProfileState({
-    Status status = Status.initial,
-    String? message,
-  }) : super(status: status, message: message);
+    super.status,
+    super.message,
+  });
 
   @override
   ProfileState clone({

@@ -7,7 +7,7 @@ import 'bloc.dart';
 
 /// 系统设置页(多语言，主题切换)
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

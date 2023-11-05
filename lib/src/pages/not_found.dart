@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class NotFoundPage extends StatelessWidget {
   final String? pageName;
-  const NotFoundPage(this.pageName, {Key? key}) : super(key: key);
+  const NotFoundPage(this.pageName, {super.key});
 
   @override
   Widget build(BuildContext context) {

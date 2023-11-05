@@ -267,7 +267,7 @@ extension StackTraceExt on StackTrace {
 
 extension FunctionExt on Function {
   void Function() debounce([Duration duration = const Duration(seconds: 1)]) {
-    return Debounce(this, duration);
+    return Debounce(this, duration).call;
   }
 }
 

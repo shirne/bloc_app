@@ -11,7 +11,7 @@ import 'common.dart';
 
 class MainApp extends StatelessWidget {
   final storeService = StoreService();
-  MainApp({Key? key}) : super(key: key);
+  MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ import 'bloc.dart';
 
 /// 产品主页
 class ProductPage extends StatelessWidget {
-  const ProductPage({Key? key}) : super(key: key);
+  const ProductPage({super.key});
 
   @override
   Widget build(BuildContext context) {

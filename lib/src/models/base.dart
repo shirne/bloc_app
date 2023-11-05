@@ -181,8 +181,7 @@ class ModelList<T extends Base> extends Base {
 
 /// 分页数据的模型，以下定义的字段可根据实际情况调整
 class ModelPage<T extends Base> extends ModelList<T> {
-  ModelPage({this.total = 0, this.page = 0, this.pageSize = 10, List<T>? items})
-      : super(items: items);
+  ModelPage({this.total = 0, this.page = 0, this.pageSize = 10, super.items});
 
   ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(

@@ -52,7 +52,7 @@ class MultiValidator<T> extends Validator<T> {
 }
 
 class RequiredValidator extends Validator<String?> {
-  RequiredValidator([String error = 'Required']) : super(error);
+  RequiredValidator([super.error = 'Required']);
 
   @override
   bool isValid(String? value) => (value ?? '').isNotEmpty;
@@ -104,8 +104,7 @@ class EmailValidator extends RegExpValidator {
 }
 
 class GlobalPhoneValidator extends Validator<String?> {
-  GlobalPhoneValidator([this.code, String error = 'Invalid phone number.'])
-      : super(error);
+  GlobalPhoneValidator([this.code, super.error = 'Invalid phone number.']);
 
   final int? code;
 
@@ -140,8 +139,8 @@ class CodeValidator extends RegExpValidator {
   CodeValidator({
     this.length = 4,
     this.withAlphabet = false,
-    String error = 'Invalid code.',
-  }) : super(error: error);
+    super.error = 'Invalid code.',
+  });
 
   final int length;
   final bool withAlphabet;

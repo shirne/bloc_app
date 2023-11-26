@@ -14,19 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../globals/config.dart';
 import 'device_info.dart';
 
-final logger = Logger.root
-  ..level = Config.env == Env.dev ? Level.ALL : Level.WARNING
-  ..onRecord.listen((record) {
-    log(
-      record.message,
-      time: record.time,
-      level: record.level.value,
-      name: record.loggerName,
-      error: record.error,
-      stackTrace: record.stackTrace,
-      sequenceNumber: record.sequenceNumber,
-    );
-  });
+Logger get logger => createLog();
 
 final datetimeFmt = DateFormat('yyyy-MM-dd HH:mm:ss');
 final dateHmFmt = DateFormat('yyyy-MM-dd HH:mm');
@@ -43,6 +31,27 @@ extension DateFormatExt on DateFormat {
   DateFormat withLocale(Locale locale) {
     return DateFormat(pattern, locale.toString());
   }
+}
+
+final _loggers = <String, Logger>{};
+
+Logger createLog([String? name]) {
+  return _loggers.putIfAbsent(
+    name ?? 'log',
+    () => (name == null ? Logger.root : Logger(name))
+      ..level = Config.env == Env.dev ? Level.ALL : Level.WARNING
+      ..onRecord.listen((record) {
+        log(
+          record.message,
+          time: record.time,
+          level: record.level.value,
+          name: record.loggerName,
+          error: record.error,
+          stackTrace: record.stackTrace,
+          sequenceNumber: record.sequenceNumber,
+        );
+      }),
+  );
 }
 
 class Utils {

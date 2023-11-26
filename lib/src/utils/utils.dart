@@ -12,20 +12,52 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../globals/config.dart';
+import '../globals/routes.dart';
+import 'core.dart';
 import 'device_info.dart';
 
 Logger get logger => createLog();
 
-final datetimeFmt = DateFormat('yyyy-MM-dd HH:mm:ss');
-final dateHmFmt = DateFormat('yyyy-MM-dd HH:mm');
-final dateHmWFmt = DateFormat('yyyy-MM-dd HH:mm EEE');
-final dateFmt = DateFormat('yyyy-MM-dd');
-final dtFmt = DateFormat('MM-dd');
-final dtWFmt = DateFormat('MM-dd EEE');
-final dtmFmt = DateFormat('MM-dd HH:mm');
-final dateWFmt = DateFormat('yyyy-MM-dd EEE');
-final timeFmt = DateFormat('HH:mm:ss');
-final hmFmt = DateFormat('HH:mm');
+final _datetimeFmt = DateFormat('yyyy-MM-dd HH:mm:ss');
+DateFormat get datetimeFmt => _datetimeFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _dateHmFmt = DateFormat('yyyy-MM-dd HH:mm');
+DateFormat get dateHmFmt => _dateHmFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _dateHmWFmt = DateFormat('yyyy-MM-dd HH:mm EEE');
+DateFormat get dateHmWFmt => _dateHmWFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _dateFmt = DateFormat('yyyy-MM-dd');
+DateFormat get dateFmt => _dateFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _dtFmt = DateFormat('MM-dd');
+DateFormat get dtFmt => _dtFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _dtWFmt = DateFormat('MM-dd EEE');
+DateFormat get dtWFmt => _dtWFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _dtmFmt = DateFormat('MM-dd HH:mm');
+DateFormat get dtmFmt => _dtmFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _dateWFmt = DateFormat('yyyy-MM-dd EEE');
+DateFormat get dateWFmt => _dateWFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _timeFmt = DateFormat('HH:mm:ss');
+DateFormat get timeFmt => _timeFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
+final _hmFmt = DateFormat('HH:mm');
+DateFormat get hmFmt => _hmFmt.withLocale(
+      navigatorKey.currentContext!.locale,
+    );
 
 extension DateFormatExt on DateFormat {
   DateFormat withLocale(Locale locale) {

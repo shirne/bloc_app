@@ -161,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const Gap.v(16),
                       TextField(
+                        obscureText: true,
                         decoration: InputDecoration(
                           hintText: context.l10n.labelPassword,
                           prefixIcon: const Icon(Icons.lock),

@@ -135,6 +135,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    CancelToken? cancelToken,
     VoidCallback? onRequireLogin,
   }) async {
     if (!skipLock && isLocked) {
@@ -163,17 +164,12 @@ class ApiService {
         data: data,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
       );
 
       final result = ApiResult<T>.fromResponse(res, dataParser);
-      if (result.needLogin) {
-        (onRequireLogin ?? _onRequireLogin).call();
-      }
-      if (result.invalidToken) {
-        GlobalBloc.instance.add(UserQuitEvent());
-      }
 
-      return result;
+      return _checkResponse(result);
     } on DioException catch (e) {
       if (e.response != null) {
         final data = e.response!.data is Json ? e.response!.data : emptyJson;
@@ -183,17 +179,26 @@ class ApiService {
           dataParser?.call(data) ?? ApiResult.transData(data),
           transErrorMsg(e.response!.data),
         );
-        if (result.needLogin) {
-          (onRequireLogin ?? _onRequireLogin).call();
-        }
-        if (result.invalidToken) {
-          GlobalBloc.instance.add(UserQuitEvent());
-        }
-        return result;
+
+        return _checkResponse(result);
       }
 
       return ApiResult<T>(-1, globalL10n.requestError, null);
     }
+  }
+
+  Future<ApiResult<T>> _checkResponse<T extends Base>(
+    ApiResult<T> result, {
+    VoidCallback? onRequireLogin,
+  }) async {
+    if (result.needLogin) {
+      (onRequireLogin ?? _onRequireLogin).call();
+    }
+    if (result.invalidToken) {
+      GlobalBloc.instance.add(UserQuitEvent());
+    }
+
+    return result;
   }
 
   dynamic transErrorMsg(dynamic msg) {
@@ -219,6 +224,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    CancelToken? cancelToken,
     VoidCallback? onRequireLogin,
   }) async {
     return request(
@@ -228,6 +234,7 @@ class ApiService {
       queryParameters: queryParameters,
       dataParser: dataParser,
       skipLock: skipLock,
+      cancelToken: cancelToken,
       onRequireLogin: onRequireLogin,
     );
   }
@@ -240,6 +247,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    CancelToken? cancelToken,
     VoidCallback? onRequireLogin,
   }) async {
     return request(
@@ -250,6 +258,7 @@ class ApiService {
       queryParameters: queryParameters,
       dataParser: dataParser,
       skipLock: skipLock,
+      cancelToken: cancelToken,
       onRequireLogin: onRequireLogin,
     );
   }
@@ -262,6 +271,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    CancelToken? cancelToken,
     VoidCallback? onRequireLogin,
   }) async {
     return request(
@@ -272,6 +282,7 @@ class ApiService {
       queryParameters: queryParameters,
       dataParser: dataParser,
       skipLock: skipLock,
+      cancelToken: cancelToken,
       onRequireLogin: onRequireLogin,
     );
   }
@@ -284,6 +295,7 @@ class ApiService {
     Map<String, String>? header,
     DataParser<T>? dataParser,
     bool skipLock = false,
+    CancelToken? cancelToken,
     VoidCallback? onRequireLogin,
   }) async {
     return request(
@@ -294,6 +306,7 @@ class ApiService {
       queryParameters: queryParameters,
       dataParser: dataParser,
       skipLock: skipLock,
+      cancelToken: cancelToken,
       onRequireLogin: onRequireLogin,
     );
   }

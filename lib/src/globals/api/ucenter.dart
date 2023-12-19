@@ -8,6 +8,7 @@ class ApiUcenter extends ApiBase {
     return await apiService.post(
       '$basePath/login',
       {'email': email, 'password': password},
+      dataParser: (m) => UserModel.fromJson(m),
       skipLock: true,
     );
   }
@@ -34,6 +35,7 @@ class ApiUcenter extends ApiBase {
         'smsCode': smsCode,
         'password': password,
       },
+      dataParser: (m) => UserModel.fromJson(m),
       skipLock: true,
     );
   }
@@ -62,7 +64,7 @@ class ApiUcenter extends ApiBase {
   ]) async {
     return await apiService.get(
       'user/profile',
-      skipLock: true,
+      dataParser: (m) => UserModel.fromJson(m),
     );
   }
 
@@ -71,7 +73,6 @@ class ApiUcenter extends ApiBase {
   ]) async {
     return await apiService.get(
       'user/notice_count',
-      skipLock: true,
     );
   }
 }

@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import 'src/app.dart';
 import 'src/assets.dart';
 import 'src/globals/store_service.dart';
+import 'src/utils/console.dart';
 import 'src/utils/device_info.dart';
 import 'src/utils/utils.dart';
 import 'src/widgets/gap.dart';
@@ -19,6 +21,8 @@ void main() async {
     preloadAssetsImage(AssetImage(Assets.images.background)),
     DeviceInfo().init(),
   ]);
+  Logger.root.level = getLevel();
+
   runApp(MainApp());
 }
 
@@ -31,6 +35,13 @@ void handleError() {
     // MyDialog.toast('$e');
 
     return true;
+  };
+  FlutterError.onError = (details) {
+    logger.warning(
+      'Flutter error: ${details.exception}',
+      details.exception,
+      details.stack,
+    );
   };
   ErrorWidget.builder = (FlutterErrorDetails d) {
     logger.warning(

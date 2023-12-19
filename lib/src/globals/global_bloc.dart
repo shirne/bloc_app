@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/l10n.dart';
 import '../models/user.dart';
 import '../utils/core.dart';
-import '../utils/utils.dart';
 import '../widgets/cached_bloc.dart';
 import 'api.dart';
 import 'api_service.dart';

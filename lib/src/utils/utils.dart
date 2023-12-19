@@ -11,7 +11,6 @@ import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../globals/config.dart';
 import '../globals/routes.dart';
 import 'console.dart';
 import 'core.dart';

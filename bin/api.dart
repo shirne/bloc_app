@@ -204,8 +204,9 @@ class Api$className extends ApiBase {
       if (response != null) {
         content.writeln('      dataParser: (d)=> $response.fromJson(d),');
       }
+
+      // TODO(shirne): skipLock: true,
       content.write('''
-      skipLock: true,
     );
   }
 ''');

@@ -13,6 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../globals/config.dart';
 import '../globals/routes.dart';
+import 'console.dart';
 import 'core.dart';
 import 'device_info.dart';
 
@@ -71,7 +72,6 @@ Logger createLog([String? name]) {
   return _loggers.putIfAbsent(
     name ?? 'log',
     () => (name == null ? Logger.root : Logger(name))
-      ..level = Config.env == Env.dev ? Level.ALL : Level.WARNING
       ..onRecord.listen((record) {
         log(
           record.message,
@@ -82,6 +82,7 @@ Logger createLog([String? name]) {
           stackTrace: record.stackTrace,
           sequenceNumber: record.sequenceNumber,
         );
+        addLog(record);
       }),
   );
 }

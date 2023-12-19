@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shirne_dialog/shirne_dialog.dart';
 
 import '../../common.dart';
+import '../../utils/console.dart';
 import 'bloc.dart';
 
 /// 系统设置页(多语言，主题切换)
@@ -137,6 +140,31 @@ class SettingsPage extends StatelessWidget {
                         );
                       }
                     },
+                  ),
+                  RawGestureDetector(
+                    gestures: {
+                      SerialTapGestureRecognizer:
+                          GestureRecognizerFactoryWithHandlers<
+                                  SerialTapGestureRecognizer>(
+                              () => SerialTapGestureRecognizer(), (recognizer) {
+                        recognizer.onSerialTapDown = (details) async {
+                          if (details.count > 4) {
+                            final isOpen = await MyDialog.confirm(
+                              'Open Logs?',
+                              buttonText: 'Open',
+                              cancelText: 'Close',
+                            );
+                            if (isOpen == true) {
+                              showConsole();
+                            } else if (isOpen == false) {
+                              hideConsole();
+                            }
+                          }
+                        };
+                      }),
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(height: 30, color: Colors.transparent),
                   ),
                 ],
               ),

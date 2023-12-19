@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../l10n/gen/l10n.dart';
+import '../models/base.dart';
 import '../models/user.dart';
 import '../utils/utils.dart';
 import '../utils/core.dart';
+
+typedef StringList = List<String>;
 
 class StoreService {
   static const userTokenKey = 'user_token';
@@ -30,6 +33,42 @@ class StoreService {
   }
 
   StoreService._();
+
+  T? get<T>(String key) {
+    switch (T) {
+      case const (bool):
+        return _sp.getBool(key) as T?;
+      case const (int):
+        return _sp.getInt(key) as T?;
+      case const (double):
+        return _sp.getDouble(key) as T?;
+      case const (String):
+        return _sp.getString(key) as T?;
+      case const (StringList):
+        return _sp.getStringList(key) as T?;
+    }
+    return as<T>(_sp.get(key));
+  }
+
+  Future<bool> set<T>(String key, T value) async {
+    switch (T) {
+      case const (bool):
+        return _sp.setBool(key, value as bool);
+      case const (int):
+        return _sp.setInt(key, value as int);
+      case const (double):
+        return _sp.setDouble(key, value as double);
+      case const (String):
+        return _sp.setString(key, value as String);
+      case const (StringList):
+        return _sp.setStringList(key, value as StringList);
+    }
+    return false;
+  }
+
+  Future<bool> del(String key) {
+    return _sp.remove(key);
+  }
 
   bool getAgreed() => _sp.getBool(agreedKey) ?? false;
 

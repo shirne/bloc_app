@@ -108,13 +108,23 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
     return BlocProvider<LoginBloc>(
       create: (context) => LoginBloc(),
-      child: BlocBuilder<LoginBloc, LoginState>(
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(context.l10n.login),
-            ),
-            body: Center(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(context.l10n.login),
+          backgroundColor: theme.appBarTheme.backgroundColor?.withAlpha(100),
+        ),
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        body: BlocBuilder<LoginBloc, LoginState>(
+          builder: (context, state) {
+            return Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(Assets.images.background),
+                ),
+              ),
+              alignment: Alignment.center,
               child: Card(
                 child: Container(
                   width: math.min(MediaQuery.of(context).size.width * 0.8, 450),
@@ -205,9 +215,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

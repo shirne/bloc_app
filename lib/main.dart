@@ -23,7 +23,7 @@ void main() async {
   ]);
   Logger.root.level = getLevel();
 
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 void handleError() {
@@ -34,6 +34,8 @@ void handleError() {
     logger.warning('Caught unhandled exception: $e', e, s);
     // MyDialog.toast('$e');
 
+    // TODO report errors
+
     return true;
   };
   FlutterError.onError = (details) {
@@ -42,6 +44,8 @@ void handleError() {
       details.exception,
       details.stack,
     );
+
+    // TODO report errors
   };
   ErrorWidget.builder = (FlutterErrorDetails d) {
     logger.warning(

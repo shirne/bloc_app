@@ -169,7 +169,7 @@ class ApiService {
 
       final result = ApiResult<T>.fromResponse(res, dataParser);
 
-      return _checkResponse(result);
+      return _checkResponse(result,onRequireLogin:onRequireLogin);
     } on DioException catch (e) {
       if (e.response != null) {
         final data = e.response!.data is Json ? e.response!.data : emptyJson;
@@ -180,7 +180,7 @@ class ApiService {
           transErrorMsg(e.response!.data),
         );
 
-        return _checkResponse(result);
+        return _checkResponse(result,onRequireLogin:onRequireLogin);
       }
 
       return ApiResult<T>(-1, globalL10n.requestError, null);

@@ -202,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () async {},
                             child: Text(context.l10n.forgotPassword),
                           ),
                           TextButton(

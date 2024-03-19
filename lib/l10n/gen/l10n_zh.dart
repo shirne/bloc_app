@@ -92,6 +92,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themeDark => '暗色';
 
   @override
+  String date(Object a, Object b) {
+    return '$a月$b号';
+  }
+
+  @override
   String get languages => '语言';
 
   @override

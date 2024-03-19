@@ -32,6 +32,7 @@
     "themeSystem":"System",
     "themeLight":"Light",
     "themeDark":"Dark",
+    "date": "{b}day{a}month",
 
     "languages":"Language",
     "languagesDesc":"Set languages",

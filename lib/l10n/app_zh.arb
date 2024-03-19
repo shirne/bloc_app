@@ -32,6 +32,7 @@
     "themeSystem":"跟随系统",
     "themeLight":"亮色",
     "themeDark":"暗色",
+    "date": "{a}月{b}号",
     
     "languages":"语言",
     "languagesDesc":"设置显示语言",

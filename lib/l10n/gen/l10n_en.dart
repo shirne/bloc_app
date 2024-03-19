@@ -92,6 +92,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeDark => 'Dark';
 
   @override
+  String date(Object a, Object b) {
+    return '${b}day${a}month';
+  }
+
+  @override
   String get languages => 'Language';
 
   @override

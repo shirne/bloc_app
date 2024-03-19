@@ -268,6 +268,12 @@ abstract class AppLocalizations {
   /// **'Dark'**
   String get themeDark;
 
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'{b}day{a}month'**
+  String date(Object a, Object b);
+
   /// No description provided for @languages.
   ///
   /// In en, this message translates to:

@@ -4,7 +4,7 @@ final dirs = ['images', 'svgs'];
 const path = './lib/src/assets.dart';
 final files = <String, List<String>>{};
 
-/// 将assets中的图片按像素比整理
+/// 将assets中的资源按路径生成实体
 void main(List<String> args) {
   final dir = Directory('${Directory.current.absolute.path}/assets');
 

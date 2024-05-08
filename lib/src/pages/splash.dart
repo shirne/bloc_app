@@ -61,12 +61,12 @@ class _SplashPageState extends State<SplashPage> {
       StoreService().setAgreed(true);
     }
     await Future.delayed(Duration.zero);
-    if (context.mounted) {
+    if (mounted) {
       setState(() {
         alignment = const Alignment(0, -0.5);
       });
       await Future.delayed(const Duration(milliseconds: 100));
-      if (context.mounted) {
+      if (mounted) {
         //LocatorUtil().init();
         await Future.wait([
           initWeb(),
@@ -74,7 +74,7 @@ class _SplashPageState extends State<SplashPage> {
           initChat(),
           Future.delayed(const Duration(seconds: 1)),
         ]);
-        if (context.mounted) {
+        if (mounted) {
           Routes.main.replace(context);
         }
       }

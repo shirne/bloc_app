@@ -16,7 +16,7 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     await StoreService().init();
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MainApp());
+    await tester.pumpWidget(const MainApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

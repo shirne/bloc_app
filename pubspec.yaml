@@ -6,6 +6,8 @@ version: 1.0.0+1
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
+isar_version: &isar_version 3.1.0+1
+
 dependencies:
   flutter:
     sdk: flutter
@@ -21,6 +23,8 @@ dependencies:
   bloc: ^8.0.3
   flutter_bloc: ^8.0.1
   shared_preferences: ^2.0.17 # 本地存储
+  isar: *isar_version
+  isar_flutter_libs: *isar_version
   flutter_secure_storage: ^9.0.0
   permission_handler: ^11.0.1
   device_info_plus:
@@ -40,6 +44,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  build_runner:
+  isar_generator: *isar_version
   flutter_lints:
   icons_launcher:
   flutter_native_splash:

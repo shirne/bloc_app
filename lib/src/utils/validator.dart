@@ -12,17 +12,14 @@ abstract class Validator<T> {
 
   String? call(T value) => isValid(value) ? null : error;
 
-  Validator<T> and(Validator<T> other, {String error = ''}) {
-    return MultiValidator([this, other], error: error);
-  }
+  Validator<T> and(Validator<T> other, {String error = ''}) =>
+      MultiValidator([this, other], error: error);
 
-  Validator<T> or(Validator<T> other, {String error = ''}) {
-    return MultiValidator(
-      [this, other],
-      isAnd: false,
-      error: error,
-    );
-  }
+  Validator<T> or(Validator<T> other, {String error = ''}) => MultiValidator(
+        [this, other],
+        isAnd: false,
+        error: error,
+      );
 }
 
 class MultiValidator<T> extends Validator<T> {

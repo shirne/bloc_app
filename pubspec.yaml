@@ -1,6 +1,6 @@
 name: blocapp
 description: An app skeleton of flutter app based on bloc & flutter_bloc.
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -14,12 +14,11 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-
   path:
-  intl:                    # 国际化
+  intl: # 国际化
   path_provider:
-  logging:                  # 日志工具
-  dio: ^5.1.2                # 网络库
+  logging: # 日志工具
+  dio: ^5.1.2 # 网络库
   bloc: ^8.0.3
   flutter_bloc: ^8.0.1
   shared_preferences: ^2.0.17 # 本地存储
@@ -30,15 +29,18 @@ dependencies:
   device_info_plus:
   geolocator:
 
-  skeletons: ^0.0.3          # 骨架页构造工具
-  appscheme: ^1.0.8          # applink处理
-  file_picker: ^6.0.0         # 文件选择
+  skeletons: #^0.0.3          # 骨架页构造工具
+    git:
+      url: https://github.com/shirne/flutter_skeletons
+      ref: 089cbed11d485e6fc2faf6460821eab9d07795f8
+  appscheme: ^1.0.8 # applink处理
+  file_picker: ^6.0.0 # 文件选择
 
-  shirne_dialog: ^4.5.0       # 对话框
-  
-  flutter_widget_from_html: ^0.14.6
-  flutter_widget_from_html_core: ^0.14.6 # 简单html全平台解析
-  flutter_inappwebview: ^6.0.0-beta.24+1  # 内置webview
+  shirne_dialog: ^4.5.0 # 对话框
+
+  flutter_widget_from_html: ^0.15.0
+  flutter_widget_from_html_core: ^0.15.0 # 简单html全平台解析
+  flutter_inappwebview: ^6.0.0 # 内置webview
 
 dev_dependencies:
   flutter_test:
@@ -56,7 +58,6 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 flutter:
-
   uses-material-design: true
 
   generate: true
@@ -85,7 +86,6 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-
 # flutter pub run icons_launcher:create
 icons_launcher:
   image_path: "assets/images/icon.png"
@@ -97,12 +97,12 @@ icons_launcher:
       #adaptive_background_image
       adaptive_foreground_image: "assets/images/icon_foreground.png"
       #adaptive_round_image
-    ios: 
+    ios:
       enable: true
-    macos: 
+    macos:
       enable: true
-    windows: 
+    windows:
       enable: true
-    web: 
+    web:
       enable: true
       favicon_path: "assets/images/icon.png"

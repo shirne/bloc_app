@@ -15,7 +15,7 @@ void main(List<String> args) {
 }
 
 final classUpperReg = RegExp('(^|_)([a-z])');
-final varUpperReg = RegExp('_([a-z])');
+final varUpperReg = RegExp('[_-]([a-z])');
 final xDirReg = RegExp(r'^\d\.\dx$');
 final sufixReg = RegExp(r'\.[a-zA-Z0-9]+$');
 

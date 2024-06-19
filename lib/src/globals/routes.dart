@@ -24,11 +24,6 @@ bool notLoginPage(Route<dynamic> route) {
 
 String? processRoutes(String? url) {
   if (url != null && Config.shareRegexp.hasMatch(url)) {
-    if (url.contains('/mine/activity/')) {
-      url = url.replaceAll('/mine/activity/', '/mine/activities/');
-    } else if (url.contains('/mine/carpool/')) {
-      url = url.replaceAll('/mine/carpool/', '/mine/carpools/');
-    }
     logger.info('tourl: $url');
     final uri = Uri.parse(url);
 

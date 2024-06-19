@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
@@ -17,9 +16,19 @@ class MainApp extends StatelessWidget {
     MyDialog.navigatorKey = navigatorKey;
     return RepositoryProvider<StoreService>(
       create: (_) => StoreService(),
-      child: BlocProvider<GlobalBloc>(
-        create: (BuildContext context) =>
-            GlobalBloc(context.read<StoreService>()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<GlobalBloc>(
+            create: (BuildContext context) => GlobalBloc(
+              context.read<StoreService>(),
+            ),
+          ),
+          BlocProvider<UserBloc>(
+            create: (BuildContext context) => UserBloc(
+              context.read<StoreService>(),
+            ),
+          ),
+        ],
         child: BlocBuilder<GlobalBloc, GlobalState>(
           builder: (context, state) {
             return DefaultTextStyle(
@@ -61,7 +70,7 @@ class MainApp extends StatelessWidget {
                     );
                   }
                   if (route.isAuth) {
-                    if (!GlobalBloc.instance.state.token.isValid) {
+                    if (!UserBloc.instance.state.token.isValid) {
                       return MaterialPageRoute<dynamic>(
                         settings: RouteSettings(
                           name: Routes.login.name,

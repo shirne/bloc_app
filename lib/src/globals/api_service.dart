@@ -11,6 +11,7 @@ import '../utils/core.dart';
 import 'config.dart';
 import 'global_bloc.dart';
 import 'routes.dart';
+import 'user_bloc.dart';
 
 const _tokenHeaderKey = 'Authorization';
 
@@ -169,7 +170,7 @@ class ApiService {
 
       final result = ApiResult<T>.fromResponse(res, dataParser);
 
-      return _checkResponse(result,onRequireLogin:onRequireLogin);
+      return _checkResponse(result, onRequireLogin: onRequireLogin);
     } on DioException catch (e) {
       if (e.response != null) {
         final data = e.response!.data is Json ? e.response!.data : emptyJson;
@@ -180,7 +181,7 @@ class ApiService {
           transErrorMsg(e.response!.data),
         );
 
-        return _checkResponse(result,onRequireLogin:onRequireLogin);
+        return _checkResponse(result, onRequireLogin: onRequireLogin);
       }
 
       return ApiResult<T>(-1, globalL10n.requestError, null);
@@ -195,7 +196,7 @@ class ApiService {
       (onRequireLogin ?? _onRequireLogin).call();
     }
     if (result.invalidToken) {
-      GlobalBloc.instance.add(UserQuitEvent());
+      UserBloc.instance.add(UserQuitEvent());
     }
 
     return result;

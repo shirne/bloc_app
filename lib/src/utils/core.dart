@@ -8,6 +8,8 @@ import '../common.dart';
 
 /// 基于核心库的扩展
 
+typedef ResultCallback<T> = void Function(bool, T? data);
+
 /// 获取可空的元素
 extension ListExt<E> on List<E> {
   E? get firstOrNull => isEmpty ? null : this[0];

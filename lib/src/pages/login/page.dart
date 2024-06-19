@@ -55,9 +55,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<GlobalBloc, GlobalState>(
-      listener: (context, globalState) {
-        if (canClose && globalState.token.isValid) {
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, userState) {
+        if (canClose && userState.token.isValid) {
           close();
         }
       },

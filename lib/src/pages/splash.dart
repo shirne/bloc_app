@@ -130,33 +130,37 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(Assets.images.background),
+      body: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage(Assets.images.background),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Image.asset(
+                  Assets.images.splashLogo,
+                  width: 90.25,
+                  height: 128.75,
+                ),
               ),
-            ),
-            alignment: Alignment.center,
-            child: Image.asset(
-              Assets.images.splashLogo,
-              width: 90.25,
-              height: 128.75,
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Image.asset(
-              Assets.images.text,
-              width: 150.25,
-              height: 50,
-            ),
-          ),
-        ],
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Image.asset(
+                  Assets.images.text,
+                  width: 150.25,
+                  height: 50,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

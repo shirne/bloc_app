@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../l10n/gen/l10n.dart';
 import '../models/base.dart';
@@ -12,13 +13,17 @@ import '../utils/core.dart';
 typedef StringList = List<String>;
 
 class StoreService {
-  static const userTokenKey = 'user_token';
+  static const userTokenKey = 'token';
   static const needAuthKey = 'need_auth';
   static const agreedKey = 'pricity_agreed';
 
+  late final secureStorage = const FlutterSecureStorage();
+  String? _tokenStr;
   late SharedPreferences _sp;
+
   Future<void> init() async {
     _sp = await SharedPreferences.getInstance();
+    _tokenStr = await secureStorage.read(key: userTokenKey);
   }
 
   SharedPreferences get sp => _sp;
@@ -113,30 +118,36 @@ class StoreService {
     }
   }
 
-  TokenModel token() {
-    String? jsonData = sp.getString(userTokenKey);
-    if (jsonData != null && jsonData.isNotEmpty) {
-      try {
-        return TokenModel.fromJson(jsonDecode(jsonData));
-      } catch (_) {
-        deleteToken();
-        logger.warning(
-          'user auth decode failed: $jsonData',
-          Exception('user auth decode failed: $jsonData'),
-          StackTrace.current.cast(5),
-        );
+  TokenModel? _token;
+  TokenModel get token {
+    if (_token == null) {
+      if (_tokenStr != null && _tokenStr!.isNotEmpty) {
+        try {
+          _token = TokenModel.fromJson(jsonDecode(_tokenStr!));
+        } catch (_) {
+          deleteToken();
+          logger.warning(
+            'user auth decode failed: $_tokenStr',
+            Exception('user auth decode failed: $_tokenStr'),
+            StackTrace.current.cast(5),
+          );
+        }
       }
     }
-    return TokenModel.empty;
+    return _token ?? TokenModel.empty;
   }
 
-  Future<bool> deleteToken() async {
+  Future<void> deleteToken() async {
     await sp.remove(needAuthKey);
-    return await sp.remove(userTokenKey);
+    _tokenStr = null;
+    _token = null;
+    return await secureStorage.delete(key: userTokenKey);
   }
 
-  Future<bool> updateToken(TokenModel token) async {
-    return await sp.setString(userTokenKey, jsonEncode(token.toJson()));
+  Future<void> updateToken(TokenModel token) async {
+    _tokenStr = jsonEncode(token.toJson());
+    _token = null;
+    return await secureStorage.write(key: userTokenKey, value: _tokenStr);
   }
 
   bool needAuth() => sp.getBool(needAuthKey) ?? false;

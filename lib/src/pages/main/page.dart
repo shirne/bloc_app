@@ -69,7 +69,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<GlobalBloc, GlobalState>(
+    return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (!state.token.isValid) {
           logger.info('to login');

@@ -25,7 +25,7 @@ class LoginBloc extends CachedBloc<LoginEvent, LoginState> {
     emit(state.clone(status: Status.loading));
     await Future.delayed(const Duration(milliseconds: 500));
     if (isClosed) return;
-    GlobalBloc.instance.add(
+    UserBloc.instance.add(
       UserLoginEvent(
         TokenModel(
           accessToken: 'aaa',

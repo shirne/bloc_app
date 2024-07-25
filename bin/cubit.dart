@@ -18,59 +18,32 @@ void main(List<String> args) {
   final pathDeeper = dir.isEmpty ? '' : '../' * dir.split('/').length;
   Directory(pageDir).createSync(recursive: true);
 
-  File('${pageDir}bloc.dart').writeAsStringSync("""
+  File('${pageDir}cubit.dart').writeAsStringSync("""
 import 'package:flutter/widgets.dart';
 
 import '../../${pathDeeper}common.dart';
 
-part 'event.dart';
 part 'state.dart';
 
-class ${page}Bloc extends CachedBloc<${page}Event, ${page}State> {
-  ${page}Bloc([String globalKey = '']) : super(() => ${page}State(), globalKey) {
-    on<StateChangedEvent>((event, emit) {
-      emit(event.state);
-    });
-    
-    on<RefreshEvent>((event, emit) {
-      emit(state.clone(status: Status.loading));
-      _loadData(onError: event.onError);
-    });
-    
-    _loadData();
+class ${page}Cubit extends CachedCubit<${page}State> {
+  ${page}Cubit([String globalKey = '']) : super(() => ${page}State(), globalKey) {
+    loadData();
   }
   
-  Future<void> _loadData({void Function(String message)? onError}) async {
-    add(StateChangedEvent(state.clone(status: Status.loading)));
+  Future<void> loadData({void Function(String message)? onError}) async {
+    emit(state.clone(status: Status.loading));
     await Future.delayed(const Duration(milliseconds: 500));
     //TODO load data
     if(isClosed){
       return;
     }
-    add(StateChangedEvent(state.clone(status: Status.success)));
+    emit(state.clone(status: Status.success));
   }
 }
 """);
-  File('${pageDir}event.dart').writeAsStringSync("""
-part of 'bloc.dart';
 
-@immutable
-abstract class ${page}Event {}
-
-class RefreshEvent extends ${page}Event {
-  RefreshEvent({this.onError});
-
-  final void Function(String message)? onError;
-}
-
-class StateChangedEvent extends ${page}Event {
-  StateChangedEvent(this.state);
-  
-  final ${page}State state;
-}
-""");
   File('${pageDir}state.dart').writeAsStringSync("""
-part of 'bloc.dart';
+part of 'cubit.dart';
 
 @immutable
 class ${page}State extends BaseState {
@@ -91,24 +64,23 @@ class ${page}State extends BaseState {
   }
 }
 """);
-  File('${pageDir}page.dart').writeAsStringSync("""
+  File('${pageDir}view.dart').writeAsStringSync("""
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletons/skeletons.dart';
 
 import '../../${pathDeeper}common.dart';
-import 'bloc.dart';
+import 'cubit.dart';
 
-class ${page}Page extends StatelessWidget {
-  const ${page}Page({super.key});
+class ${page}View extends StatelessWidget {
+  const ${page}View({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<${page}Bloc>(
-      create: (context) => ${page}Bloc(),
-      child: Scaffold(
-        appBar: AppBar(),
-        body: BlocBuilder<${page}Bloc, ${page}State>(
+    return BlocProvider<${page}Cubit>(
+      create: (context) => ${page}Cubit(),
+      child: Container(
+        child: BlocBuilder<${page}Cubit, ${page}State>(
           builder: (context, state) {
             // 初始化状态可以显示skeleton
             if (state.isInitial) {

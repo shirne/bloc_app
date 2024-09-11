@@ -58,7 +58,7 @@ class ClassEntity {
             c.className.replaceRange(0, 1, c.className[0].toLowerCase());
         final clsName = c.path.isEmpty ? c.className : '_\$${c.className}';
         sb.write(
-          '$prefix$classVar = $clsName();\n',
+          '$prefix$classVar = const $clsName();\n',
         );
       }
     }

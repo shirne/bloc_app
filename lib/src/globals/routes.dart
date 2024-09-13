@@ -134,12 +134,21 @@ class RouteItem {
 
   const RouteItem(this.name, this.builder, {this.isAuth = true});
 
-  Future<T?> show<T>(BuildContext context, {Object? arguments}) {
-    return Navigator.of(context).pushNamed<T>(name, arguments: arguments);
+  Future<T?> show<T>(
+    BuildContext context, {
+    Object? arguments,
+    bool useRoot = true,
+  }) {
+    return Navigator.of(context, rootNavigator: useRoot)
+        .pushNamed<T>(name, arguments: arguments);
   }
 
-  Future<T?> replace<T>(BuildContext context, {Object? arguments}) {
-    return Navigator.of(context)
+  Future<T?> replace<T>(
+    BuildContext context, {
+    Object? arguments,
+    bool useRoot = true,
+  }) {
+    return Navigator.of(context, rootNavigator: useRoot)
         .pushReplacementNamed<T, Object>(name, arguments: arguments);
   }
 }

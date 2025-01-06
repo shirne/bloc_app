@@ -18,7 +18,7 @@ dependencies:
   intl: # 国际化
   path_provider:
   logging: # 日志工具
-  dio: ^5.1.2 # 网络库
+  dio: ^5.7.0 # 网络库
   bloc: ^8.0.3
   flutter_bloc: ^8.0.1
   shared_preferences: ^2.0.17 # 本地存储
@@ -33,13 +33,13 @@ dependencies:
     git:
       url: https://github.com/shirne/flutter_skeletons
       ref: 089cbed11d485e6fc2faf6460821eab9d07795f8
-  appscheme: ^1.0.8 # applink处理
-  file_picker: ^6.0.0 # 文件选择
+  appscheme: ^1.1.0 # applink处理
+  file_picker: ^8.1.7 # 文件选择
 
   shirne_dialog: ^4.5.0 # 对话框
 
-  flutter_widget_from_html: ^0.15.0
-  flutter_widget_from_html_core: ^0.15.0 # 简单html全平台解析
+  # flutter_widget_from_html: ^0.15.3
+  flutter_widget_from_html_core: ^0.15.2 # 简单html全平台解析
   flutter_inappwebview: ^6.0.0 # 内置webview
 
 dev_dependencies:

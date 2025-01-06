@@ -70,7 +70,8 @@ class MainApp extends StatelessWidget {
                     );
                   }
                   if (route.isAuth) {
-                    if (!UserBloc.instance.state.token.isValid) {
+                    if (UserBloc.hasInstance &&
+                        !UserBloc.instance.state.token.isValid) {
                       return MaterialPageRoute<dynamic>(
                         settings: RouteSettings(
                           name: Routes.login.name,

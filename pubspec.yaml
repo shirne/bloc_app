@@ -40,7 +40,7 @@ dependencies:
 
   # flutter_widget_from_html: ^0.15.3
   flutter_widget_from_html_core: ^0.15.2 # 简单html全平台解析
-  flutter_inappwebview: ^6.0.0 # 内置webview
+  flutter_inappwebview: ^6.1.5 # 内置webview
 
 dev_dependencies:
   flutter_test:

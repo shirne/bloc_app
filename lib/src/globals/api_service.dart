@@ -195,7 +195,7 @@ class ApiService {
     if (result.needLogin) {
       (onRequireLogin ?? _onRequireLogin).call();
     }
-    if (result.invalidToken) {
+    if (UserBloc.hasInstance && result.invalidToken) {
       UserBloc.instance.add(UserQuitEvent());
     }
 

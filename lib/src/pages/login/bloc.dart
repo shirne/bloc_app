@@ -25,15 +25,17 @@ class LoginBloc extends CachedBloc<LoginEvent, LoginState> {
     emit(state.clone(status: Status.loading));
     await Future.delayed(const Duration(milliseconds: 500));
     if (isClosed) return;
-    UserBloc.instance.add(
-      UserLoginEvent(
-        TokenModel(
-          accessToken: 'aaa',
-          refreshToken: 'bbb',
-          expireIn: 1000,
-          createTime: DateTime.now(),
+    if (UserBloc.hasInstance) {
+      UserBloc.instance.add(
+        UserLoginEvent(
+          TokenModel(
+            accessToken: 'aaa',
+            refreshToken: 'bbb',
+            expireIn: 1000,
+            createTime: DateTime.now(),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }

@@ -44,6 +44,7 @@ class _MainPageState extends State<MainPage> {
   void onScheme(SchemeEntity? value) {
     if (value != null) {
       logger.info('Init  ${value.dataString}');
+
       if (value.path != null &&
           value.path != Routes.main.name &&
           value.path != Routes.login.name) {

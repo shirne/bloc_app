@@ -143,6 +143,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   static UserBloc? _instance;
   static UserBloc get instance => _instance!;
+  static bool get hasInstance => _instance != null;
 
   @override
   Future<void> close() {

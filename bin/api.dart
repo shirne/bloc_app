@@ -112,6 +112,13 @@ class $className extends Base {
   }
   content.writeln('  );');
 
+  content.write('''
+  static $className? tryFromJson(Json? json) {
+    if (json == null) return null;
+    return $className.fromJson(json);
+  }
+''');
+
   for (var f in data.properties) {
     if (f.description != null) {
       content.writeln('  /// ${f.description}');

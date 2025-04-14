@@ -29,6 +29,9 @@ class ClassEntity {
   final List<String> properties;
   final List<ClassEntity> classes;
 
+  bool get isEmpty => properties.isEmpty && classes.isEmpty;
+  bool get isNotEmpty => properties.isNotEmpty || classes.isNotEmpty;
+
   String get fullPath => '$path$name/';
 
   String? _className;
@@ -87,8 +90,9 @@ void loopDir(Directory dir, ClassEntity parent, [int depts = 1]) {
     if (item is Directory) {
       if (!xDirReg.hasMatch(name) && (depts > 1 || dirs.contains(name))) {
         final cls = ClassEntity(name, parent.fullPath);
-        parent.classes.add(cls);
+
         loopDir(item, cls, depts + 1);
+        if (cls.isNotEmpty) parent.classes.add(cls);
       }
     } else if (item is File) {
       if (item.uri.pathSegments.last.contains('@')) continue;

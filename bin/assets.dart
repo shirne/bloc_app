@@ -38,16 +38,22 @@ class ClassEntity {
   String toClassCode() {
     StringBuffer sb = StringBuffer();
 
+    // 根目录
     if (path.isEmpty) {
-      sb.write('class $className {\n');
+      sb.write('class $className {');
     } else {
       sb.write('class _\$$className {\n');
       sb.write('  const _\$$className();\n\n');
     }
+
+    if (properties.isNotEmpty) {
+      sb.write('  static const _base = \'$path$name\';\n\n');
+    }
+
     final prefix = path.isEmpty ? '  static const ' : '  final ';
     for (var i in properties) {
       sb.write(
-        '$prefix${i.replaceFirst(sufixReg, '').replaceAllMapped(varUpperReg, (m) => m[1]!.toUpperCase())} = \'$fullPath$i\';\n',
+        '$prefix${i.replaceFirst(sufixReg, '').replaceAllMapped(varUpperReg, (m) => m[1]!.toUpperCase())} = \'\$_base/$i\';\n',
       );
     }
     if (classes.isNotEmpty) {
@@ -58,7 +64,7 @@ class ClassEntity {
             c.className.replaceRange(0, 1, c.className[0].toLowerCase());
         final clsName = c.path.isEmpty ? c.className : '_\$${c.className}';
         sb.write(
-          '$prefix$classVar = $clsName();\n',
+          '$prefix$classVar = ${path.isEmpty ? '' : 'const '}$clsName();\n',
         );
       }
     }
@@ -79,12 +85,12 @@ void loopDir(Directory dir, ClassEntity parent, [int depts = 1]) {
     final name = item.uri.pathSegments.lastWhere((e) => e.isNotEmpty);
 
     if (item is Directory) {
-      if ((depts > 1 && !xDirReg.hasMatch(name)) || dirs.contains(name)) {
+      if (!xDirReg.hasMatch(name) && (depts > 1 || dirs.contains(name))) {
         final cls = ClassEntity(name, parent.fullPath);
         parent.classes.add(cls);
         loopDir(item, cls, depts + 1);
       }
-    } else if (depts > 1 && item is File) {
+    } else if (item is File) {
       if (item.uri.pathSegments.last.contains('@')) continue;
       parent.properties.add(name);
     }

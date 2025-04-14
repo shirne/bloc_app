@@ -199,7 +199,6 @@ class Api$className extends ApiBase {
   ${params.isEmpty ? '' : '}'}) async {
     return await apiService.${method.method}(
       '\${basePath}$path',
-      ${method.method == 'post' ? '{}' : ''}
 ''');
       if (params.where((e) => !e.isPath).isNotEmpty) {
         if (method.method == 'get') {
@@ -215,6 +214,8 @@ class Api$className extends ApiBase {
           );
         }
         content.writeln('},');
+      } else if (method.method == 'post') {
+        content.writeln('{},');
       }
       if (response != null) {
         content.writeln('      dataParser: (d)=> $response.fromJson(d),');

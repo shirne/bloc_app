@@ -25,15 +25,28 @@ void main(List<String> args) {
 
   try {
     final jsonStr = File(path).readAsStringSync();
-    final entry = SwaggerModel.fromJson(jsonDecode(jsonStr));
+    var json = jsonDecode(jsonStr);
+    if (json['openapi'] != null) {
+      final entry = OpenApiModel.fromJson(jsonDecode(jsonStr));
 
-    final models = createModel(entry.definitions);
+      final models = createModel(entry.components);
 
-    File('$_modelPath$name.dart').writeAsStringSync(models);
+      File('$_modelPath$name.dart').writeAsStringSync(models);
 
-    final apis = createApi(entry.paths, entry.basePath, className);
+      final apis = createApi(entry.paths, '', className);
 
-    File('$_apiPath$name.dart').writeAsStringSync(apis);
+      File('$_apiPath$name.dart').writeAsStringSync(apis);
+    } else {
+      final entry = SwaggerModel.fromJson(jsonDecode(jsonStr));
+
+      final models = createModel(entry.definitions);
+
+      File('$_modelPath$name.dart').writeAsStringSync(models);
+
+      final apis = createApi(entry.paths, entry.basePath, className);
+
+      File('$_apiPath$name.dart').writeAsStringSync(apis);
+    }
   } catch (e) {
     stdout.writeln("Err: $e");
     stdout.writeln(StackTrace.current);
@@ -74,7 +87,7 @@ class $className extends Base {
       final transType = f.type.item != null
           ? isBase
               ? '?.cast<${f.type.item?.type}>()'
-              : '?.map<${f.type.item}>((e)=>${f.type.item?.typeName}.fromJson(e)).toList()'
+              : '?.map<${f.type.item?.typeName}>((e)=>${f.type.item?.typeName}.fromJson(e)).toList()'
           : '';
       content.writeln(
         '    ${f.fieldName}: as<${f.type.type}>(json[\'${f.name}\'])$transType${f.isRequired ? ' ?? []' : ''},',
@@ -143,6 +156,7 @@ String getDefault(FieldModel f) {
       typeValue = "''";
     case 'List':
       typeValue = '[]';
+    case 'Json':
     case 'Map':
       typeValue = '{}';
   }
@@ -185,6 +199,7 @@ class Api$className extends ApiBase {
   ${params.isEmpty ? '' : '}'}) async {
     return await apiService.${method.method}(
       '\${basePath}$path',
+      ${method.method == 'post' ? '{}' : ''}
 ''');
       if (params.where((e) => !e.isPath).isNotEmpty) {
         if (method.method == 'get') {
@@ -233,6 +248,50 @@ String? getTypeName(String? name) {
     return name;
   }
   return '${name}Model';
+}
+
+class OpenApiModel {
+  OpenApiModel({
+    required this.openapi,
+    required this.info,
+    required this.servers,
+    required this.paths,
+    required this.components,
+  });
+  OpenApiModel.fromJson(Json json)
+      : this(
+          openapi: as<String>(json['openapi']) ?? '',
+          info: InfoModel.fromJson(as<Json>(json['info'], emptyJson)!),
+          servers: as<List>(json['servers'])
+                  ?.map<ServerModel>((d) => ServerModel.fromJson(d))
+                  .toList() ??
+              [],
+          paths: as<Json>(json['paths'])?.map<String, List<RequestEntry>>(
+                (k, v) => MapEntry(
+                  k,
+                  v.entries
+                      .map<RequestEntry>(
+                        (e) => RequestEntry.fromJson(e.value, k, e.key),
+                      )
+                      .toList(),
+                ),
+              ) ??
+              {},
+          components: as<Json>(json['components']?['schemas'])
+                  ?.entries
+                  .map<ModelEntry>((e) => ModelEntry.fromJson(e.value, e.key))
+                  .toList() ??
+              [],
+        );
+
+  String get host => servers.firstOrNull?.url ?? '';
+
+  final String openapi;
+  final InfoModel info;
+  final List<ServerModel> servers;
+
+  final Map<String, List<RequestEntry>> paths;
+  final List<ModelEntry> components;
 }
 
 class SwaggerModel {
@@ -313,6 +372,21 @@ class InfoModel {
   final String version;
 }
 
+class ServerModel {
+  ServerModel({
+    required this.url,
+    required this.description,
+  });
+  ServerModel.fromJson(Json json)
+      : this(
+          url: as<String>(json['url'], '')!,
+          description: as<String>(json['description'], '')!,
+        );
+
+  final String url;
+  final String description;
+}
+
 class RequestEntry {
   RequestEntry({
     required this.path,
@@ -337,7 +411,8 @@ class RequestEntry {
                   ?.map<ParamModel>((e) => ParamModel.fromJson(e))
                   .toList() ??
               [],
-          tags: as<List>(json['produces'])?.cast<String>() ?? [],
+          tags:
+              as<List>(json['produces'] ?? json['tags'])?.cast<String>() ?? [],
         );
   final String path;
   final String method;
@@ -358,7 +433,14 @@ class ResponseScheme {
       : this(
           description: as<String>(json['description'], '')!,
           schema: getTypeName(
-            as<Json>(json['schema'], emptyJson)!['\$ref']?.split('/').last,
+            as<Json>(
+                    json['schema'] ??
+                        as<Json>(json['content'])
+                            ?.values
+                            .firstOrNull?['schema'],
+                    emptyJson)!['\$ref']
+                ?.split('/')
+                .last,
           ),
         );
 
@@ -435,12 +517,14 @@ class TypeModel {
       type == 'double' ||
       type == 'String' ||
       type == 'bool' ||
+      type == 'Map' ||
+      type == 'Json' ||
       type == 'DateTime';
 
   static String? parseType(String? type) {
     if (type == 'integer') {
       return 'int';
-    } else if (type == 'float' || type == 'double') {
+    } else if (type == 'float' || type == 'double' || type == 'number') {
       return 'double';
     } else if (type == 'string') {
       return 'String';
@@ -448,8 +532,8 @@ class TypeModel {
       return 'bool';
     } else if (type == 'array') {
       return 'List';
-    } else if (type == 'map' || type == 'dictionary') {
-      return 'Map';
+    } else if (type == 'map' || type == 'dictionary' || type == 'object') {
+      return 'Json';
     }
     return type;
   }
@@ -493,7 +577,7 @@ class ModelEntry {
       : this(
           name: name,
           type: as<String>(json['type'], '')!,
-          title: as<String>(json['title'], '')!,
+          title: as<String>(json['title'] ?? json['description'], '')!,
           properties: as<Json>(json['properties'])
                   ?.entries
                   .map<FieldModel>(

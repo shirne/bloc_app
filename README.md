@@ -19,6 +19,14 @@
 - 执行命令 flutter pub run flutter_native_splash:create 生成新启动页
 - 执行命令 flutter pub run icons_launcher:create 生成新图标
 
+## 生成模型和API
+
+- 支持swagger和openapi格式的json文档生成model和api
+- 生成后的文件需要手动做一些调整
+```
+dart run bin/api.dart json文件
+```
+
 ## 添加模型
 
 - models目录中新增文件，新建类继承自Base

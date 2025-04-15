@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 class StateButtonWrapper extends StatefulWidget {
   const StateButtonWrapper(
@@ -15,7 +14,7 @@ class StateButtonWrapper extends StatefulWidget {
   final FutureOr<void> Function()? onPressed;
   final Widget Function(
     BuildContext context,
-    MaterialStatesController controller,
+    WidgetStatesController controller,
     VoidCallback? onPressed,
     Widget? child,
   ) builder;
@@ -27,13 +26,13 @@ class StateButtonWrapper extends StatefulWidget {
 }
 
 class _StateButtonWrapperState extends State<StateButtonWrapper> {
-  final controller = MaterialStatesController();
+  final controller = WidgetStatesController();
 
   void onPressed() async {
-    if (controller.value.contains(MaterialState.disabled)) return;
-    controller.update(MaterialState.disabled, true);
+    if (controller.value.contains(WidgetState.disabled)) return;
+    controller.update(WidgetState.disabled, true);
     await widget.onPressed?.call();
-    controller.update(MaterialState.disabled, false);
+    controller.update(WidgetState.disabled, false);
   }
 
   @override
@@ -50,7 +49,7 @@ class _StateButtonWrapperState extends State<StateButtonWrapper> {
                 return Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (value.contains(MaterialState.disabled)) ...[
+                    if (value.contains(WidgetState.disabled)) ...[
                       CupertinoActivityIndicator(radius: widget.loadingRadius),
                       const SizedBox(width: 4),
                     ],

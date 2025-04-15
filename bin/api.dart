@@ -83,8 +83,8 @@ class $className extends Base {
   $className(${hasFields ? '{' : ''}
 ''');
   for (var f in data.properties) {
-    content
-        .writeln('    ${f.isRequired ? 'required ' : ''}this.${f.fieldName},');
+    content.writeln(
+        '    ${f.isRequired ? 'required ' : ''}this.${f.fieldName}${f.isRequired || f.defaultValue == null ? '' : getDefault(f, '=')},');
   }
   content.writeln('  ${hasFields ? '}' : ''});');
   content.write('''
@@ -99,21 +99,21 @@ class $className extends Base {
               : '?.map<${f.type.item?.typeName}>((e)=>${f.type.item?.typeName}.fromJson(e)).toList()'
           : '';
       content.writeln(
-        '    ${f.fieldName}: as<${f.type.type}>(json[\'${f.name}\'])$transType${f.isRequired ? ' ?? []' : ''},',
+        '    ${f.fieldName}: as<${f.type.type}>(json[\'${f.name}\'])$transType${f.nullable ? '' : ' ?? []'},',
       );
     } else {
       if (f.type.isBase) {
         content.writeln(
-          '    ${f.fieldName}: as<${f.type.typeName}>(json[\'${f.name}\']${getDefault(f)})${f.isRequired ? '!' : ''},',
+          '    ${f.fieldName}: as<${f.type.typeName}>(json[\'${f.name}\']${getDefault(f)})${f.nullable ? '' : '!'},',
         );
       } else {
-        if (f.isRequired) {
+        if (f.nullable) {
           content.writeln(
-            '    ${f.fieldName}: ${f.type.typeName}.fromJson(as<Json>(json[\'${f.name}\']) ?? emptyJson),',
+            '    ${f.fieldName}: ${f.type.typeName}.tryFromJson(as<Json>(json[\'${f.name}\'])),',
           );
         } else {
           content.writeln(
-            '    ${f.fieldName}: ${f.type.typeName}.tryFromJson(as<Json>(json[\'${f.name}\'])),',
+            '    ${f.fieldName}: ${f.type.typeName}.fromJson(as<Json>(json[\'${f.name}\']) ?? emptyJson),',
           );
         }
       }
@@ -136,7 +136,7 @@ class $className extends Base {
       content.writeln('  /// ${f.description}');
     }
     content.writeln(
-      '  final ${f.type.typeName}${f.isRequired ? '' : '?'} ${f.fieldName};',
+      '  final ${f.type.typeName}${f.nullable ? '?' : ''} ${f.fieldName};',
     );
   }
 
@@ -156,9 +156,9 @@ class $className extends Base {
   return content.toString();
 }
 
-String getDefault(FieldModel f) {
+String getDefault(FieldModel f, [prefix = ',']) {
   if (f.defaultValue != null) {
-    return ', ${f.defaultValue}';
+    return '$prefix ${f.defaultValue}';
   }
   if (!f.isRequired) {
     return '';
@@ -182,7 +182,7 @@ String getDefault(FieldModel f) {
     case 'Map':
       typeValue = '{}';
   }
-  return ', $typeValue';
+  return '$prefix $typeValue';
 }
 
 String createApi(
@@ -536,6 +536,8 @@ class FieldModel {
           defaultValue: json['default'],
           isRequired: requires?.contains(json['name'] ?? name) ?? false,
         );
+
+  bool get nullable => !isRequired && defaultValue == null;
 
   final String fieldName;
   final String name;

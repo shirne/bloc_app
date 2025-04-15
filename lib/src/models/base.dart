@@ -192,10 +192,18 @@ class ModelPage<T extends Base> extends ModelList<T> {
   ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
           total: as<int>(json?['total'], 0)!,
-          page: as<int>(json?['page'] ?? json?['current'], 0)!,
+          page: as<int>(
+            json?['page'] ?? json?['current'] ?? json?['currentPage'],
+            0,
+          )!,
           pageSize: as<int>(
-              json?['page_size'] ?? json?['pageSize'] ?? json?['size'], 8)!,
-          totalPage: as<int>(json?['pages'] ?? json?['total_page']) ?? 1,
+            json?['page_size'] ?? json?['pageSize'] ?? json?['size'],
+            8,
+          )!,
+          totalPage: as<int>(
+            json?['pages'] ?? json?['total_page'] ?? json?['totalPage'],
+            1,
+          )!,
           items: as<List>(json?['items'] ?? json?['list'])
               ?.map<T?>(dataParser ?? (item) => item as T?)
               .whereType<T>()

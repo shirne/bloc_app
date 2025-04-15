@@ -129,6 +129,9 @@ class $className extends Base {
 ''');
 
   for (var f in data.properties) {
+    if (f.title != null) {
+      content.writeln('  /// ${f.title}');
+    }
     if (f.description != null) {
       content.writeln('  /// ${f.description}');
     }
@@ -518,6 +521,7 @@ class FieldModel {
   FieldModel({
     required this.name,
     required this.type,
+    required this.title,
     required this.description,
     required this.defaultValue,
     required this.isRequired,
@@ -527,6 +531,7 @@ class FieldModel {
       : this(
           name: name,
           type: TypeModel.fromJson(json),
+          title: as<String>(json['title']),
           description: as<String>(json['description']),
           defaultValue: json['default'],
           isRequired: requires?.contains(json['name'] ?? name) ?? false,
@@ -534,6 +539,7 @@ class FieldModel {
 
   final String fieldName;
   final String name;
+  final String? title;
   final String? description;
   final dynamic defaultValue;
   final TypeModel type;

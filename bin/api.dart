@@ -9,6 +9,10 @@ final paramReg = RegExp(r'\{([\w]+)\}');
 const _apiPath = 'lib/src/globals/api/';
 const _modelPath = 'lib/src/models/';
 
+const baseClassName = 'BaseResponse';
+const baseClassDataField = 'data';
+final modalMap = <String, String>{};
+
 void main(List<String> args) {
   if (args.isEmpty) {
     stdout.writeln("Please specify the json file");
@@ -49,7 +53,11 @@ void main(List<String> args) {
     }
   } catch (e) {
     stdout.writeln("Err: $e");
-    stdout.writeln(StackTrace.current);
+    if (e is Error) {
+      stdout.writeln(e.stackTrace);
+    } else {
+      stdout.writeln(StackTrace.current);
+    }
   }
 }
 
@@ -65,6 +73,7 @@ String createModel(List<ModelEntry> entries) {
 
 String createModelClass(ModelEntry data) {
   final className = getTypeName(data.name);
+  if (className == null || className.contains('<')) return '';
   final content = StringBuffer();
 
   final hasFields = data.properties.isNotEmpty;
@@ -191,10 +200,14 @@ class Api$className extends ApiBase {
       final methodName = method.operationId;
       final params = method.parameters;
       final response = method.responses['200']?.schema;
-      final respType = response == null ? '' : '<$response>';
+      final respType = getTypeName(response) ?? 'ApiResult';
+      final innerType = respType.startsWith('ApiResult<')
+          ? respType.substring(10, respType.length - 1)
+          : respType;
+      print('$origPath $response $respType $innerType');
       content.write('''
   /// ${method.summary}
-  Future<ApiResult$respType> $methodName(${params.isEmpty ? '' : '{'}
+  Future<$respType> $methodName(${params.isEmpty ? '' : '{'}
 ''');
       for (var e in params) {
         content.write(
@@ -225,7 +238,19 @@ class Api$className extends ApiBase {
         content.writeln('{},');
       }
       if (response != null) {
-        content.writeln('      dataParser: (d)=> $response.fromJson(d),');
+        if (isBaseType(innerType) || innerType == 'Model') {
+          content.writeln('      dataParser: (d)=> Model.fromJson(d),');
+        } else if (innerType.startsWith('ModelList<')) {
+          var sType = innerType.substring(10, innerType.length - 1);
+          content.writeln(
+              '      dataParser: (d)=> ModelList.fromJson(d, (m) => $sType.fromJson(m)),');
+        } else if (innerType.startsWith('ModelPage<')) {
+          var sType = innerType.substring(10, innerType.length - 1);
+          content.writeln(
+              '      dataParser: (d)=> ModelPage.fromJson(d, (m) => $sType.fromJson(m)),');
+        } else {
+          content.writeln('      dataParser: (d)=> $innerType.fromJson(d),');
+        }
       }
 
       // TODO(shirne): skipLock: true,
@@ -252,10 +277,41 @@ String transPath(String path) {
 
 String? getTypeName(String? name) {
   if (name == null) return null;
-  if (name.endsWith('Resp') || name.endsWith('Req')) {
-    return name;
+  if (name.startsWith(baseClassName)) {
+    var innerType = getTypeName(name.substring(baseClassName.length))!;
+    if (isBaseType(innerType)) {
+      innerType = 'Model';
+    } else if (innerType.startsWith('List<')) {
+      innerType = 'Model$innerType';
+    }
+    return 'ApiResult<$innerType>';
   }
-  return '${name}Model';
+
+  if (modalMap.containsKey(name)) return modalMap[name];
+  String newName;
+
+  if (name.startsWith('Page')) {
+    newName = "ModelPage<${getTypeName(name.substring(4))}>";
+  } else if (name.startsWith('MapString')) {
+    newName = "Json";
+  } else if (name.startsWith('Map') || name == "Object") {
+    newName = "Map";
+  } else if (name.startsWith('List')) {
+    newName = "List<${getTypeName(name.substring(4))}>";
+  } else {
+    newName = TypeModel.parseType(name)!;
+    if (newName == name &&
+        !isBaseType(newName) &&
+        !newName.contains('<') &&
+        !name.endsWith('DTO') &&
+        !name.endsWith('Model') &&
+        !name.endsWith('Resp') &&
+        !name.endsWith('Req')) {
+      newName = '${name}Model';
+    }
+  }
+  modalMap.putIfAbsent(name, () => newName);
+  return newName;
 }
 
 class OpenApiModel {
@@ -520,7 +576,35 @@ class TypeModel {
     return ref ?? 'String';
   }
 
-  bool get isBase =>
+  bool get isBase => isBaseType(type ?? ref);
+
+  static String? parseType(String? type) {
+    if (type != null) {
+      var lowerType = type.toLowerCase();
+      if (lowerType == 'integer') {
+        return 'int';
+      } else if (lowerType == 'float' ||
+          lowerType == 'double' ||
+          lowerType == 'number') {
+        return 'double';
+      } else if (lowerType == 'string') {
+        return 'String';
+      } else if (lowerType == 'boolean') {
+        return 'bool';
+      } else if (lowerType == 'array') {
+        return 'List';
+      } else if (lowerType == 'map' ||
+          lowerType == 'dictionary' ||
+          lowerType == 'object') {
+        return 'Json';
+      }
+    }
+    return type;
+  }
+}
+
+bool isBaseType(String? type) {
+  return type == null ||
       type == 'int' ||
       type == 'double' ||
       type == 'String' ||
@@ -528,23 +612,6 @@ class TypeModel {
       type == 'Map' ||
       type == 'Json' ||
       type == 'DateTime';
-
-  static String? parseType(String? type) {
-    if (type == 'integer') {
-      return 'int';
-    } else if (type == 'float' || type == 'double' || type == 'number') {
-      return 'double';
-    } else if (type == 'string') {
-      return 'String';
-    } else if (type == 'boolean') {
-      return 'bool';
-    } else if (type == 'array') {
-      return 'List';
-    } else if (type == 'map' || type == 'dictionary' || type == 'object') {
-      return 'Json';
-    }
-    return type;
-  }
 }
 
 class ParamModel {

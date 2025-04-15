@@ -162,7 +162,7 @@ class ModelList<T extends Base> extends Base {
 
   ModelList.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
-          items: as<List>(json?['items'] ?? json?['list'])
+          items: as<List>(json?['items'] ?? json?['list'] ?? json?['data'])
               ?.map<T?>(dataParser ?? (item) => item as T?)
               .whereType<T>()
               .toList(),

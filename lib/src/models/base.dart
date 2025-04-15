@@ -181,13 +181,21 @@ class ModelList<T extends Base> extends Base {
 
 /// 分页数据的模型，以下定义的字段可根据实际情况调整
 class ModelPage<T extends Base> extends ModelList<T> {
-  ModelPage({this.total = 0, this.page = 0, this.pageSize = 10, super.items});
+  ModelPage({
+    this.total = 0,
+    this.page = 0,
+    this.pageSize = 10,
+    this.totalPage = 0,
+    super.items,
+  });
 
   ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])
       : this(
           total: as<int>(json?['total'], 0)!,
-          page: as<int>(json?['page'], 0)!,
-          pageSize: as<int>(json?['page_size'] ?? json?['pageSize'], 8)!,
+          page: as<int>(json?['page'] ?? json?['current'], 0)!,
+          pageSize: as<int>(
+              json?['page_size'] ?? json?['pageSize'] ?? json?['size'], 8)!,
+          totalPage: as<int>(json?['pages'] ?? json?['total_page']) ?? 1,
           items: as<List>(json?['items'] ?? json?['list'])
               ?.map<T?>(dataParser ?? (item) => item as T?)
               .whereType<T>()
@@ -196,6 +204,7 @@ class ModelPage<T extends Base> extends ModelList<T> {
 
   final int total;
   final int page;
+  final int totalPage;
   final int pageSize;
 
   @override
@@ -204,6 +213,7 @@ class ModelPage<T extends Base> extends ModelList<T> {
       'total': total,
       'page': page,
       'page_size': pageSize,
+      'total_page': totalPage,
     });
 }
 

@@ -154,6 +154,9 @@ class $className extends Base {
 }
 
 String getDefault(FieldModel f) {
+  if (f.defaultValue != null) {
+    return ', ${f.defaultValue}';
+  }
   if (!f.isRequired) {
     return '';
   }
@@ -498,11 +501,10 @@ class ResponseScheme {
           description: as<String>(json['description'], '')!,
           schema: getTypeName(
             as<Json>(
-                    json['schema'] ??
-                        as<Json>(json['content'])
-                            ?.values
-                            .firstOrNull?['schema'],
-                    emptyJson)!['\$ref']
+              json['schema'] ??
+                  as<Json>(json['content'])?.values.firstOrNull?['schema'],
+              emptyJson,
+            )!['\$ref']
                 ?.split('/')
                 .last,
           ),
@@ -517,6 +519,7 @@ class FieldModel {
     required this.name,
     required this.type,
     required this.description,
+    required this.defaultValue,
     required this.isRequired,
   }) : fieldName = camelCase(name);
 
@@ -525,12 +528,14 @@ class FieldModel {
           name: name,
           type: TypeModel.fromJson(json),
           description: as<String>(json['description']),
-          isRequired: requires?.contains(json['name']) ?? false,
+          defaultValue: json['default'],
+          isRequired: requires?.contains(json['name'] ?? name) ?? false,
         );
 
   final String fieldName;
   final String name;
   final String? description;
+  final dynamic defaultValue;
   final TypeModel type;
   final bool isRequired;
 }

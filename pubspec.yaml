@@ -51,6 +51,7 @@ dev_dependencies:
   flutter_lints:
   icons_launcher:
   flutter_native_splash:
+  archive:
   yaml:
   args:
 

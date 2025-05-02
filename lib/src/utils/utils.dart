@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../globals/routes.dart';
+import '../models/base.dart';
 import 'console.dart';
 import 'core.dart';
 import 'device_info.dart';
@@ -125,6 +126,17 @@ class Utils {
     if (hasSpecial && !hasSpecialExp.hasMatch(password)) return false;
 
     return true;
+  }
+
+  static Json parseQuery(dynamic query) {
+    var data = <String, dynamic>{};
+    if (query == null) return data;
+    if (query is Json) return query;
+    if (query is String) {
+      var uri = Uri.parse(query);
+      data.addAll(uri.queryParameters);
+    }
+    return data;
   }
 
   static String parseString(dynamic val) {

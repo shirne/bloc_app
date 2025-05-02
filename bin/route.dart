@@ -101,7 +101,7 @@ void walkDir(
             if (pagePath == loginDir || pagePath.startsWith('$loginDir/'))
               "    isAuth: false,",
             hasArgs
-                ? "    (arguments) => ${useAlias ? '$libName.' : ''}$className(arguments as Json?),"
+                ? "    (arguments) => ${useAlias ? '$libName.' : ''}$className(Utils.parseQuery(arguments)),"
                 : "    (arguments) => const ${useAlias ? '$libName.' : ''}$className(),",
             "  );",
           ]);
@@ -124,7 +124,7 @@ void walkDir(
       if (lastLine.startsWith('///')) {
         comment = lastLine.substring(3).trim();
       }
-    } else if (s.trim().startsWith('$className(Json?')) {
+    } else if (s.trim().startsWith('$className(Json')) {
       hasArgs = true;
       break;
     }

@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:appscheme/appscheme.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,38 +24,8 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-      Future(checkScheme);
-    }
 
     homeTabIndex.addListener(_onChangeTab);
-  }
-
-  void checkScheme() {
-    AppScheme? appScheme = AppSchemeImpl.getInstance();
-    appScheme?.getInitScheme().then(onScheme);
-    appScheme?.registerSchemeListener().listen(onScheme);
-  }
-
-  void onScheme(SchemeEntity? value) {
-    if (value != null) {
-      logger.info('Init  ${value.dataString}');
-
-      if (value.path != null &&
-          value.path != Routes.main.name &&
-          value.path != Routes.login.name) {
-        /// 处理首页tab
-        if (value.path == Routes.home.name) {
-          homeTabIndex.value = 0;
-        } else if (value.path == Routes.product.name) {
-          homeTabIndex.value = 1;
-        } else if (value.path == Routes.mine.name) {
-          homeTabIndex.value = 2;
-        } else {
-          Navigator.of(context).pushNamed(value.path!, arguments: value.query);
-        }
-      }
-    }
   }
 
   void _onChangeTab() {

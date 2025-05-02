@@ -33,7 +33,7 @@ dependencies:
     git:
       url: git@github.com:shirne/flutter_skeletons.git
       ref: 5ecc839f9961a91e052de9eb2ad7c84eee8b2bc8
-  appscheme: ^1.1.0 # applink处理
+  # appscheme: ^1.1.0 # applink处理
   file_picker: ^9.0.2 # 文件选择
 
   shirne_dialog: ^4.5.0 # 对话框

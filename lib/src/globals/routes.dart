@@ -13,8 +13,8 @@ import '../pages/mine/profile/page.dart';
 import '../pages/product/page.dart';
 import '../pages/settings/page.dart';
 import '../pages/web/page.dart';
-import 'config.dart';
 // ==== GENERATED END ====
+import 'config.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -57,12 +57,12 @@ class Routes {
   static final policy = RouteItem(
     '/policy',
     isAuth: false,
-    (arguments) => PolicyPage(arguments as Json?),
+    (arguments) => PolicyPage(Utils.parseQuery(arguments)),
   );
   static final notFound = RouteItem(
     '/404',
     isAuth: false,
-    (arguments) => NotFoundPage(arguments as String?),
+    (arguments) => NotFoundPage(as<String?>(arguments)),
   );
 
 // ==== GENERATED ROUTES START ====
@@ -74,7 +74,7 @@ class Routes {
   static final login = RouteItem(
     '/login',
     isAuth: false,
-    (arguments) => LoginPage(arguments as Json?),
+    (arguments) => LoginPage(Utils.parseQuery(arguments)),
   );
   static final main = RouteItem(
     '/main',
@@ -98,7 +98,7 @@ class Routes {
   );
   static final web = RouteItem(
     '/web',
-    (arguments) => WebViewPage(arguments as Json?),
+    (arguments) => WebViewPage(Utils.parseQuery(arguments)),
   );
 
   static final routes = {

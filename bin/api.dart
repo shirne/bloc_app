@@ -84,7 +84,8 @@ class $className extends Base {
 ''');
   for (var f in data.properties) {
     content.writeln(
-        '    ${f.isRequired ? 'required ' : ''}this.${f.fieldName}${f.isRequired || f.defaultValue == null ? '' : getDefault(f, '=')},');
+      '    ${f.isRequired ? 'required ' : ''}this.${f.fieldName}${f.isRequired || f.defaultValue == null ? '' : getDefault(f, '=')},',
+    );
   }
   content.writeln('  ${hasFields ? '}' : ''});');
   content.write('''
@@ -210,7 +211,7 @@ class Api$className extends ApiBase {
       final innerType = respType.startsWith('ApiResult<')
           ? respType.substring(10, respType.length - 1)
           : respType;
-      print('$origPath $response $respType $innerType');
+      stdout.writeln('$origPath $response $respType $innerType');
       content.write('''
   /// ${method.summary}
   Future<$respType> $methodName(${params.isEmpty ? '' : '{'}
@@ -249,11 +250,13 @@ class Api$className extends ApiBase {
         } else if (innerType.startsWith('ModelList<')) {
           var sType = innerType.substring(10, innerType.length - 1);
           content.writeln(
-              '      dataParser: (d)=> ModelList.fromJson(d, (m) => $sType.fromJson(m)),');
+            '      dataParser: (d)=> ModelList.fromJson(d, (m) => $sType.fromJson(m)),',
+          );
         } else if (innerType.startsWith('ModelPage<')) {
           var sType = innerType.substring(10, innerType.length - 1);
           content.writeln(
-              '      dataParser: (d)=> ModelPage.fromJson(d, (m) => $sType.fromJson(m)),');
+            '      dataParser: (d)=> ModelPage.fromJson(d, (m) => $sType.fromJson(m)),',
+          );
         } else {
           content.writeln('      dataParser: (d)=> $innerType.fromJson(d),');
         }

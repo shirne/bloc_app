@@ -1,5 +1,6 @@
 import 'dart:io';
 
+// ignore: depend_on_referenced_packages
 import 'package:archive/archive.dart';
 
 final dirs = ['rank'];
@@ -33,9 +34,11 @@ void loopDir(Directory dir, [int depts = 1]) {
           if (entry.isFile && entry.name.contains('@')) {
             var parts = entry.name.split('@');
             final fileBytes = entry.readBytes()!;
-            File(parts[1].startsWith('1x')
-                ? '${dir.path}/$name${parts[1].substring(2)}'
-                : '${dir.path}/$name@${parts[1]}')
+            File(
+              parts[1].startsWith('1x')
+                  ? '${dir.path}/$name${parts[1].substring(2)}'
+                  : '${dir.path}/$name@${parts[1]}',
+            )
               ..createSync(recursive: true)
               ..writeAsBytesSync(fileBytes);
           }

@@ -19,7 +19,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int index = homeTabIndex.value;
-  bool profilePoped = false;
 
   @override
   void initState() {
@@ -41,19 +40,6 @@ class _MainPageState extends State<MainPage> {
         if (!state.token.isValid) {
           logger.info('to login');
           Routes.login.show(context);
-        } else if (!profilePoped) {
-          if (state.user.id != 0 && state.user.nickname.isEmpty) {
-            profilePoped = true;
-            Future.delayed(const Duration(milliseconds: 300)).then((_) {
-              Routes.mineProfile.show(
-                context,
-                arguments: {
-                  'profile': false,
-                  'password': false,
-                },
-              );
-            });
-          }
         }
       },
       builder: (context, globalState) {

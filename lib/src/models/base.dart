@@ -128,6 +128,10 @@ T? as<T>(dynamic value, [T? defaultValue]) {
   return defaultValue;
 }
 
+List<T>? asList<T>(dynamic value) {
+  return as<List>(value)?.map<T>((d) => as(d)).toList();
+}
+
 abstract class Base {
   const Base();
 

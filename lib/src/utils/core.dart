@@ -4,7 +4,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../common.dart';
+import '../../l10n/gen/l10n.dart';
+import '../app_theme.dart';
+import 'utils.dart';
 
 /// 基于核心库的扩展
 
@@ -166,6 +168,9 @@ extension StringExt on String {
     if (isEmpty) return null;
     if (Utils.isNetwork(this)) {
       return NetworkImage(this);
+    }
+    if (Utils.isAssets(this)) {
+      return AssetImage(this);
     }
     return FileImage(File(this));
   }

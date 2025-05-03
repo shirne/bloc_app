@@ -262,6 +262,10 @@ class Utils {
     return url.startsWith('http://') || url.startsWith('https://');
   }
 
+  static bool isAssets(String path) {
+    return path.startsWith('assets/');
+  }
+
   static const _alphas = 'abcdefghijklmnopqrstuvwxyz';
   static const _upperAlphas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   static const _numbers = '0123456789';
@@ -345,10 +349,6 @@ class Utils {
 
   static Future<String> getSupportDir({String name = ''}) async {
     return getDir(getApplicationSupportDirectory, name: name);
-  }
-
-  static bool isUrl(String result) {
-    return result.startsWith('http://') || result.startsWith('https://');
   }
 }
 

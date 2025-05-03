@@ -33,7 +33,8 @@ class MainApp extends StatelessWidget {
           builder: (context, state) {
             return DefaultTextStyle(
               // 如果需要内置字体，此处修改为对应的字体名
-              style: const TextStyle(fontFamily: '微软雅黑'),
+              style:
+                  const TextStyle(fontFamily: '微软雅黑', fontFamilyFallback: ['']),
               child: MaterialApp(
                 restorationScopeId: 'app',
                 navigatorKey: navigatorKey,

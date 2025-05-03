@@ -183,14 +183,14 @@ class Utils {
   }
 
   static Color variant(Color color, [double power = 1.2]) {
-    final red = (color.red * power).round();
-    final green = (color.green * power).round();
-    final blue = (color.blue * power).round();
-    return Color.fromARGB(
-      color.alpha,
-      red < 0 ? 0 : (red > 255 ? 255 : red),
-      green < 0 ? 0 : (green > 255 ? 255 : green),
-      blue < 0 ? 0 : (blue > 255 ? 255 : blue),
+    double red = (color.r * power).clamp(0, 1);
+    double green = (color.g * power).clamp(0, 1);
+    double blue = (color.b * power).clamp(0, 1);
+    return Color.from(
+      alpha: color.a,
+      red: red,
+      green: green,
+      blue: blue,
     );
   }
 

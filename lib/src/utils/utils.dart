@@ -266,6 +266,48 @@ class Utils {
     return path.startsWith('assets/');
   }
 
+  static int versionCompare(String v1, String v2) {
+    var b1 = 0, b2 = 0;
+    if (v1.contains('+')) {
+      var bp = v1.split('+');
+      b1 = int.tryParse(bp[1]) ?? 0;
+      v1 = bp[0];
+    }
+    if (v2.contains('+')) {
+      var bp = v2.split('+');
+      b2 = int.tryParse(bp[1]) ?? 0;
+      v2 = bp[0];
+    }
+    var parts1 = v1.split('.');
+    var parts2 = v2.split('.');
+    var l = math.min(parts1.length, parts2.length);
+    for (var i = 0; i < l; i++) {
+      if (parts1 == parts2) {
+        continue;
+      }
+      try {
+        var sv1 = int.parse(parts1[i]);
+        var sv2 = int.parse(parts2[i]);
+        if (sv1 > sv2) {
+          return 1;
+        } else if (sv2 > sv1) {
+          return -1;
+        }
+      } catch (_) {}
+    }
+    if (parts1.length > parts2.length) {
+      return 1;
+    } else if (parts2.length > parts1.length) {
+      return -1;
+    }
+    if (b1 > b2) {
+      return 1;
+    } else if (b2 > b1) {
+      return -1;
+    }
+    return 0;
+  }
+
   static const _alphas = 'abcdefghijklmnopqrstuvwxyz';
   static const _upperAlphas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   static const _numbers = '0123456789';

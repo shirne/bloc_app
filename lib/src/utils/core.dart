@@ -36,6 +36,11 @@ extension ListExt<E> on List<E> {
     return matched;
   }
 
+  List<List<E>> chunk(int size) {
+    return List.generate((length / size).ceil(),
+        (i) => sublist(i * size, math.min(i * size + size, length)));
+  }
+
   int indexOr(bool Function(E) test, [int dft = 0]) {
     if (isEmpty) return -1;
     final index = indexWhere(test);

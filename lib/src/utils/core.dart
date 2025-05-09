@@ -150,6 +150,8 @@ extension IntExt on int {
     }
     return DateTime.fromMillisecondsSinceEpoch(this * 1000);
   }
+
+  String toHex([int length = 2]) => toRadixString(16).padLeft(length, '0');
 }
 
 extension StringExt on String {
@@ -202,6 +204,13 @@ extension StringNullExt on String? {
     }
     return this!;
   }
+}
+
+extension ColorExt on Color {
+  String toRgb([String typeName = 'Color']) =>
+      '$typeName(${(r * 255).toInt()},${(g * 255).toInt()},${(b * 255).toInt()})';
+  String toHex([String prefix = '#']) =>
+      '$prefix${(r * 255).toInt().toHex(2)}${(g * 255).toInt().toHex(2)}${(b * 255).toInt().toHex(2)}';
 }
 
 extension LocaleExt on Locale {

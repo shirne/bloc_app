@@ -137,6 +137,7 @@ class ApiService {
     DataParser<T>? dataParser,
     bool skipLock = false,
     CancelToken? cancelToken,
+    void Function(int, int)? onSendProgress,
     VoidCallback? onRequireLogin,
   }) async {
     if (!skipLock && isLocked) {
@@ -166,6 +167,7 @@ class ApiService {
         queryParameters: queryParameters,
         options: options,
         cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
       );
 
       final result = ApiResult<T>.fromResponse(res, dataParser);
@@ -249,6 +251,7 @@ class ApiService {
     DataParser<T>? dataParser,
     bool skipLock = false,
     CancelToken? cancelToken,
+    void Function(int, int)? onSendProgress,
     VoidCallback? onRequireLogin,
   }) async {
     return request(
@@ -261,6 +264,7 @@ class ApiService {
       skipLock: skipLock,
       cancelToken: cancelToken,
       onRequireLogin: onRequireLogin,
+      onSendProgress: onSendProgress,
     );
   }
 
@@ -273,6 +277,7 @@ class ApiService {
     DataParser<T>? dataParser,
     bool skipLock = false,
     CancelToken? cancelToken,
+    void Function(int, int)? onSendProgress,
     VoidCallback? onRequireLogin,
   }) async {
     return request(
@@ -284,6 +289,7 @@ class ApiService {
       dataParser: dataParser,
       skipLock: skipLock,
       cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
       onRequireLogin: onRequireLogin,
     );
   }

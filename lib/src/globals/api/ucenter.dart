@@ -75,4 +75,18 @@ class ApiUcenter extends ApiBase {
       'user/notice_count',
     );
   }
+
+  Future<ApiResult<FileModel>> upload(
+    path, {
+    void Function(int, int)? onSendProgress,
+    VoidCallback? onRequireLogin,
+  }) async {
+    return await apiService.post(
+      'user/upload',
+      FormData.fromMap({
+        'file': MultipartFile.fromFile(path),
+      }),
+      onSendProgress: onSendProgress,
+    );
+  }
 }

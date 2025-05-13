@@ -17,6 +17,9 @@ dependencies:
   path:
   intl: # 国际化
   path_provider:
+  video_player:
+  photo_manager:
+  wechat_assets_picker: ^9.5.0
   logging: # 日志工具
   dio: ^5.8.0+1 # 网络库
   bloc: ^9.0.0

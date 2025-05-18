@@ -1,10 +1,28 @@
+import 'dart:io';
+import 'dart:ui' show Size;
+import 'dart:math' as math;
+
 import 'package:dio/dio.dart';
-import 'package:photo_manager/photo_manager.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 
 import '../globals/api.dart';
-import '../models/base.dart';
 import '../models/system.dart';
 import 'utils.dart';
+
+enum UploadType {
+  user(0),
+  avatar(1),
+  icon(2),
+  cover(3),
+  origin(4),
+  doc(5),
+  video(6);
+
+  const UploadType(this.type);
+
+  final int type;
+}
 
 enum UploadState {
   init,
@@ -51,6 +69,44 @@ class UploadEvent {
 
 typedef UploadHalder = Function(UploadEvent);
 
+abstract class UploadOption {
+  UploadOption(this.type);
+  final UploadType type;
+}
+
+class ImageOption extends UploadOption {
+  static bool needCrop(UploadType type) => switch (type) {
+        UploadType.icon || UploadType.avatar => true,
+        _ => false,
+      };
+  static Size? limitSize(UploadType type) => switch (type) {
+        UploadType.icon => Size(64, 64),
+        UploadType.avatar => Size(400, 400),
+        UploadType.origin || UploadType.doc || UploadType.video => null,
+        _ => Size(1600, 1600),
+      };
+
+  ImageOption(super.type, [this.size, this.crop = false]);
+
+  ImageOption.fromType(UploadType type)
+      : this(
+          type,
+          limitSize(type),
+          needCrop(type),
+        );
+
+  final Size? size;
+  final bool crop;
+}
+
+class FileOption extends UploadOption {
+  FileOption(super.type);
+}
+
+class VideoOption extends UploadOption {
+  VideoOption(super.type) : assert(type == UploadType.video);
+}
+
 class UploadUtil {
   static final _instance = UploadUtil._();
 
@@ -58,35 +114,23 @@ class UploadUtil {
 
   factory UploadUtil() => _instance;
 
-  final queue = <(dynamic, Json?, UploadHalder)>[];
+  final queue = <(File, UploadOption?, UploadHalder)>[];
   final dio = Dio();
 
-  (dynamic, Json?, UploadHalder)? current;
+  (File, UploadOption?, UploadHalder)? current;
 
-  void addEntity(AssetEntity entity, UploadHalder handler, [Json? args]) {
-    queue.add(((entity, args, handler)));
+  void addFile(File file, UploadHalder handler, [UploadOption? option]) {
+    queue.add(((file, option, handler)));
     startUpload();
   }
 
-  void addEntities(List<AssetEntity> entities, UploadHalder handler,
-      [Json? args]) {
-    for (var entity in entities) {
-      queue.add(((entity, args, handler)));
+  void addFiles(List<File> files, UploadHalder handler,
+      [UploadOption? option]) {
+    for (var file in files) {
+      queue.add(((file, option, handler)));
     }
     startUpload();
   }
-
-  // void addFile(XFile file, UploadHalder handler, [Json? args]) {
-  //   queue.add(((file, args, handler)));
-  //   startUpload();
-  // }
-
-  // void addFiles(List<XFile> files, UploadHalder handler, [Json? args]) {
-  //   for (var file in files) {
-  //     queue.add(((file, args, handler)));
-  //   }
-  //   startUpload();
-  // }
 
   void startUpload() {
     if (queue.isEmpty) return;
@@ -96,10 +140,70 @@ class UploadUtil {
     }
   }
 
+  static int cacheId = 1000;
+
+  Future<String?> cropImage(String path, ImageOption option) async {
+    try {
+      var size = option.size;
+      if (size == null) return path;
+
+      // Directory.current; //
+      var cachedir = await getApplicationCacheDirectory();
+
+      var newpath = '${cachedir.path}/${cacheId++}.jpg';
+      //print('newpath: $newpath');
+      final cmd = img.Command()..decodeImageFile(path);
+
+      var image = await cmd.getImage();
+      if (image == null) {
+        throw Exception('unseppert image format');
+      }
+
+      if (image.width > size.width || image.height > size.height) {
+        if (option.crop) {
+          var scale =
+              math.max(size.width / image.width, size.height / image.height);
+
+          var scaleWidth = (image.width * scale).ceil();
+          var scaleHeight = (image.height * scale).ceil();
+          cmd
+            ..copyResize(
+              width: scaleWidth,
+              height: scaleHeight,
+              // maintainAspect: true,
+            )
+            ..copyCrop(
+              x: ((scaleWidth - size.width) / 2).toInt(),
+              y: ((scaleHeight - size.height) / 2).toInt(),
+              width: size.width.toInt(),
+              height: size.height.toInt(),
+            );
+        } else {
+          var scale =
+              math.min(size.width / image.width, size.height / image.height);
+          cmd.copyResize(
+            width: (image.width * scale).ceil(),
+            height: (image.height * scale).ceil(),
+            // maintainAspect: true,
+          );
+        }
+      }
+
+      cmd
+        ..encodeJpg(quality: 75)
+        ..writeToFile(newpath);
+      await cmd.executeThread();
+      return newpath;
+    } catch (err) {
+      logger.warning(err);
+    }
+    return null;
+  }
+
   Future<void> doUpload() async {
     if (current == null) return;
-    var entity = current!.$1;
-    var args = current!.$2;
+    var file = current!.$1;
+    var option = current!.$2;
     var handler = current!.$3;
     var progress = 0.0;
     try {
@@ -108,15 +212,17 @@ class UploadUtil {
       } catch (e) {
         logger.warning(e);
       }
-      var filePath = '';
-      if (entity is AssetEntity) {
-        var file = (await entity.file)!;
-        filePath = file.path;
-        // } else if (entity is XFile) {
-        //   filePath = entity.path;
-      } else {
-        throw Exception('unsupport type ${entity.runtimeType}');
+      String? filePath = file.path;
+
+      // 根据参数压缩图片
+      if (option is ImageOption) {
+        filePath = await cropImage(filePath, option);
+        if (filePath == null) {
+          throw Exception('图片压缩失败');
+        }
       }
+
+      // TODO 压缩视频
 
       final result = await Api.ucenter.upload(
         filePath,

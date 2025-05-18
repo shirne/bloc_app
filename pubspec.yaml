@@ -32,6 +32,7 @@ dependencies:
   device_info_plus:
   geolocator:
 
+  image:
   skeletons: #^0.0.3          # 骨架页构造工具
     git:
       url: git@github.com:shirne/flutter_skeletons.git

@@ -22,39 +22,64 @@
 ## 生成模型和API
 
 - 支持swagger和openapi格式的json文档生成model和api
-- 生成后的文件需要手动做一些调整
+- 生成后的文件可能需要手动做一些调整
 ```
 dart run bin/api.dart json文件
 ```
 
-## 添加模型
+## 从json生成模型(开发中)
+
+```
+dart run bin/model.dart json文件
+```
+
+## 添加模型和API
 
 - models目录中新增文件，新建类继承自Base
 ```dart
-class ArticleModel extends Base {
+class ArticleModel implements Base {
   ArticleModel({
     this.articleId = 0,
     this.title = '',
     this.content = '',
+    this.createTime,
   });
-  
+
+  /// 为了防止数据异常，这里转换使用工具类 as<T>
+  ArticleModel.fromJson(Map<String, dynamic>? json)
+      : this(
+          articleId: as<int>(json?['article_id']) ?? 0,
+          title: as<String>(json?['title'] ?? '',
+          content: as<String>(json?['content'] ?? '',
+          createTime: as<DateTime>(json?['create_time']),
+        );
+
   int articleId;
   String title;
   String content;
+  DateTime? createTime;
 
-  /// 为了防止数据异常，这里转换可以使用工具类中的数字，日期等转换方法
-  ArticleModel.fromJson(Map<String, dynamic>? json)
-      : this(
-          articleId: json?['article_id'] ?? 0,
-          title: json?['title'] ?? '',
-          content: json?['content'] ?? '',
-        );
+  /// 模型克隆功能
+  /// 对于可空字段 如果需要再次赋空可以使用Optional传递
+  @override
+  ArticleModel clone({
+    int? articleId,
+    String? title,
+    String? content,
+    Optional<DateTime>? createTime,
+  }) => ArticleModel(
+    articleId: articleId ?? this.articleId,
+    title: title ?? this.title,
+    content: content ?? this.content,
+    createTime: createTime.absent(this.createTime),
+  );
 
   @override
   Map<String, dynamic> toJson() => {
       'article_id': articleId,
       'title': title,
       'content': content,
+      'create_time': createTime?.toString(),
     };
 }
 ```
@@ -198,7 +223,7 @@ lib
 |   |  |- ...           
 |   |- pages                // 页面目录，创建的页面文件在此目录下，一般一个页面会生成一个子目录
 |   |  |- home              // 首页  
-|   |  |- home              // 登录页  
+|   |  |- login              // 登录页  
 |   |  |- settings          // 设置页  
 |   |  |- not_found.dart    // 默认的404页
 |   |- utils                // 工具库
@@ -215,6 +240,22 @@ dart bin/assetsx.dart
 * 生成assets.dart(默认处理images和svgs目录)
 ```
 dart bin/assets.dart
+```
+
+## 其它Tools
+
+* 统计代码行数
+```
+dart bin/lines.dart
+```
+* 统计依赖次数
+```
+dart bin/deps.dart
+```
+* 多分辨率分包素材批量解压
+```
+// 每个素材一个zip压缩包，放至assets目录下，解压后以压缩包名字命名
+dart bin/unzip.dart
 ```
 
 ## 注意事项

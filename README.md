@@ -13,6 +13,16 @@
     * `https://flutter.cn/docs/get-started/install` (国内)
     * `https://docs.flutter.dev/docs/get-started/install` (国外)
 
+# Features
+
+* 采用BLOC作为状态管理
+* 主题自由扩展, 主题切换，多语言
+* API 请求基础设施
+* OpenAPI 文档解析
+* 文件上传任务处理
+* 常用工具类及扩展
+
+
 ## 修改启动页和图标
 
 - 按assets/images 中的图片规格制作替换

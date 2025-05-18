@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '_common.dart';
-
-typedef Json = Map<String, dynamic>;
+import '_model.dart';
 
 final paramReg = RegExp(r'\{([\w]+)\}');
 const _apiPath = 'lib/src/globals/api/';
@@ -31,7 +30,7 @@ void main(List<String> args) {
     final jsonStr = File(path).readAsStringSync();
     var json = jsonDecode(jsonStr);
     if (json['openapi'] != null) {
-      final entry = OpenApiModel.fromJson(jsonDecode(jsonStr));
+      final entry = OpenApiModel.fromJson(json);
 
       final models = createModel(entry.components);
 
@@ -41,7 +40,7 @@ void main(List<String> args) {
 
       File('$_apiPath$name.dart').writeAsStringSync(apis);
     } else {
-      final entry = SwaggerModel.fromJson(jsonDecode(jsonStr));
+      final entry = SwaggerModel.fromJson(json);
 
       final models = createModel(entry.definitions);
 
@@ -66,163 +65,10 @@ String createModel(List<ModelEntry> entries) {
   content.writeln('import \'../utils/core.dart\';');
   content.writeln('import \'base.dart\';');
   for (var i in entries) {
-    content.writeln(createModelClass(i));
+    content.writeln(createModelClass(i, getTypeName(i.name)));
   }
 
   return content.toString();
-}
-
-String createModelClass(ModelEntry data) {
-  final className = getTypeName(data.name);
-  if (className == null || className.contains('<')) return '';
-  final content = StringBuffer();
-
-  final hasFields = data.properties.isNotEmpty;
-
-  content.write('''
-class $className implements Base {
-  $className(${hasFields ? '{' : ''}
-''');
-  for (var f in data.properties) {
-    content.writeln(
-      '    ${f.isRequired ? 'required ' : ''}this.${f.fieldName}${f.isRequired || f.defaultValue == null ? '' : getDefault(f, '=')},',
-    );
-  }
-  content.writeln('  ${hasFields ? '}' : ''});');
-
-  content.write('''
-  $className.fromJson(Json json):this(
-''');
-  for (var f in data.properties) {
-    if (f.type.type == 'List') {
-      final isBase = f.type.item?.isBase ?? true;
-      final transType = f.type.item != null
-          ? isBase
-              ? '?.cast<${f.type.item?.type}>()'
-              : '?.map<${f.type.item?.typeName}>((e)=>${f.type.item?.typeName}.fromJson(e)).toList()'
-          : '';
-      content.writeln(
-        '    ${f.fieldName}: as<${f.type.type}>(json[\'${f.name}\'])$transType${f.nullable ? '' : ' ?? []'},',
-      );
-    } else {
-      if (f.type.isBase) {
-        content.writeln(
-          '    ${f.fieldName}: as<${f.type.typeName}>(json[\'${f.name}\']${getDefault(f)})${f.nullable ? '' : '!'},',
-        );
-      } else {
-        if (f.nullable) {
-          content.writeln(
-            '    ${f.fieldName}: ${f.type.typeName}.tryFromJson(as<Json>(json[\'${f.name}\'])),',
-          );
-        } else {
-          content.writeln(
-            '    ${f.fieldName}: ${f.type.typeName}.fromJson(as<Json>(json[\'${f.name}\']) ?? emptyJson),',
-          );
-        }
-      }
-    }
-  }
-  content.writeln('  );');
-
-  content.write('''
-  static $className? tryFromJson(Json? json) {
-    if (json == null) return null;
-    return $className.fromJson(json);
-  }
-''');
-
-  var cloneParams = StringBuffer();
-  var cloneArgs = StringBuffer();
-
-  if (hasFields) {
-    cloneParams.writeln('{');
-
-    for (var f in data.properties) {
-      if (f.title != null) {
-        content.writeln('  /// ${f.title}');
-      }
-      if (f.description != null) {
-        content.writeln('  /// ${f.description}');
-      }
-      content.writeln(
-        '  final ${f.type.typeName}${f.nullable ? '?' : ''} ${f.fieldName};',
-      );
-      if (f.nullable) {
-        cloneParams
-            .writeln('     Optional<${f.type.typeName}>? ${f.fieldName},');
-        cloneArgs.writeln(
-          '     ${f.fieldName}: ${f.fieldName}.absent(this.${f.fieldName}),',
-        );
-      } else {
-        cloneParams.writeln('     ${f.type.typeName}? ${f.fieldName},');
-        cloneArgs.writeln(
-          '     ${f.fieldName}: ${f.fieldName} ?? this.${f.fieldName},',
-        );
-      }
-    }
-
-    cloneParams.write('}');
-  }
-
-  content.write('''
-
-  @override
-  $className clone(${cloneParams.toString()}) => $className(${cloneArgs.toString()});
-''');
-
-  content.writeln('''
-
-  @override
-  Json toJson() => {''');
-  for (var f in data.properties) {
-    if (isBaseType(f.type.typeName)) {
-      content.writeln(
-        '      \'${f.name}\': ${f.fieldName}${f.type.type == 'DateTime' ? '?.toString()' : ''},',
-      );
-    } else if (f.type.typeName.startsWith('List<') == true) {
-      content.writeln(
-        '      \'${f.name}\': ${f.fieldName}${f.nullable ? '?' : ''}.map((e) => e.toJson()).toList(),',
-      );
-    } else {
-      content.writeln(
-        '      \'${f.name}\': ${f.fieldName}${f.nullable ? '?' : ''}.toJson(),',
-      );
-    }
-  }
-  content.writeln('    };');
-
-  content.writeln('}');
-
-  return content.toString();
-}
-
-String getDefault(FieldModel f, [prefix = ',']) {
-  if (f.defaultValue != null) {
-    return '$prefix ${f.defaultValue}';
-  }
-  if (!f.isRequired) {
-    return '';
-  }
-  String typeValue = '';
-  switch (f.type.type) {
-    case 'int':
-      typeValue = '0';
-    case 'double':
-      typeValue = '0';
-    case 'DateTime':
-      typeValue = 'DateTime.now()';
-
-    case 'bool':
-      typeValue = 'false';
-    case 'String':
-      typeValue = "''";
-    case 'List':
-      typeValue = '[]';
-    case 'Json':
-    case 'Map':
-      typeValue = '{}';
-  }
-  return '$prefix $typeValue';
 }
 
 String createApi(
@@ -391,7 +237,13 @@ class OpenApiModel {
               {},
           components: as<Json>(json['components']?['schemas'])
                   ?.entries
-                  .map<ModelEntry>((e) => ModelEntry.fromJson(e.value, e.key))
+                  .map<ModelEntry>(
+                    (e) => ModelEntry.fromJson(
+                      e.value,
+                      e.key,
+                      getTypeName,
+                    ),
+                  )
                   .toList() ??
               [],
         );
@@ -442,7 +294,9 @@ class SwaggerModel {
               {},
           definitions: as<Json>(json['definitions'])
                   ?.entries
-                  .map<ModelEntry>((e) => ModelEntry.fromJson(e.value, e.key))
+                  .map<ModelEntry>(
+                    (e) => ModelEntry.fromJson(e.value, e.key, getTypeName),
+                  )
                   .toList() ??
               [],
           securityDefinitions: as<Json>(json['securityDefinitions'])
@@ -559,116 +413,6 @@ class ResponseScheme {
   final String? schema;
 }
 
-class FieldModel {
-  FieldModel({
-    required this.name,
-    required this.type,
-    required this.title,
-    required this.description,
-    required this.defaultValue,
-    required this.isRequired,
-  }) : fieldName = camelCase(name);
-
-  FieldModel.fromJson(Json json, String name, List<String>? requires)
-      : this(
-          name: name,
-          type: TypeModel.fromJson(json),
-          title: as<String>(json['title']),
-          description: as<String>(json['description']),
-          defaultValue: json['default'],
-          isRequired: requires?.contains(json['name'] ?? name) ?? false,
-        );
-
-  bool get nullable => !isRequired && defaultValue == null;
-
-  final String fieldName;
-  final String name;
-  final String? title;
-  final String? description;
-  final dynamic defaultValue;
-  final TypeModel type;
-  final bool isRequired;
-}
-
-class TypeModel {
-  TypeModel({
-    this.type,
-    this.ref,
-    this.format,
-    this.item,
-  });
-
-  TypeModel.fromJson(Json json)
-      : this(
-          type: parseType(as<String>(json['type'])),
-          ref: getTypeName(
-            as<String>(json['\$ref'] ?? json['schema']?['\$ref'])
-                ?.split('/')
-                .last,
-          ),
-          format: as<String>(json['format']),
-          item: TypeModel.tryFromJson(json['items']),
-        );
-
-  static TypeModel? tryFromJson(Json? json) {
-    if (json == null) return null;
-    return TypeModel.fromJson(json);
-  }
-
-  final String? type;
-  final String? ref;
-  final String? format;
-  final TypeModel? item;
-
-  String get typeName {
-    if (type != null) {
-      if (type == 'List' && item != null) {
-        return 'List<${item!.typeName}>';
-      } else {
-        return type!;
-      }
-    }
-    return ref ?? 'String';
-  }
-
-  bool get isBase => isBaseType(type ?? ref);
-
-  static String? parseType(String? type) {
-    if (type != null) {
-      var lowerType = type.toLowerCase();
-      if (lowerType == 'integer') {
-        return 'int';
-      } else if (lowerType == 'float' ||
-          lowerType == 'double' ||
-          lowerType == 'number') {
-        return 'double';
-      } else if (lowerType == 'string') {
-        return 'String';
-      } else if (lowerType == 'boolean') {
-        return 'bool';
-      } else if (lowerType == 'array') {
-        return 'List';
-      } else if (lowerType == 'map' ||
-          lowerType == 'dictionary' ||
-          lowerType == 'object') {
-        return 'Json';
-      }
-    }
-    return type;
-  }
-}
-
-bool isBaseType(String? type) {
-  return type == null ||
-      type == 'int' ||
-      type == 'double' ||
-      type == 'String' ||
-      type == 'bool' ||
-      type == 'Map' ||
-      type == 'Json' ||
-      type == 'DateTime';
-}
-
 class ParamModel {
   ParamModel({
     required this.isRequired,
@@ -680,7 +424,7 @@ class ParamModel {
   ParamModel.fromJson(Json json)
       : this(
           isRequired: as<bool>(json['required'], false)!,
-          type: TypeModel.fromJson(json),
+          type: TypeModel.fromJson(json, getTypeName),
           inWhere: as<String>(json['in'], '')!,
           name: as<String>(json['name'], '')!,
         );
@@ -692,41 +436,6 @@ class ParamModel {
   String paramName;
 
   bool get isPath => inWhere == 'path';
-}
-
-class ModelEntry {
-  ModelEntry({
-    required this.name,
-    required this.type,
-    required this.title,
-    required this.properties,
-    required this.requires,
-  });
-
-  ModelEntry.fromJson(Json json, String name)
-      : this(
-          name: name,
-          type: as<String>(json['type'], '')!,
-          title: as<String>(json['title'] ?? json['description'], '')!,
-          properties: as<Json>(json['properties'])
-                  ?.entries
-                  .map<FieldModel>(
-                    (d) => FieldModel.fromJson(
-                      as<Json>(d.value, emptyJson)!,
-                      d.key,
-                      json['required']?.cast<String>(),
-                    ),
-                  )
-                  .toList() ??
-              [],
-          requires: as<List>(json['required'])?.cast<String>() ?? [],
-        );
-
-  final String name;
-  final String type;
-  final String title;
-  final List<FieldModel> properties;
-  final List<String> requires;
 }
 
 class SecurityDefinition {

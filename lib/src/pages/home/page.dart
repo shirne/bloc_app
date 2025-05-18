@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text("${state.count}"),
+                        SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () {
                             Routes.login.show(context);
@@ -57,6 +58,18 @@ class _HomePageState extends State<HomePage> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(context.l10n.login),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Routes.web.show(context, arguments: {
+                              'url': 'https://www.baidu.com/',
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text('Open Baidu in Webview'),
                           ),
                         ),
                       ],

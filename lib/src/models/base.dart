@@ -135,18 +135,25 @@ List<T>? asList<T>(dynamic value) {
 abstract class Base {
   const Base();
 
+  Base.fromJson(Json json);
+
   Json toJson();
+
+  Base clone();
 
   @override
   String toString() => jsonEncode(toJson());
 }
 
 /// 通用的接口返回模型
-class Model extends Base {
+class Model implements Base {
   Json data;
   Model(this.data);
 
   Model.fromJson(Json? json) : this(json ?? {});
+
+  @override
+  Model clone({Json? data}) => Model(data ?? this.data);
 
   @override
   Json toJson() => data;
@@ -161,7 +168,7 @@ class Model extends Base {
 }
 
 /// 列表数据的模型
-class ModelList<T extends Base> extends Base {
+class ModelList<T extends Base> implements Base {
   ModelList({this.items});
 
   ModelList.fromJson(Json? json, [DataParser<T>? dataParser])
@@ -176,6 +183,9 @@ class ModelList<T extends Base> extends Base {
 
   bool get isEmpty => items?.isEmpty ?? true;
   bool get isNotEmpty => !isEmpty;
+
+  @override
+  ModelList clone({List<T>? items}) => ModelList(items: items ?? this.items);
 
   @override
   Json toJson() => {
@@ -229,7 +239,7 @@ class ModelPage<T extends Base> extends ModelList<T> {
     });
 }
 
-class ActionResult extends Base {
+class ActionResult implements Base {
   ActionResult(this.state);
 
   ActionResult.fromJson(Json json) : this(as<int>(json['state'], 0)!);
@@ -237,6 +247,9 @@ class ActionResult extends Base {
   final int state;
 
   bool get isSuccess => state == 1;
+
+  @override
+  ActionResult clone({int? state}) => ActionResult(state ?? this.state);
 
   @override
   Json toJson() => {

@@ -38,6 +38,7 @@ class FileModel implements Base {
   final DateTime? createdTime;
   final DateTime? updatedTime;
 
+  @override
   Map<String, dynamic> toJson() => {
         'id': id,
         'url': url,
@@ -51,7 +52,8 @@ class FileModel implements Base {
         'updated_time': updatedTime,
       };
 
-  FileModel copyWith({
+  @override
+  FileModel clone({
     int? id,
     String? url,
     String? extensions,

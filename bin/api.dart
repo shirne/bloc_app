@@ -63,6 +63,7 @@ void main(List<String> args) {
 
 String createModel(List<ModelEntry> entries) {
   final content = StringBuffer();
+  content.writeln('import \'../utils/core.dart\';');
   content.writeln('import \'base.dart\';');
   for (var i in entries) {
     content.writeln(createModelClass(i));
@@ -79,7 +80,7 @@ String createModelClass(ModelEntry data) {
   final hasFields = data.properties.isNotEmpty;
 
   content.write('''
-class $className extends Base {
+class $className implements Base {
   $className(${hasFields ? '{' : ''}
 ''');
   for (var f in data.properties) {
@@ -88,6 +89,7 @@ class $className extends Base {
     );
   }
   content.writeln('  ${hasFields ? '}' : ''});');
+
   content.write('''
   $className.fromJson(Json json):this(
 ''');
@@ -129,26 +131,63 @@ class $className extends Base {
   }
 ''');
 
-  for (var f in data.properties) {
-    if (f.title != null) {
-      content.writeln('  /// ${f.title}');
+  var cloneParams = StringBuffer();
+  var cloneArgs = StringBuffer();
+
+  if (hasFields) {
+    cloneParams.writeln('{');
+
+    for (var f in data.properties) {
+      if (f.title != null) {
+        content.writeln('  /// ${f.title}');
+      }
+      if (f.description != null) {
+        content.writeln('  /// ${f.description}');
+      }
+      content.writeln(
+        '  final ${f.type.typeName}${f.nullable ? '?' : ''} ${f.fieldName};',
+      );
+      if (f.nullable) {
+        cloneParams
+            .writeln('     Optional<${f.type.typeName}>? ${f.fieldName},');
+        cloneArgs.writeln(
+          '     ${f.fieldName}: ${f.fieldName}.absent(this.${f.fieldName}),',
+        );
+      } else {
+        cloneParams.writeln('     ${f.type.typeName}? ${f.fieldName},');
+        cloneArgs.writeln(
+          '     ${f.fieldName}: ${f.fieldName} ?? this.${f.fieldName},',
+        );
+      }
     }
-    if (f.description != null) {
-      content.writeln('  /// ${f.description}');
-    }
-    content.writeln(
-      '  final ${f.type.typeName}${f.nullable ? '?' : ''} ${f.fieldName};',
-    );
+
+    cloneParams.write('}');
   }
+
+  content.write('''
+
+  @override
+  $className clone(${cloneParams.toString()}) => $className(${cloneArgs.toString()});
+''');
 
   content.writeln('''
 
   @override
   Json toJson() => {''');
   for (var f in data.properties) {
-    content.writeln(
-      '      \'${f.name}\': ${f.fieldName}${f.type.type == 'DateTime' ? '.toString()' : ''},',
-    );
+    if (isBaseType(f.type.typeName)) {
+      content.writeln(
+        '      \'${f.name}\': ${f.fieldName}${f.type.type == 'DateTime' ? '?.toString()' : ''},',
+      );
+    } else if (f.type.typeName.startsWith('List<') == true) {
+      content.writeln(
+        '      \'${f.name}\': ${f.fieldName}${f.nullable ? '?' : ''}.map((e) => e.toJson()).toList(),',
+      );
+    } else {
+      content.writeln(
+        '      \'${f.name}\': ${f.fieldName}${f.nullable ? '?' : ''}.toJson(),',
+      );
+    }
   }
   content.writeln('    };');
 

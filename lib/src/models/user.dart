@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../utils/core.dart';
 import 'base.dart';
 
-class UserModel extends Base {
+class UserModel implements Base {
   static const empty = UserModel();
 
   const UserModel({
@@ -58,6 +58,40 @@ class UserModel extends Base {
   bool get isValid => id > 0;
 
   @override
+  UserModel clone({
+    int? id,
+    String? username,
+    String? nickname,
+    String? avatar,
+    String? password,
+    int? followCount,
+    int? fansCount,
+    double? score,
+    int? expire,
+    int? points,
+    int? level,
+    int? status,
+    DateTime? createTime,
+    DateTime? updateTime,
+  }) =>
+      UserModel(
+        id: id ?? this.id,
+        username: username ?? this.username,
+        nickname: nickname ?? this.nickname,
+        avatar: avatar ?? this.avatar,
+        password: password ?? this.password,
+        followCount: followCount ?? this.followCount,
+        fansCount: fansCount ?? this.fansCount,
+        score: score ?? this.score,
+        expire: expire ?? this.expire,
+        points: points ?? this.points,
+        level: level ?? this.level,
+        status: status ?? this.status,
+        createTime: createTime ?? this.createTime,
+        updateTime: updateTime ?? this.updateTime,
+      );
+
+  @override
   Json toJson() => {
         'id': id,
         'username': username,
@@ -75,7 +109,7 @@ class UserModel extends Base {
       };
 }
 
-class JwtToken extends Base {
+class JwtToken implements Base {
   JwtToken(this.token) : data = parseData(token);
 
   final String token;
@@ -101,6 +135,9 @@ class JwtToken extends Base {
   }
 
   @override
+  JwtToken clone({String? token}) => JwtToken(token ?? this.token);
+
+  @override
   Json toJson() => {
         'value': token,
       };
@@ -109,7 +146,7 @@ class JwtToken extends Base {
   String toString() => token;
 }
 
-class TokenModel extends Base {
+class TokenModel implements Base {
   static final empty = TokenModel();
 
   TokenModel({
@@ -139,6 +176,9 @@ class TokenModel extends Base {
       DateTime.now().difference(createTime!).inSeconds > expireIn;
 
   @override
+  TokenModel clone() => TokenModel();
+
+  @override
   Json toJson() => {
         'access_token': accessToken,
         'refresh_token': refreshToken,
@@ -147,17 +187,38 @@ class TokenModel extends Base {
       };
 }
 
-class UserInfo extends Base {
+class UserInfo implements Base {
+  UserInfo();
+
+  UserInfo.fromJson(Json json) : this();
+
+  @override
+  UserInfo clone() => UserInfo();
+
   @override
   Json toJson() => {};
 }
 
-class UserLevel extends Base {
+class UserLevel implements Base {
+  UserLevel();
+
+  UserLevel.fromJson(Json json) : this();
+
+  @override
+  UserLevel clone() => UserLevel();
+
   @override
   Json toJson() => {};
 }
 
-class UserAgentLevel extends Base {
+class UserAgentLevel implements Base {
+  UserAgentLevel();
+
+  UserAgentLevel.fromJson(Json json) : this();
+
+  @override
+  UserAgentLevel clone() => UserAgentLevel();
+
   @override
   Json toJson() => {};
 }

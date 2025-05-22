@@ -27,7 +27,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
         foregroundColor:
             isDark ? base.colorScheme.onSurface : base.colorScheme.onPrimary,
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 20,
       ),
       listTileTheme: ListTileThemeData(

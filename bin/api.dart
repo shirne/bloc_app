@@ -117,16 +117,16 @@ class Api$className extends ApiBase {
     final origPath = i.key.substring(1);
     final path = transPath(origPath);
     for (var method in i.value) {
-      final methodName = method.operationId;
+      var methodName = method.operationId;
+      if (methodName.isEmpty) {
+        methodName = '${method.method}${pascalCase(origPath.split('/').last)}';
+      }
       final params = method.parameters;
       var response = method.responses['200']?.schema;
-      final respType = getTypeName(response) ?? 'ApiResult';
-      final innerType = respType.startsWith('ApiResult<')
-          ? respType.substring(10, respType.length - 1)
-          : respType;
+
       final custom = method.responses['200']?.custom;
       if (response == null && custom != null) {
-        response = custom.name;
+        response = 'ApiResult<${custom.name}>';
         onCustomModel.call(custom);
         if (method.responses['200']?.subModels != null) {
           for (var subm in method.responses['200']!.subModels!) {
@@ -134,6 +134,12 @@ class Api$className extends ApiBase {
           }
         }
       }
+
+      final respType = getTypeName(response) ?? 'ApiResult';
+      final innerType = respType.startsWith('ApiResult<')
+          ? respType.substring(10, respType.length - 1)
+          : respType;
+
       stdout.writeln('$origPath $response $respType $innerType');
       content.write('''
   /// ${method.summary}
@@ -452,7 +458,7 @@ class ResponseScheme {
           ? null
           : ModelEntry.fromJson(
               schema,
-              'Resp${pascalCase(path.split('/').last)}',
+              '${pascalCase(path.split('/').last)}Resp',
               getTypeName,
               (m) => subModels.add(m),
             ),

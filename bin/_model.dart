@@ -175,8 +175,12 @@ class ModelEntry {
     required this.requires,
   });
 
-  ModelEntry.fromJson(Json json, String name, TypeNameParser getTypeName)
-      : this(
+  ModelEntry.fromJson(
+    Json json,
+    String name,
+    TypeNameParser getTypeName, [
+    Function(ModelEntry)? onSubModels,
+  ]) : this(
           name: name,
           type: as<String>(json['type'], '')!,
           title: as<String>(json['title'] ?? json['description'], '')!,
@@ -188,6 +192,7 @@ class ModelEntry {
                       d.key,
                       json['required']?.cast<String>(),
                       getTypeName,
+                      onSubModels,
                     ),
                   )
                   .toList() ??
@@ -212,19 +217,32 @@ class FieldModel {
     required this.isRequired,
   }) : fieldName = camelCase(name);
 
-  FieldModel.fromJson(
+  factory FieldModel.fromJson(
     Json json,
     String name,
     List<String>? requires,
-    TypeNameParser getTypeName,
-  ) : this(
-          name: name,
-          type: TypeModel.fromJson(json, getTypeName),
-          title: as<String>(json['title']),
-          description: as<String>(json['description']),
-          defaultValue: json['default'],
-          isRequired: requires?.contains(json['name'] ?? name) ?? false,
-        );
+    TypeNameParser getTypeName, [
+    Function(ModelEntry)? onSubModels,
+  ]) {
+    String? subModelName;
+    if (onSubModels != null &&
+        json['type'] == 'object' &&
+        json['properties']?.isNotEmpty == true) {
+      // 名字可能重复?
+      subModelName = pascalCase('${name}_model');
+      onSubModels(ModelEntry.fromJson(json, subModelName, getTypeName));
+      json['type'] = subModelName;
+      json['\$ref'] = subModelName; // 可能没用？
+    }
+    return FieldModel(
+      name: name,
+      type: TypeModel.fromJson(json, getTypeName),
+      title: as<String>(json['title']),
+      description: as<String>(json['description']),
+      defaultValue: json['default'],
+      isRequired: requires?.contains(json['name'] ?? name) ?? false,
+    );
+  }
 
   bool get nullable => !isRequired && defaultValue == null;
 

@@ -36,7 +36,21 @@ void main(List<String> args) {
 
       File('$_modelPath$name.dart').writeAsStringSync(models);
 
-      final apis = createApi(entry.paths, '', className);
+      final customModels = <ModelEntry>[];
+
+      final apis = createApi(
+        entry.paths,
+        '',
+        className,
+        (m) => customModels.add(m),
+      );
+
+      if (customModels.isNotEmpty) {
+        File('$_modelPath$name.dart').writeAsStringSync(
+          createModel(customModels, false),
+          mode: FileMode.append,
+        );
+      }
 
       File('$_apiPath$name.dart').writeAsStringSync(apis);
     } else {
@@ -46,7 +60,16 @@ void main(List<String> args) {
 
       File('$_modelPath$name.dart').writeAsStringSync(models);
 
-      final apis = createApi(entry.paths, entry.basePath, className);
+      final customModels = <ModelEntry>[];
+
+      final apis = createApi(
+          entry.paths, entry.basePath, className, (m) => customModels.add(m));
+      if (customModels.isNotEmpty) {
+        File('$_modelPath$name.dart').writeAsStringSync(
+          createModel(customModels, false),
+          mode: FileMode.append,
+        );
+      }
 
       File('$_apiPath$name.dart').writeAsStringSync(apis);
     }
@@ -60,10 +83,14 @@ void main(List<String> args) {
   }
 }
 
-String createModel(List<ModelEntry> entries) {
+String createModel(List<ModelEntry> entries, [bool withInclude = true]) {
   final content = StringBuffer();
-  content.writeln('import \'../utils/core.dart\';');
-  content.writeln('import \'base.dart\';');
+  if (withInclude) {
+    content.writeln('import \'../utils/core.dart\';');
+    content.writeln('import \'base.dart\';');
+  } else {
+    content.writeln('');
+  }
   for (var i in entries) {
     content.writeln(createModelClass(i, getTypeName(i.name)));
   }
@@ -75,6 +102,7 @@ String createApi(
   Map<String, List<RequestEntry>> json,
   String basePath,
   String className,
+  Function(ModelEntry) onCustomModel,
 ) {
   final content = StringBuffer();
   content.write('''
@@ -91,11 +119,21 @@ class Api$className extends ApiBase {
     for (var method in i.value) {
       final methodName = method.operationId;
       final params = method.parameters;
-      final response = method.responses['200']?.schema;
+      var response = method.responses['200']?.schema;
       final respType = getTypeName(response) ?? 'ApiResult';
       final innerType = respType.startsWith('ApiResult<')
           ? respType.substring(10, respType.length - 1)
           : respType;
+      final custom = method.responses['200']?.custom;
+      if (response == null && custom != null) {
+        response = custom.name;
+        onCustomModel.call(custom);
+        if (method.responses['200']?.subModels != null) {
+          for (var subm in method.responses['200']!.subModels!) {
+            onCustomModel.call(subm);
+          }
+        }
+      }
       stdout.writeln('$origPath $response $respType $innerType');
       content.write('''
   /// ${method.summary}
@@ -370,7 +408,7 @@ class RequestEntry {
           summary: as<String>(json['summary'], '')!,
           operationId: as<String>(json['operationId'], '')!,
           responses: as<Json>(json['responses'])?.map<String, ResponseScheme>(
-                (k, v) => MapEntry(k, ResponseScheme.fromJson(v)),
+                (k, v) => MapEntry(k, ResponseScheme.fromJson(v, path)),
               ) ??
               {},
           parameters: as<List>(json['parameters'])
@@ -393,24 +431,39 @@ class ResponseScheme {
   ResponseScheme({
     required this.description,
     this.schema,
+    this.custom,
+    this.subModels,
   });
 
-  ResponseScheme.fromJson(Json json)
-      : this(
-          description: as<String>(json['description'], '')!,
-          schema: getTypeName(
-            as<Json>(
-              json['schema'] ??
-                  as<Json>(json['content'])?.values.firstOrNull?['schema'],
-              emptyJson,
-            )!['\$ref']
-                ?.split('/')
-                .last,
-          ),
-        );
+  factory ResponseScheme.fromJson(Json json, String path) {
+    var schema = as<Json>(
+      json['schema'] ??
+          as<Json>(json['content'])?.values.firstOrNull?['schema'],
+      emptyJson,
+    )!;
+    final subModels = <ModelEntry>[];
+
+    return ResponseScheme(
+      description: as<String>(json['description'], '')!,
+      schema: getTypeName(
+        schema['\$ref']?.split('/').last,
+      ),
+      custom: schema.containsKey('\$ref')
+          ? null
+          : ModelEntry.fromJson(
+              schema,
+              'Resp${pascalCase(path.split('/').last)}',
+              getTypeName,
+              (m) => subModels.add(m),
+            ),
+      subModels: subModels,
+    );
+  }
 
   final String description;
   final String? schema;
+  final ModelEntry? custom;
+  final List<ModelEntry>? subModels;
 }
 
 class ParamModel {

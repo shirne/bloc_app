@@ -108,10 +108,22 @@ class $className implements Base {
       content.writeln(
         '      \'${f.name}\': ${f.fieldName}${f.type.type == 'DateTime' ? '?.toString()' : ''},',
       );
-    } else if (f.type.typeName.startsWith('List<') == true) {
-      content.writeln(
-        '      \'${f.name}\': ${f.fieldName}${f.nullable ? '?' : ''}.map((e) => e.toJson()).toList(),',
-      );
+    } else if (f.type.type == 'List') {
+      if (isBaseType(f.type.item?.type)) {
+        if (f.type.item?.type == 'DateTime') {
+          content.writeln(
+            '      \'${f.name}\': ${f.fieldName}${f.nullable ? '?' : ''}.map((e) => e.toString()).toList(),',
+          );
+        } else {
+          content.writeln(
+            '      \'${f.name}\': ${f.fieldName},',
+          );
+        }
+      } else {
+        content.writeln(
+          '      \'${f.name}\': ${f.fieldName}${f.nullable ? '?' : ''}.map((e) => e.toJson()).toList(),',
+        );
+      }
     } else {
       content.writeln(
         '      \'${f.name}\': ${f.fieldName}${f.nullable ? '?' : ''}.toJson(),',

@@ -200,6 +200,108 @@ class ModelEntry {
           requires: as<List>(json['required'])?.cast<String>() ?? [],
         );
 
+  factory ModelEntry.fromExample(
+    Json json,
+    String name,
+    TypeNameParser getTypeName, [
+    Function(ModelEntry)? onSubModels,
+  ]) {
+    final requires = <String>[];
+    final properties = <FieldModel>[];
+    for (var e in json.entries) {
+      if (e.value != null) {
+        // 默认有值就require
+        requires.add(e.key);
+        if (e.value is List) {
+          if (e.value.isEmpty) {
+            properties.add(FieldModel(
+              name: e.key,
+              isRequired: true,
+              type: TypeModel(type: 'List'),
+            ));
+          } else {
+            var subType = switch (e.value.first) {
+              (int _) => 'int',
+              (double _) => 'double',
+              (bool _) => 'bool',
+              (DateTime _) => 'DateTime',
+              (String _) => 'String',
+              _ => pascalCase('${e.key}ItemModel'),
+            };
+            if (!isBaseType(subType)) {
+              onSubModels?.call(
+                ModelEntry.fromExample(
+                  e.value.first,
+                  subType,
+                  getTypeName,
+                  onSubModels,
+                ),
+              );
+            }
+            properties.add(FieldModel(
+              name: e.key,
+              isRequired: true,
+              type: TypeModel(type: 'List', item: TypeModel(type: subType)),
+            ));
+          }
+        } else if (e.value is Map) {
+          var subType = pascalCase('${e.key}Model');
+          onSubModels?.call(
+            ModelEntry.fromExample(e.value, subType, getTypeName, onSubModels),
+          );
+          properties.add(FieldModel(
+            name: e.key,
+            isRequired: true,
+            type: TypeModel(type: subType),
+          ));
+        } else {
+          properties.add(FieldModel(
+            name: e.key,
+            isRequired: true,
+            type: TypeModel(
+                type: switch (e.value) {
+              (int _) => 'int',
+              (double _) => 'double',
+              (bool _) => 'bool',
+              (DateTime _) => 'DateTime',
+              _ => 'String',
+            }),
+          ));
+        }
+      } else {
+        // 值为空则根据名称判断
+        if (e.key.startsWith('is_')) {
+          properties.add(FieldModel(
+            name: e.key,
+            type: TypeModel(type: 'bool'),
+          ));
+        } else if (e.key.endsWith('_time') || e.key.endsWith('_at')) {
+          properties.add(FieldModel(
+            name: e.key,
+            type: TypeModel(type: 'DateTime'),
+          ));
+        } else if (e.key.endsWith('_id') || e.key == 'id') {
+          properties.add(FieldModel(
+            name: e.key,
+            type: TypeModel(type: 'int'),
+          ));
+        } else {
+          properties.add(FieldModel(
+            name: e.key,
+            type: TypeModel(type: 'String'),
+          ));
+        }
+      }
+    }
+    return ModelEntry(
+      name: name,
+      type: 'object',
+      title: name,
+      properties: properties,
+      requires: requires,
+    );
+  }
+
   final String name;
   final String type;
   final String title;
@@ -211,10 +313,10 @@ class FieldModel {
   FieldModel({
     required this.name,
     required this.type,
-    required this.title,
-    required this.description,
-    required this.defaultValue,
-    required this.isRequired,
+    this.title,
+    this.description,
+    this.defaultValue,
+    this.isRequired = false,
   }) : fieldName = camelCase(name);
 
   factory FieldModel.fromJson(

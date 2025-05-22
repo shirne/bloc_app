@@ -41,9 +41,10 @@
 dart run bin/api.dart json文件
 ```
 
-## 从json生成模型(开发中)
+## 从json生成模型
 
 ```
+/// json文件可以是 openapi 中components的类型定义，也可以是json格式的数据示例
 dart run bin/model.dart json文件
 ```
 

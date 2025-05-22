@@ -23,12 +23,32 @@ void main(List<String> args) {
 
   try {
     final jsonStr = File(path).readAsStringSync();
-    var json = jsonDecode(jsonStr);
-
+    final json = as<Json>(jsonDecode(jsonStr));
+    if (json == null) {
+      stdout.writeln("json parse error.");
+      return;
+    }
     final entries = <ModelEntry>[];
 
-    final entry = ModelEntry.fromJson(json, className, getTypeName);
-    entries.add(entry);
+    if (json.containsKey('type') &&
+        json.containsKey('properties') &&
+        json['properties'] is Json) {
+      final entry = ModelEntry.fromJson(
+        json,
+        className,
+        getTypeName,
+        (m) => entries.add(m),
+      );
+      entries.add(entry);
+    } else {
+      final entry = ModelEntry.fromExample(
+        json,
+        className,
+        getTypeName,
+        (m) => entries.add(m),
+      );
+      entries.add(entry);
+    }
 
     final models = createModel(entries);
 
@@ -50,7 +70,7 @@ String? getTypeName(String? name) {
 
   String newName = TypeModel.parseType(name)!;
 
-  if (!isBaseType(newName)) {
+  if (!isBaseType(newName) && !newName.endsWith('Model')) {
     newName = '${name}Model';
   }
 

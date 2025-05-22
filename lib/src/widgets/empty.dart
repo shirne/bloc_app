@@ -16,7 +16,7 @@ class EmptyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconTheme(
       data: IconThemeData(
-        color: context.colorScheme.tertiary,
+        color: context.colorScheme.outlineVariant,
         size: 120,
       ),
       child: Center(

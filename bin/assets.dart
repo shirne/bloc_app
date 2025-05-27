@@ -12,6 +12,8 @@ void main(List<String> args) {
   loopDir(dir, rootClass);
 
   File(path).writeAsStringSync(rootClass.toClassCode());
+
+  stdout.writeln('Generate assets ok');
 }
 
 final classUpperReg = RegExp('(^|_)([a-z])');

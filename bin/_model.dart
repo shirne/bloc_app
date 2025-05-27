@@ -214,11 +214,13 @@ class ModelEntry {
         requires.add(e.key);
         if (e.value is List) {
           if (e.value.isEmpty) {
-            properties.add(FieldModel(
-              name: e.key,
-              isRequired: true,
-              type: TypeModel(type: 'List'),
-            ));
+            properties.add(
+              FieldModel(
+                name: e.key,
+                isRequired: true,
+                type: TypeModel(type: 'List'),
+              ),
+            );
           } else {
             var subType = switch (e.value.first) {
               (int _) => 'int',
@@ -238,58 +240,73 @@ class ModelEntry {
                 ),
               );
             }
-            properties.add(FieldModel(
-              name: e.key,
-              isRequired: true,
-              type: TypeModel(type: 'List', item: TypeModel(type: subType)),
-            ));
+            properties.add(
+              FieldModel(
+                name: e.key,
+                isRequired: true,
+                type: TypeModel(type: 'List', item: TypeModel(type: subType)),
+              ),
+            );
           }
         } else if (e.value is Map) {
           var subType = pascalCase('${e.key}Model');
           onSubModels?.call(
             ModelEntry.fromExample(e.value, subType, getTypeName, onSubModels),
           );
-          properties.add(FieldModel(
-            name: e.key,
-            isRequired: true,
-            type: TypeModel(type: subType),
-          ));
+          properties.add(
+            FieldModel(
+              name: e.key,
+              isRequired: true,
+              type: TypeModel(type: subType),
+            ),
+          );
         } else {
-          properties.add(FieldModel(
-            name: e.key,
-            isRequired: true,
-            type: TypeModel(
+          properties.add(
+            FieldModel(
+              name: e.key,
+              isRequired: true,
+              type: TypeModel(
                 type: switch (e.value) {
-              (int _) => 'int',
-              (double _) => 'double',
-              (bool _) => 'bool',
-              (DateTime _) => 'DateTime',
-              _ => 'String',
-            }),
-          ));
+                  (int _) => 'int',
+                  (double _) => 'double',
+                  (bool _) => 'bool',
+                  (DateTime _) => 'DateTime',
+                  _ => 'String',
+                },
+              ),
+            ),
+          );
         }
       } else {
         // 值为空则根据名称判断
         if (e.key.startsWith('is_')) {
-          properties.add(FieldModel(
-            name: e.key,
-            type: TypeModel(type: 'bool'),
-          ));
+          properties.add(
+            FieldModel(
+              name: e.key,
+              type: TypeModel(type: 'bool'),
+            ),
+          );
         } else if (e.key.endsWith('_time') || e.key.endsWith('_at')) {
-          properties.add(FieldModel(
-            name: e.key,
-            type: TypeModel(type: 'DateTime'),
-          ));
+          properties.add(
+            FieldModel(
+              name: e.key,
+              type: TypeModel(type: 'DateTime'),
+            ),
+          );
         } else if (e.key.endsWith('_id') || e.key == 'id') {
-          properties.add(FieldModel(
-            name: e.key,
-            type: TypeModel(type: 'int'),
-          ));
+          properties.add(
+            FieldModel(
+              name: e.key,
+              type: TypeModel(type: 'int'),
+            ),
+          );
         } else {
-          properties.add(FieldModel(
-            name: e.key,
-            type: TypeModel(type: 'String'),
-          ));
+          properties.add(
+            FieldModel(
+              name: e.key,
+              type: TypeModel(type: 'String'),
+            ),
+          );
         }
       }
     }

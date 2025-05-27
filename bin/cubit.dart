@@ -100,5 +100,5 @@ class ${page}View extends StatelessWidget {
   }
 }
 """);
-  stdout.write('create $page ok');
+  stdout.writeln('Create $page ok');
 }

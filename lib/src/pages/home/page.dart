@@ -63,9 +63,12 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () {
-                            Routes.web.show(context, arguments: {
-                              'url': 'https://www.baidu.com/',
-                            });
+                            Routes.web.show(
+                              context,
+                              arguments: {
+                                'url': 'https://www.baidu.com/',
+                              },
+                            );
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),

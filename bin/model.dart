@@ -53,6 +53,8 @@ void main(List<String> args) {
     final models = createModel(entries);
 
     File('$_modelPath$name.dart').writeAsStringSync(models);
+
+    stdout.writeln("Generated $name.");
   } catch (e) {
     stdout.writeln("Err: $e");
     if (e is Error) {

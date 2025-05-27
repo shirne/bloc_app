@@ -1,0 +1,75 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "echo 2",
+            "type": "shell",
+            "command": "echo Hello"
+        },
+        {
+            "label": "Generate Routes",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "run",
+                "bin/route.dart"
+            ]
+        },
+        {
+            "label": "Generate Assets",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "run",
+                "bin/assets.dart"
+            ]
+        },
+        {
+            "label": "Create Bloc Page",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "run",
+                "bin/bloc.dart",
+                "${input:pageName}",
+                "${input:pagePath}"
+            ]
+        },
+        {
+            "label": "Generate API from current JSON file",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "run",
+                "bin/api.dart",
+                "${relativeFile}"
+            ]
+        },
+        {
+            "label": "Generate Model from current JSON file",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "run",
+                "bin/model.dart",
+                "${relativeFile}"
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "pageName",
+            "type": "promptString",
+            "description": "Name your page(eg. Home).",
+            "default": ""
+        },
+         {
+            "id": "pagePath",
+            "type": "promptString",
+            "description": "Route path (unser lib/pages).",
+            "default": ""
+        }
+    ]
+}

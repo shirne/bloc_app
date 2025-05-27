@@ -5,11 +5,13 @@ class Assets {
 class _$Images {
   const _$Images();
 
-  final iconForeground = 'assets/images/icon_foreground.png';
-  final logo = 'assets/images/logo.png';
-  final icon = 'assets/images/icon.png';
-  final splashLogo = 'assets/images/splash_logo.png';
-  final background = 'assets/images/background.png';
-  final logoReverse = 'assets/images/logo_reverse.png';
-  final text = 'assets/images/text.png';
+  static const _base = 'assets/images';
+
+  final background = '$_base/background.png';
+  final icon = '$_base/icon.png';
+  final iconForeground = '$_base/icon_foreground.png';
+  final logo = '$_base/logo.png';
+  final logoReverse = '$_base/logo_reverse.png';
+  final splashLogo = '$_base/splash_logo.png';
+  final text = '$_base/text.png';
 }

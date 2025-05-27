@@ -37,8 +37,10 @@ extension ListExt<E> on List<E> {
   }
 
   List<List<E>> chunk(int size) {
-    return List.generate((length / size).ceil(),
-        (i) => sublist(i * size, math.min(i * size + size, length)));
+    return List.generate(
+      (length / size).ceil(),
+      (i) => sublist(i * size, math.min(i * size + size, length)),
+    );
   }
 
   int indexOr(bool Function(E) test, [int dft = 0]) {

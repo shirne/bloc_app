@@ -124,8 +124,11 @@ class UploadUtil {
     startUpload();
   }
 
-  void addFiles(List<File> files, UploadHalder handler,
-      [UploadOption? option]) {
+  void addFiles(
+    List<File> files,
+    UploadHalder handler, [
+    UploadOption? option,
+  ]) {
     for (var file in files) {
       queue.add(((file, option, handler)));
     }

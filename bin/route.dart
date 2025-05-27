@@ -56,7 +56,7 @@ void main(List<String> args) {
   File(path).writeAsStringSync(newContents.join("\n"));
 
   File(export).writeAsStringSync(exports.join("\n"));
-  stdout.write('update routes ok');
+  stdout.writeln('Update routes ok');
 }
 
 void walkDir(

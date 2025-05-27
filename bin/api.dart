@@ -63,7 +63,11 @@ void main(List<String> args) {
       final customModels = <ModelEntry>[];
 
       final apis = createApi(
-          entry.paths, entry.basePath, className, (m) => customModels.add(m));
+        entry.paths,
+        entry.basePath,
+        className,
+        (m) => customModels.add(m),
+      );
       if (customModels.isNotEmpty) {
         File('$_modelPath$name.dart').writeAsStringSync(
           createModel(customModels, false),
@@ -73,6 +77,8 @@ void main(List<String> args) {
 
       File('$_apiPath$name.dart').writeAsStringSync(apis);
     }
+
+    stdout.writeln("Generated $name and relative models.");
   } catch (e) {
     stdout.writeln("Err: $e");
     if (e is Error) {

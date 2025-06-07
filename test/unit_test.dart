@@ -16,4 +16,12 @@ void main() {
     expect(as<DateTime>('2022-03-04'), DateTime(2022, 3, 4));
     expect(as<DateTime>('2022/03/04'), DateTime(2022, 3, 4));
   });
+
+  test('chunk', () {
+    var list = [1, 2, 3, 4, 5, 6];
+
+    expect(3, list.chunk(2).length);
+    expect(2, list.chunk(3).length);
+    expect(2, list.chunk(4).length);
+  });
 }

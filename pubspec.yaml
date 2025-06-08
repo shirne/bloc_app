@@ -21,7 +21,12 @@ dependencies:
   photo_manager:
   wechat_assets_picker: ^9.5.0
   logging: # 日志工具
+
   dio: ^5.8.0+1 # 网络库
+  dartssh2:
+  web_socket_channel:
+  pointycastle: # 加密库
+
   bloc: ^9.0.0
   flutter_bloc: ^9.1.0
   shared_preferences: ^2.0.17 # 本地存储
@@ -45,6 +50,8 @@ dependencies:
   # flutter_widget_from_html: ^0.15.3
   flutter_widget_from_html_core: ^0.16.0 # 简单html全平台解析
   flutter_inappwebview: ^6.1.5 # 内置webview
+
+  window_manager:
 
 dev_dependencies:
   flutter_test:

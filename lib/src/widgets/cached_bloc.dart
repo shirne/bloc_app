@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 
@@ -152,17 +151,32 @@ class PagedState<T, S extends QueryModel> extends BaseState {
 
 final _states = <String, dynamic>{};
 
+T _getCachedState<T>(
+  T Function() createState, [
+  String globalKey = '',
+  T Function(T)? fromCache,
+]) {
+  if (globalKey.isEmpty) {
+    return createState();
+  }
+  final cached = as<T>(_states[globalKey]);
+
+  final state = cached ?? createState.call();
+
+  if (fromCache == null) {
+    return state;
+  }
+
+  return fromCache.call(state);
+}
+
 abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
   CachedBloc(
     T Function() createState, [
     this.globalKey = '',
     T Function(T)? fromCache,
   ]) : super(
-          globalKey.isEmpty
-              ? createState()
-              : fromCache == null
-                  ? _states.putIfAbsent(globalKey, createState)
-                  : fromCache.call(_states.putIfAbsent(globalKey, createState)),
+          _getCachedState(createState, globalKey, fromCache),
         );
 
   final String globalKey;
@@ -194,11 +208,7 @@ abstract class CachedCubit<T> extends Cubit<T> {
     this.globalKey = '',
     T Function(T)? fromCache,
   ]) : super(
-          globalKey.isEmpty
-              ? createState()
-              : fromCache == null
-                  ? _states.putIfAbsent(globalKey, createState)
-                  : fromCache.call(_states.putIfAbsent(globalKey, createState)),
+          _getCachedState(createState, globalKey, fromCache),
         );
 
   @override

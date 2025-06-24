@@ -74,7 +74,7 @@ T? as<T>(dynamic value, [T? defaultValue]) {
     }
     dynamic result;
     if (T == int) {
-      result = int.tryParse(value);
+      result = int.tryParse(value) ?? double.tryParse(value)?.toInt();
     } else if (T == double) {
       result = double.tryParse(value);
     } else if (T == BigInt) {

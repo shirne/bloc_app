@@ -277,8 +277,11 @@ dart bin/unzip.dart
 ```
 keytool -list -v -keystore xxx.jks
 
-# 如果上面没有md5，用这个方式获取
-keytool -exportcert -keystore xxx.jks | openssl dgst -md5
+# 如果上面没有md5，在安卓目录执行以下命令获取
+./gradlew app:signingReport
+
+# 查看公钥
+keytool -list -rfc --keystore suolong.jks | openssl x509 -inform pem -pubkey
 ```
 
 ## 注意事项

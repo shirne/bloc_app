@@ -273,6 +273,14 @@ dart bin/deps.dart
 dart bin/unzip.dart
 ```
 
+## 获取安卓密钥的签名
+```
+keytool -list -v -keystore xxx.jks
+
+# 如果上面没有md5，用这个方式获取
+keytool -exportcert -keystore xxx.jks | openssl dgst -md5
+```
+
 ## 注意事项
 
 * 如发现Bug或使用问题，可以提Issue

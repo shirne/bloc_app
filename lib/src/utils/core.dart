@@ -208,6 +208,35 @@ extension StringNullExt on String? {
   }
 }
 
+extension ObjectExt on Object? {
+  bool isNullOrEmpty() {
+    if (this == null) {
+      return true;
+    }
+    if (this is String) {
+      return (this as String).isEmpty;
+    }
+    if (this is Iterable) {
+      return (this as Iterable).isEmpty;
+    }
+    if (this is List) {
+      return (this as List).isEmpty;
+    }
+    if (this is Set) {
+      return (this as Set).isEmpty;
+    }
+    if (this is Map) {
+      return (this as Map).isEmpty;
+    }
+
+    try {
+      return (this as dynamic).isEmpty;
+    } catch (_) {}
+
+    return false;
+  }
+}
+
 extension ColorExt on Color {
   String toRgb([String typeName = 'Color']) =>
       '$typeName(${(r * 255).toInt()},${(g * 255).toInt()},${(b * 255).toInt()})';

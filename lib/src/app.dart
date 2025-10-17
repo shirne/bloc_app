@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shirne_dialog/shirne_dialog.dart';
@@ -47,7 +48,11 @@ class MainApp extends StatelessWidget {
                 ],
                 supportedLocales: AppLocalizations.supportedLocales,
                 locale: state.locale,
-                onGenerateTitle: (c) => c.l10n.appTitle,
+                onGenerateTitle: (c) {
+                  SystemChrome.setApplicationSwitcherDescription(
+                      ApplicationSwitcherDescription(label: c.l10n.appTitle));
+                  return c.l10n.appTitle;
+                },
                 theme: AppTheme.lightTheme(),
                 darkTheme: AppTheme.darkTheme(),
                 themeMode: state.themeMode,

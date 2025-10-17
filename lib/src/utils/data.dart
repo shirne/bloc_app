@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 import '../models/repositories.dart';
 import 'utils.dart';

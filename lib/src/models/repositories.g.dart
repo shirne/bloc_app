@@ -64,7 +64,7 @@ const UserProfileSchema = CollectionSchema(
   getId: _userProfileGetId,
   getLinks: _userProfileGetLinks,
   attach: _userProfileAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.3',
 );
 
 int _userProfileEstimateSize(
@@ -988,7 +988,7 @@ const UserAvatarSchema = CollectionSchema(
   getId: _userAvatarGetId,
   getLinks: _userAvatarGetLinks,
   attach: _userAvatarAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.3',
 );
 
 int _userAvatarEstimateSize(

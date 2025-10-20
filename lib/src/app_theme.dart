@@ -20,8 +20,15 @@ class AppTheme extends ThemeExtension<AppTheme> {
     return base.copyWith(
       visualDensity: VisualDensity.standard,
       appBarTheme: AppBarTheme(
-        systemOverlayStyle:
-            isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        systemOverlayStyle: isDark
+            ? SystemUiOverlayStyle.light.copyWith(
+                statusBarColor: Colors.transparent,
+                systemNavigationBarColor: Colors.black,
+              )
+            : SystemUiOverlayStyle.dark.copyWith(
+                statusBarColor: Colors.transparent,
+                systemNavigationBarColor: Colors.transparent,
+              ),
         backgroundColor:
             isDark ? base.colorScheme.surface : base.colorScheme.primary,
         foregroundColor:

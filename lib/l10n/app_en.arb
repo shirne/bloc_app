@@ -36,5 +36,8 @@
 
     "languages":"Language",
     "languagesDesc":"Set languages",
-    "languagesSystem":"System"
+    "languagesSystem":"System",
+
+    "systemUIMode":"System UI Mode",
+    "systemUIModeDesc":"Set System UI Mode"
 }

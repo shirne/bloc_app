@@ -36,5 +36,8 @@
     
     "languages":"语言",
     "languagesDesc":"设置显示语言",
-    "languagesSystem":"跟随系统"
+    "languagesSystem":"跟随系统",
+
+    "systemUIMode":"系统UI模式",
+    "systemUIModeDesc":"设置系统UI显示模式"
 }

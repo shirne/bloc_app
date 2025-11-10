@@ -108,6 +108,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languagesSystem => '跟随系统';
+
+  @override
+  String get systemUIMode => '系统UI模式';
+
+  @override
+  String get systemUIModeDesc => '设置系统UI显示模式';
 }
 
 /// The translations for Chinese, as used in China (`zh_CN`).

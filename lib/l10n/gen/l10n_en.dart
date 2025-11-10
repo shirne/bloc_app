@@ -108,4 +108,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languagesSystem => 'System';
+
+  @override
+  String get systemUIMode => 'System UI Mode';
+
+  @override
+  String get systemUIModeDesc => 'Set System UI Mode';
 }

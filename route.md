@@ -19,5 +19,7 @@
 // 系统设置页(多语言，主题切换)
 /settings
 
+/settings/system_uimode
+
 // 加载web页(url = 链接, show_app_bar = 是否显示appbar)
 /web?

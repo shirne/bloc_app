@@ -141,6 +141,20 @@ class SettingsPage extends StatelessWidget {
                       }
                     },
                   ),
+                  ListTile(
+                    title: Text(context.l10n.systemUIMode),
+                    subtitle: Text(context.l10n.systemUIModeDesc),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.arrow_forward_ios),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed(Routes.settingsSystemUimode.name);
+                    },
+                  ),
                   RawGestureDetector(
                     gestures: {
                       SerialTapGestureRecognizer:

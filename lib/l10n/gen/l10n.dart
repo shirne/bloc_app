@@ -296,6 +296,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System'**
   String get languagesSystem;
+
+  /// No description provided for @systemUIMode.
+  ///
+  /// In en, this message translates to:
+  /// **'System UI Mode'**
+  String get systemUIMode;
+
+  /// No description provided for @systemUIModeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set System UI Mode'**
+  String get systemUIModeDesc;
 }
 
 class _AppLocalizationsDelegate

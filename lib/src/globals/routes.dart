@@ -12,6 +12,7 @@ import '../pages/mine/page.dart';
 import '../pages/mine/profile/page.dart';
 import '../pages/product/page.dart';
 import '../pages/settings/page.dart';
+import '../pages/settings/system_uimode/page.dart';
 import '../pages/web/page.dart';
 // ==== GENERATED END ====
 import 'config.dart';
@@ -96,6 +97,10 @@ class Routes {
     '/settings',
     (arguments) => const SettingsPage(),
   );
+  static final settingsSystemUimode = RouteItem(
+    '/settings/system_uimode',
+    (arguments) => const SystemUIModePage(),
+  );
   static final web = RouteItem(
     '/web',
     (arguments) => WebViewPage(Utils.parseQuery(arguments)),
@@ -112,6 +117,7 @@ class Routes {
       mineProfile,
       product,
       settings,
+      settingsSystemUimode,
       web,
     ])
       e.name: e,

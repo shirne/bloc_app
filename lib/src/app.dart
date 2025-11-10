@@ -50,7 +50,11 @@ class MainApp extends StatelessWidget {
                 locale: state.locale,
                 onGenerateTitle: (c) {
                   SystemChrome.setApplicationSwitcherDescription(
-                      ApplicationSwitcherDescription(label: c.l10n.appTitle));
+                    ApplicationSwitcherDescription(
+                      label: c.l10n.appTitle,
+                      primaryColor: c.colorScheme.primary.toARGB32(),
+                    ),
+                  );
                   return c.l10n.appTitle;
                 },
                 theme: AppTheme.lightTheme(),

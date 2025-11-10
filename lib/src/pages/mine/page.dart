@@ -14,7 +14,16 @@ class MinePage extends StatelessWidget {
     return BlocProvider<MineBloc>(
       create: (context) => MineBloc(),
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(Routes.settings.name);
+              },
+              icon: Icon(Icons.settings),
+            ),
+          ],
+        ),
         body: BlocBuilder<MineBloc, MineState>(
           builder: (context, state) {
             // 初始化状态可以显示skeleton

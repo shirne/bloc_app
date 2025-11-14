@@ -11,6 +11,6 @@ class RefreshEvent extends MineEvent {
 
 class StateChangedEvent extends MineEvent {
   StateChangedEvent(this.state);
-  
+
   final MineState state;
 }

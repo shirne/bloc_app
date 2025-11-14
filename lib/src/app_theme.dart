@@ -6,10 +6,7 @@ import 'package:shirne_dialog/shirne_dialog.dart';
 class AppTheme extends ThemeExtension<AppTheme> {
   final ButtonStyle? primaryButton;
   final ButtonStyle? secondaryButton;
-  AppTheme({
-    this.primaryButton,
-    this.secondaryButton,
-  });
+  AppTheme({this.primaryButton, this.secondaryButton});
 
   factory AppTheme.of(BuildContext context) {
     return Theme.of(context).extension<AppTheme>()!;
@@ -29,14 +26,14 @@ class AppTheme extends ThemeExtension<AppTheme> {
                 statusBarColor: Colors.transparent,
                 systemNavigationBarColor: Colors.transparent,
               ),
-        backgroundColor:
-            isDark ? base.colorScheme.surface : base.colorScheme.primary,
-        foregroundColor:
-            isDark ? base.colorScheme.onSurface : base.colorScheme.onPrimary,
+        backgroundColor: isDark
+            ? base.colorScheme.surface
+            : base.colorScheme.primary,
+        foregroundColor: isDark
+            ? base.colorScheme.onSurface
+            : base.colorScheme.onPrimary,
       ),
-      cardTheme: const CardThemeData(
-        elevation: 20,
-      ),
+      cardTheme: const CardThemeData(elevation: 20),
       listTileTheme: ListTileThemeData(
         tileColor: base.colorScheme.surface,
         selectedTileColor: base.colorScheme.primary.withAlpha(20),
@@ -47,9 +44,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
 
   static ThemeData lightTheme() {
     final themeData = ThemeData.from(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF5AA7A7),
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5AA7A7)),
     );
     return widgetStyle(themeData, AppTheme());
   }

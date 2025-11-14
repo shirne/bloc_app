@@ -51,17 +51,16 @@ class _CustomRefreshState extends State<CustomRefresh> {
     return Stack(
       children: [
         CustomScrollView(
-          physics:
-              AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          physics: AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           controller: widget.controller,
           slivers: [
             SliverToBoxAdapter(
               child: ValueListenableBuilder(
                 valueListenable: isRefreshing,
                 builder: (context, value, child) {
-                  return SizedBox(
-                    height: value ? widget.maxDistance : 0,
-                  );
+                  return SizedBox(height: value ? widget.maxDistance : 0);
                 },
               ),
             ),
@@ -71,8 +70,10 @@ class _CustomRefreshState extends State<CustomRefresh> {
                 child: ValueListenableBuilder(
                   valueListenable: isLoadingMore,
                   builder: (context, isLoadmore, child) {
-                    final loadmoreWidget =
-                        widget.loadingMoreBuilder?.call(context, isLoadmore);
+                    final loadmoreWidget = widget.loadingMoreBuilder?.call(
+                      context,
+                      isLoadmore,
+                    );
                     if (widget.isHasMore?.call() == false) {
                       return loadmoreWidget ?? Center(child: Text('No More'));
                     }
@@ -90,7 +91,7 @@ class _CustomRefreshState extends State<CustomRefresh> {
                     return SizedBox.shrink();
                   },
                 ),
-              )
+              ),
           ],
         ),
         Positioned(
@@ -205,11 +206,11 @@ class _CustomRefreshIndicatorState extends State<CustomRefreshIndicator> {
       alignment: Alignment.center,
       child: scrollHeight > 0
           ? isRefreshing
-              ? const CupertinoActivityIndicator()
-              : Opacity(
-                  opacity: scrollHeight / widget.maxDistance,
-                  child: const Icon(Icons.arrow_downward),
-                )
+                ? const CupertinoActivityIndicator()
+                : Opacity(
+                    opacity: scrollHeight / widget.maxDistance,
+                    child: const Icon(Icons.arrow_downward),
+                  )
           : const SizedBox.shrink(),
     );
   }

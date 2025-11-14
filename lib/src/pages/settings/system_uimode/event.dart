@@ -11,6 +11,6 @@ class RefreshEvent extends SystemUIModeEvent {
 
 class StateChangedEvent extends SystemUIModeEvent {
   StateChangedEvent(this.state);
-  
+
   final SystemUIModeState state;
 }

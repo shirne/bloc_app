@@ -14,11 +14,9 @@ class ApiUcenter extends ApiBase {
   }
 
   Future<ApiResult<TokenModel>> doRefresh(String refreshToken) async {
-    return await apiService.post(
-      '$basePath/refresh',
-      {'refresh_token': refreshToken},
-      skipLock: true,
-    );
+    return await apiService.post('$basePath/refresh', {
+      'refresh_token': refreshToken,
+    }, skipLock: true);
   }
 
   Future<ApiResult<UserModel>> doRegister({
@@ -41,22 +39,19 @@ class ApiUcenter extends ApiBase {
   }
 
   Future<ApiResult<Model>> doSendSms(String mobile) async {
-    return await apiService.post(
-      '$basePath/captcha',
-      {'mobile': mobile},
-      skipLock: true,
-    );
+    return await apiService.post('$basePath/captcha', {
+      'mobile': mobile,
+    }, skipLock: true);
   }
 
   Future<ApiResult<Model>> doCheck(
     String value, [
     String type = 'mobile',
   ]) async {
-    return await apiService.post(
-      '$basePath/check',
-      {'val': value, 'type': type},
-      skipLock: true,
-    );
+    return await apiService.post('$basePath/check', {
+      'val': value,
+      'type': type,
+    }, skipLock: true);
   }
 
   Future<ApiResult<UserModel>> getUserinfo([
@@ -71,9 +66,7 @@ class ApiUcenter extends ApiBase {
   Future<ApiResult<Model>> getNoticeCount([
     VoidCallback? onRequireLogin,
   ]) async {
-    return await apiService.get(
-      'user/notice_count',
-    );
+    return await apiService.get('user/notice_count');
   }
 
   Future<ApiResult<FileModel>> upload(
@@ -83,9 +76,7 @@ class ApiUcenter extends ApiBase {
   }) async {
     return await apiService.post(
       'user/upload',
-      FormData.fromMap({
-        'file': MultipartFile.fromFile(path),
-      }),
+      FormData.fromMap({'file': MultipartFile.fromFile(path)}),
       onSendProgress: onSendProgress,
     );
   }

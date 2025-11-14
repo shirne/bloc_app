@@ -15,16 +15,13 @@ abstract class Validator<T> {
   Validator<T> and(Validator<T> other, {String error = ''}) =>
       MultiValidator([this, other], error: error);
 
-  Validator<T> or(Validator<T> other, {String error = ''}) => MultiValidator(
-        [this, other],
-        isAnd: false,
-        error: error,
-      );
+  Validator<T> or(Validator<T> other, {String error = ''}) =>
+      MultiValidator([this, other], isAnd: false, error: error);
 }
 
 class MultiValidator<T> extends Validator<T> {
   MultiValidator(this.validators, {this.isAnd = true, String error = ''})
-      : super(error);
+    : super(error);
 
   final List<Validator<T>> validators;
 
@@ -57,7 +54,7 @@ class RequiredValidator extends Validator<String?> {
 
 class LengthValidator extends Validator<String?> {
   LengthValidator(this.minLength, this.maxLength, [String? error])
-      : super(error ?? 'Required length $minLength-$maxLength');
+    : super(error ?? 'Required length $minLength-$maxLength');
 
   final int minLength;
   final int maxLength;
@@ -85,10 +82,7 @@ abstract class RegExpValidator extends Validator<String?> {
   @override
   bool isValid(String? value) {
     if ((value ?? '').isEmpty) return allowEmpty;
-    return RegExp(
-      pattern,
-      caseSensitive: caseSensitive,
-    ).hasMatch(value!);
+    return RegExp(pattern, caseSensitive: caseSensitive).hasMatch(value!);
   }
 }
 
@@ -126,7 +120,7 @@ class GlobalPhoneValidator extends Validator<String?> {
 
 class MobileValidator extends RegExpValidator {
   MobileValidator([String error = 'Invalid mobile number.'])
-      : super(error: error);
+    : super(error: error);
 
   @override
   String get pattern => r'^1[3-9]\d{9}$';
@@ -160,7 +154,7 @@ class EqualValidator extends Validator<String?> {
   final TextEditingController input;
 
   EqualValidator(this.input, {String error = 'Does not match the password.'})
-      : super(error);
+    : super(error);
 
   @override
   bool isValid(String? value) {
@@ -178,14 +172,12 @@ class AmountValidator extends RegExpValidator {
 }
 
 class UsernameValidator extends RegExpValidator {
-  UsernameValidator([
-    this.minLength = 6,
-    this.maxLength = 20,
-    String? error,
-  ]) : super(
-          error: error ??
-              'Username must consist of $minLength-$maxLength characters.',
-        );
+  UsernameValidator([this.minLength = 6, this.maxLength = 20, String? error])
+    : super(
+        error:
+            error ??
+            'Username must consist of $minLength-$maxLength characters.',
+      );
 
   final int minLength;
   final int maxLength;
@@ -197,14 +189,12 @@ class UsernameValidator extends RegExpValidator {
 }
 
 class NicknameValidator extends RegExpValidator {
-  NicknameValidator([
-    this.minLength = 6,
-    this.maxLength = 20,
-    String? error,
-  ]) : super(
-          error: error ??
-              'Nickname must consist of $minLength-$maxLength characters.',
-        );
+  NicknameValidator([this.minLength = 6, this.maxLength = 20, String? error])
+    : super(
+        error:
+            error ??
+            'Nickname must consist of $minLength-$maxLength characters.',
+      );
 
   final int minLength;
   final int maxLength;

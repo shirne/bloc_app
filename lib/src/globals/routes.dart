@@ -37,12 +37,14 @@ String? processRoutes(String? url) {
     } else if (uri.path == Routes.mine.name) {
       homeTabIndex.value = 2;
     } else {
-      Routes.matchByName(uri.path)
-          ?.show(navigatorKey.currentContext!, arguments: uri.queryParameters);
+      Routes.matchByName(
+        uri.path,
+      )?.show(navigatorKey.currentContext!, arguments: uri.queryParameters);
       return null;
     }
-    navigatorKey.currentState
-        ?.popUntil((route) => route.settings.name == Routes.main.name);
+    navigatorKey.currentState?.popUntil(
+      (route) => route.settings.name == Routes.main.name,
+    );
 
     return null;
   }
@@ -66,25 +68,16 @@ class Routes {
     (arguments) => NotFoundPage(as<String?>(arguments)),
   );
 
-// ==== GENERATED ROUTES START ====
+  // ==== GENERATED ROUTES START ====
 
-  static final home = RouteItem(
-    '/home',
-    (arguments) => const HomePage(),
-  );
+  static final home = RouteItem('/home', (arguments) => const HomePage());
   static final login = RouteItem(
     '/login',
     isAuth: false,
     (arguments) => LoginPage(Utils.parseQuery(arguments)),
   );
-  static final main = RouteItem(
-    '/main',
-    (arguments) => const MainPage(),
-  );
-  static final mine = RouteItem(
-    '/mine',
-    (arguments) => const MinePage(),
-  );
+  static final main = RouteItem('/main', (arguments) => const MainPage());
+  static final mine = RouteItem('/mine', (arguments) => const MinePage());
   static final mineProfile = RouteItem(
     '/mine/profile',
     (arguments) => const ProfilePage(),
@@ -122,7 +115,7 @@ class Routes {
     ])
       e.name: e,
   };
-// ==== GENERATED END ====
+  // ==== GENERATED END ====
 
   static RouteItem? matchByName(String? name) {
     return routes[name];
@@ -145,8 +138,10 @@ class RouteItem {
     Object? arguments,
     bool useRoot = true,
   }) {
-    return Navigator.of(context, rootNavigator: useRoot)
-        .pushNamed<T>(name, arguments: arguments);
+    return Navigator.of(
+      context,
+      rootNavigator: useRoot,
+    ).pushNamed<T>(name, arguments: arguments);
   }
 
   Future<T?> replace<T>(
@@ -154,7 +149,9 @@ class RouteItem {
     Object? arguments,
     bool useRoot = true,
   }) {
-    return Navigator.of(context, rootNavigator: useRoot)
-        .pushReplacementNamed<T, Object>(name, arguments: arguments);
+    return Navigator.of(
+      context,
+      rootNavigator: useRoot,
+    ).pushReplacementNamed<T, Object>(name, arguments: arguments);
   }
 }

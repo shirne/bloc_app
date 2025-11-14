@@ -65,9 +65,7 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () {
                             Routes.web.show(
                               context,
-                              arguments: {
-                                'url': 'https://www.baidu.com/',
-                              },
+                              arguments: {'url': 'https://www.baidu.com/'},
                             );
                           },
                           child: Padding(

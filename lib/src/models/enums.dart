@@ -1,5 +1,1 @@
-enum AccountType {
-  username,
-  email,
-  mobile;
-}
+enum AccountType { username, email, mobile }

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,17 +11,19 @@ import 'src/assets.dart';
 import 'src/globals/store_service.dart';
 import 'src/utils/console.dart';
 import 'src/utils/device_info.dart';
+import 'src/utils/error.dart';
 import 'src/utils/utils.dart';
-import 'src/widgets/gap.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-    systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarContrastEnforced: false,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle.dark.copyWith(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
 
   if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
     await windowManager.ensureInitialized();
@@ -50,77 +51,4 @@ void main() async {
   Logger.root.level = getLevel();
 
   runApp(const MainApp());
-}
-
-void handleError() {
-  PlatformDispatcher.instance.onError = (e, s) {
-    if (e is DioException && e.type == DioExceptionType.cancel) {
-      return false;
-    }
-    logger.warning('Caught unhandled exception: $e', e, s);
-    // MyDialog.toast('$e');
-
-    // TODO report errors
-
-    return true;
-  };
-  FlutterError.onError = (details) {
-    logger.warning(
-      'Flutter error: ${details.exception}',
-      details.exception,
-      details.stack,
-    );
-
-    // TODO report errors
-  };
-  ErrorWidget.builder = (FlutterErrorDetails d) {
-    logger.warning(
-      'Error has been delivered to the ErrorWidget: ${d.exception}',
-      d.exception,
-      d.stack,
-    );
-    return Material(
-      type: MaterialType.transparency,
-      child: Container(
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(13),
-          color: Colors.redAccent,
-        ),
-        child: DefaultTextStyle.merge(
-          style: const TextStyle(color: Colors.white),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const FractionallySizedBox(
-                widthFactor: 0.25,
-                child: FlutterLogo(),
-              ),
-              const Gap.v(16),
-              const Text(
-                'Flutter Error',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Gap.v(8),
-              Text(
-                d.exception.toString(),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Gap.v(8),
-              Text(
-                d.stack.toString(),
-                style: const TextStyle(fontSize: 13),
-                maxLines: 10,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  };
 }

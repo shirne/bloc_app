@@ -17,7 +17,8 @@ class StateButtonWrapper extends StatefulWidget {
     WidgetStatesController controller,
     VoidCallback? onPressed,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
   final double loadingRadius;
 

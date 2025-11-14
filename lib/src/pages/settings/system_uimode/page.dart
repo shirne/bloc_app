@@ -14,11 +14,7 @@ class SystemUIModePage extends StatelessWidget {
       create: (context) => SystemUIModeBloc(),
       child: Scaffold(
         appBar: AppBar(
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-            )
-          ],
+          actions: [Row(mainAxisAlignment: MainAxisAlignment.end)],
         ),
         body: BlocBuilder<SystemUIModeBloc, SystemUIModeState>(
           builder: (context, state) {
@@ -32,9 +28,9 @@ class SystemUIModePage extends StatelessWidget {
                     Switch.adaptive(
                       value: state.contrastEnforced,
                       onChanged: (b) {
-                        context
-                            .read<SystemUIModeBloc>()
-                            .updateContrastEnforced(b);
+                        context.read<SystemUIModeBloc>().updateContrastEnforced(
+                          b,
+                        );
                       },
                     ),
                   ],
@@ -58,7 +54,8 @@ class SystemUIModePage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     SystemChrome.setEnabledSystemUIMode(
-                        SystemUiMode.immersiveSticky);
+                      SystemUiMode.immersiveSticky,
+                    );
                     SystemChrome.setSystemUIOverlayStyle(
                       SystemUiOverlayStyle.dark.copyWith(
                         systemStatusBarContrastEnforced: state.contrastEnforced,
@@ -89,7 +86,8 @@ class SystemUIModePage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     SystemChrome.setEnabledSystemUIMode(
-                        SystemUiMode.edgeToEdge);
+                      SystemUiMode.edgeToEdge,
+                    );
                     SystemChrome.setSystemUIOverlayStyle(
                       SystemUiOverlayStyle.dark.copyWith(
                         systemStatusBarContrastEnforced: state.contrastEnforced,
@@ -104,8 +102,10 @@ class SystemUIModePage extends StatelessWidget {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                        overlays: [SystemUiOverlay.top]);
+                    SystemChrome.setEnabledSystemUIMode(
+                      SystemUiMode.manual,
+                      overlays: [SystemUiOverlay.top],
+                    );
                     SystemChrome.setSystemUIOverlayStyle(
                       SystemUiOverlayStyle.dark.copyWith(
                         systemStatusBarContrastEnforced: state.contrastEnforced,
@@ -120,8 +120,10 @@ class SystemUIModePage extends StatelessWidget {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                        overlays: [SystemUiOverlay.bottom]);
+                    SystemChrome.setEnabledSystemUIMode(
+                      SystemUiMode.manual,
+                      overlays: [SystemUiOverlay.bottom],
+                    );
                     SystemChrome.setSystemUIOverlayStyle(
                       SystemUiOverlayStyle.dark.copyWith(
                         systemStatusBarContrastEnforced: state.contrastEnforced,
@@ -136,11 +138,10 @@ class SystemUIModePage extends StatelessWidget {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                        overlays: [
-                          SystemUiOverlay.top,
-                          SystemUiOverlay.bottom
-                        ]);
+                    SystemChrome.setEnabledSystemUIMode(
+                      SystemUiMode.manual,
+                      overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+                    );
                     SystemChrome.setSystemUIOverlayStyle(
                       SystemUiOverlayStyle.dark.copyWith(
                         systemStatusBarContrastEnforced: state.contrastEnforced,
@@ -152,6 +153,7 @@ class SystemUIModePage extends StatelessWidget {
                   },
                   child: Text('manual both'),
                 ),
+                Container(alignment: .center),
               ],
             );
           },

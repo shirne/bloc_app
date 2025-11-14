@@ -48,11 +48,7 @@ class _MainPageState extends State<MainPage> {
           child: Scaffold(
             body: LazyIndexedStack(
               index: index,
-              children: const [
-                HomePage(),
-                ProductPage(),
-                MinePage(),
-              ],
+              children: const [HomePage(), ProductPage(), MinePage()],
             ),
             bottomNavigationBar: BottomNavigationBar(
               onTap: (int i) {

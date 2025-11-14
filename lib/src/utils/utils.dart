@@ -20,45 +20,33 @@ import 'device_info.dart';
 Logger get logger => createLog();
 
 final _datetimeFmt = DateFormat('yyyy-MM-dd HH:mm:ss');
-DateFormat get datetimeFmt => _datetimeFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get datetimeFmt =>
+    _datetimeFmt.withLocale(navigatorKey.currentContext!.locale);
 final _dateHmFmt = DateFormat('yyyy-MM-dd HH:mm');
-DateFormat get dateHmFmt => _dateHmFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get dateHmFmt =>
+    _dateHmFmt.withLocale(navigatorKey.currentContext!.locale);
 final _dateHmWFmt = DateFormat('yyyy-MM-dd HH:mm EEE');
-DateFormat get dateHmWFmt => _dateHmWFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get dateHmWFmt =>
+    _dateHmWFmt.withLocale(navigatorKey.currentContext!.locale);
 final _dateFmt = DateFormat('yyyy-MM-dd');
-DateFormat get dateFmt => _dateFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get dateFmt =>
+    _dateFmt.withLocale(navigatorKey.currentContext!.locale);
 final _dtFmt = DateFormat('MM-dd');
-DateFormat get dtFmt => _dtFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get dtFmt => _dtFmt.withLocale(navigatorKey.currentContext!.locale);
 final _dtWFmt = DateFormat('MM-dd EEE');
-DateFormat get dtWFmt => _dtWFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get dtWFmt =>
+    _dtWFmt.withLocale(navigatorKey.currentContext!.locale);
 final _dtmFmt = DateFormat('MM-dd HH:mm');
-DateFormat get dtmFmt => _dtmFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get dtmFmt =>
+    _dtmFmt.withLocale(navigatorKey.currentContext!.locale);
 final _dateWFmt = DateFormat('yyyy-MM-dd EEE');
-DateFormat get dateWFmt => _dateWFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get dateWFmt =>
+    _dateWFmt.withLocale(navigatorKey.currentContext!.locale);
 final _timeFmt = DateFormat('HH:mm:ss');
-DateFormat get timeFmt => _timeFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get timeFmt =>
+    _timeFmt.withLocale(navigatorKey.currentContext!.locale);
 final _hmFmt = DateFormat('HH:mm');
-DateFormat get hmFmt => _hmFmt.withLocale(
-      navigatorKey.currentContext!.locale,
-    );
+DateFormat get hmFmt => _hmFmt.withLocale(navigatorKey.currentContext!.locale);
 
 extension DateFormatExt on DateFormat {
   DateFormat withLocale(Locale locale) {
@@ -71,19 +59,20 @@ final _loggers = <String, Logger>{};
 Logger createLog([String? name]) {
   return _loggers.putIfAbsent(
     name ?? 'log',
-    () => (name == null ? Logger.root : Logger(name))
-      ..onRecord.listen((record) {
-        log(
-          record.message,
-          time: record.time,
-          level: record.level.value,
-          name: record.loggerName,
-          error: record.error,
-          stackTrace: record.stackTrace,
-          sequenceNumber: record.sequenceNumber,
-        );
-        addLog(record);
-      }),
+    () =>
+        (name == null ? Logger.root : Logger(name))
+          ..onRecord.listen((record) {
+            log(
+              record.message,
+              time: record.time,
+              level: record.level.value,
+              name: record.loggerName,
+              error: record.error,
+              stackTrace: record.stackTrace,
+              sequenceNumber: record.sequenceNumber,
+            );
+            addLog(record);
+          }),
   );
 }
 
@@ -186,12 +175,7 @@ class Utils {
     double red = (color.r * power).clamp(0, 1);
     double green = (color.g * power).clamp(0, 1);
     double blue = (color.b * power).clamp(0, 1);
-    return Color.from(
-      alpha: color.a,
-      red: red,
-      green: green,
-      blue: blue,
-    );
+    return Color.from(alpha: color.a, red: red, green: green, blue: blue);
   }
 
   static Alignment parseAlign(String align) {

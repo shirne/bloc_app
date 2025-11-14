@@ -106,8 +106,9 @@ class StoreService {
 
   Locale? locale() {
     final locale = sp.getString('locale');
-    return AppLocalizations.supportedLocales
-        .firstWhereOrNull((l) => l.toString() == locale);
+    return AppLocalizations.supportedLocales.firstWhereOrNull(
+      (l) => l.toString() == locale,
+    );
   }
 
   Future<void> updateLocale(Locale? locale) async {

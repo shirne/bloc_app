@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 import '../utils/core.dart';
 
 class AvatarWidget extends StatelessWidget {
-  const AvatarWidget(
-    this.avator, {
-    super.key,
-    this.onTap,
-    this.size = 60,
-  });
+  const AvatarWidget(this.avator, {super.key, this.onTap, this.size = 60});
 
   final String avator;
 
@@ -25,12 +20,7 @@ class AvatarWidget extends StatelessWidget {
             backgroundColor: context.colorScheme.outlineVariant,
             backgroundImage: NetworkImage(avator),
           );
-    return onTap == null
-        ? child
-        : GestureDetector(
-            onTap: onTap,
-            child: child,
-          );
+    return onTap == null ? child : GestureDetector(onTap: onTap, child: child);
   }
 }
 

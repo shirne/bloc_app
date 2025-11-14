@@ -105,10 +105,6 @@ class AppNavigatorObserver extends NavigatorObserver {
   @override
   void didStopUserGesture() {
     super.didStopUserGesture();
-    _stream.add(
-      const RouteEvent(
-        RouteEventType.stopUserGesture,
-      ),
-    );
+    _stream.add(const RouteEvent(RouteEventType.stopUserGesture));
   }
 }

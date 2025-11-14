@@ -25,9 +25,7 @@ class ProductPage extends StatelessWidget {
               );
             }
 
-            return const Center(
-              child: Text('Product'),
-            );
+            return const Center(child: Text('Product'));
           },
         ),
       ),

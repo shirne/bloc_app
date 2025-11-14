@@ -110,11 +110,9 @@ class _SplashPageState extends State<SplashPage> {
   Future<bool> initGlobal() async {
     final completer = Completer<bool>();
     context.read<GlobalBloc>().add(
-      InitEvent(
-        (isReady, _) {
-          completer.complete(isReady);
-        },
-      ),
+      InitEvent((isReady, _) {
+        completer.complete(isReady);
+      }),
     );
 
     return completer.future;

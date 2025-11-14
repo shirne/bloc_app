@@ -7,7 +7,7 @@ part 'state.dart';
 
 class ProductBloc extends CachedBloc<ProductEvent, ProductState> {
   ProductBloc([String globalKey = ''])
-      : super(() => ProductState(), globalKey) {
+    : super(() => ProductState(), globalKey) {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });

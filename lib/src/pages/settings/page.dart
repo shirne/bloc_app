@@ -20,9 +20,7 @@ class SettingsPage extends StatelessWidget {
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(
-              title: Text(context.l10n.settings),
-            ),
+            appBar: AppBar(title: Text(context.l10n.settings)),
             body: Padding(
               padding: const EdgeInsets.all(8),
               child: Column(
@@ -146,36 +144,35 @@ class SettingsPage extends StatelessWidget {
                     subtitle: Text(context.l10n.systemUIModeDesc),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.arrow_forward_ios),
-                      ],
+                      children: [const Icon(Icons.arrow_forward_ios)],
                     ),
                     onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(Routes.settingsSystemUimode.name);
+                      Navigator.of(
+                        context,
+                      ).pushNamed(Routes.settingsSystemUimode.name);
                     },
                   ),
                   RawGestureDetector(
                     gestures: {
                       SerialTapGestureRecognizer:
                           GestureRecognizerFactoryWithHandlers<
-                                  SerialTapGestureRecognizer>(
-                              () => SerialTapGestureRecognizer(), (recognizer) {
-                        recognizer.onSerialTapDown = (details) async {
-                          if (details.count > 4) {
-                            final isOpen = await MyDialog.confirm(
-                              'Open Logs?',
-                              buttonText: 'Open',
-                              cancelText: 'Close',
-                            );
-                            if (isOpen == true) {
-                              showConsole();
-                            } else if (isOpen == false) {
-                              hideConsole();
-                            }
-                          }
-                        };
-                      }),
+                            SerialTapGestureRecognizer
+                          >(() => SerialTapGestureRecognizer(), (recognizer) {
+                            recognizer.onSerialTapDown = (details) async {
+                              if (details.count > 4) {
+                                final isOpen = await MyDialog.confirm(
+                                  'Open Logs?',
+                                  buttonText: 'Open',
+                                  cancelText: 'Close',
+                                );
+                                if (isOpen == true) {
+                                  showConsole();
+                                } else if (isOpen == false) {
+                                  hideConsole();
+                                }
+                              }
+                            };
+                          }),
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Container(height: 30, color: Colors.transparent),

@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 import '../common.dart';
 
 class Line extends StatelessWidget {
-  const Line({
-    super.key,
-    this.thickness = 0.5,
-    this.margin,
-    this.color,
-  });
+  const Line({super.key, this.thickness = 0.5, this.margin, this.color});
 
   final double thickness;
 
@@ -29,7 +24,8 @@ class Line extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(
-                color: color ??
+                color:
+                    color ??
                     context.theme.dividerTheme.color ??
                     context.theme.dividerColor,
                 width: thickness,
@@ -70,7 +66,8 @@ class VerticalLine extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               left: BorderSide(
-                color: color ??
+                color:
+                    color ??
                     context.theme.dividerTheme.color ??
                     context.theme.dividerColor,
                 width: thickness,

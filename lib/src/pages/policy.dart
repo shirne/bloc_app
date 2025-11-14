@@ -6,8 +6,8 @@ import '../common.dart';
 
 class PolicyPage extends StatefulWidget {
   PolicyPage(Json? args, {super.key})
-      : name = args?['name'] ?? '',
-        title = args?['title'];
+    : name = args?['name'] ?? '',
+      title = args?['title'];
 
   final String name;
   final String? title;

@@ -24,21 +24,21 @@ class UserModel implements Base {
   });
 
   UserModel.fromJson(Json? json)
-      : this(
-          id: as<int>(json?['id']) ?? 0,
-          username: json?['username'] ?? '',
-          nickname: json?['nickname'] ?? '',
-          avatar: json?['avatar'] ?? '',
-          password: json?['password'] ?? '',
-          followCount: as<int>(json?['follow_num']) ?? 0,
-          fansCount: as<int>(json?['fans_num']) ?? 0,
-          score: as<double>(json?['score']) ?? 0,
-          points: as<int>(json?['points']) ?? 0,
-          level: as<int>(json?['level']) ?? 0,
-          status: as<int>(json?['status']) ?? 0,
-          createTime: as<DateTime>(json?['create_time']),
-          updateTime: as<DateTime>(json?['update_time']),
-        );
+    : this(
+        id: as<int>(json?['id']) ?? 0,
+        username: json?['username'] ?? '',
+        nickname: json?['nickname'] ?? '',
+        avatar: json?['avatar'] ?? '',
+        password: json?['password'] ?? '',
+        followCount: as<int>(json?['follow_num']) ?? 0,
+        fansCount: as<int>(json?['fans_num']) ?? 0,
+        score: as<double>(json?['score']) ?? 0,
+        points: as<int>(json?['points']) ?? 0,
+        level: as<int>(json?['level']) ?? 0,
+        status: as<int>(json?['status']) ?? 0,
+        createTime: as<DateTime>(json?['create_time']),
+        updateTime: as<DateTime>(json?['update_time']),
+      );
 
   final int id;
   final String username;
@@ -73,40 +73,39 @@ class UserModel implements Base {
     int? status,
     DateTime? createTime,
     DateTime? updateTime,
-  }) =>
-      UserModel(
-        id: id ?? this.id,
-        username: username ?? this.username,
-        nickname: nickname ?? this.nickname,
-        avatar: avatar ?? this.avatar,
-        password: password ?? this.password,
-        followCount: followCount ?? this.followCount,
-        fansCount: fansCount ?? this.fansCount,
-        score: score ?? this.score,
-        expire: expire ?? this.expire,
-        points: points ?? this.points,
-        level: level ?? this.level,
-        status: status ?? this.status,
-        createTime: createTime ?? this.createTime,
-        updateTime: updateTime ?? this.updateTime,
-      );
+  }) => UserModel(
+    id: id ?? this.id,
+    username: username ?? this.username,
+    nickname: nickname ?? this.nickname,
+    avatar: avatar ?? this.avatar,
+    password: password ?? this.password,
+    followCount: followCount ?? this.followCount,
+    fansCount: fansCount ?? this.fansCount,
+    score: score ?? this.score,
+    expire: expire ?? this.expire,
+    points: points ?? this.points,
+    level: level ?? this.level,
+    status: status ?? this.status,
+    createTime: createTime ?? this.createTime,
+    updateTime: updateTime ?? this.updateTime,
+  );
 
   @override
   Json toJson() => {
-        'id': id,
-        'username': username,
-        'nickname': nickname,
-        'avatar': avatar,
-        'password': password,
-        'follow_num': followCount,
-        'fans_num': fansCount,
-        'score': score,
-        'points': points,
-        'level': level,
-        'status': status,
-        'create_time': createTime,
-        'update_time': updateTime,
-      };
+    'id': id,
+    'username': username,
+    'nickname': nickname,
+    'avatar': avatar,
+    'password': password,
+    'follow_num': followCount,
+    'fans_num': fansCount,
+    'score': score,
+    'points': points,
+    'level': level,
+    'status': status,
+    'create_time': createTime,
+    'update_time': updateTime,
+  };
 }
 
 class JwtToken implements Base {
@@ -138,9 +137,7 @@ class JwtToken implements Base {
   JwtToken clone({String? token}) => JwtToken(token ?? this.token);
 
   @override
-  Json toJson() => {
-        'value': token,
-      };
+  Json toJson() => {'value': token};
 
   @override
   String toString() => token;
@@ -157,12 +154,12 @@ class TokenModel implements Base {
   });
 
   TokenModel.fromJson(Json json)
-      : this(
-          accessToken: as<String>(json['access_token'], '')!,
-          refreshToken: as<String>(json['refresh_token'], '')!,
-          expireIn: as<int>(json['expire_in'], 0)!,
-          createTime: as<DateTime>(json['update_time'] ?? json['create_time']),
-        );
+    : this(
+        accessToken: as<String>(json['access_token'], '')!,
+        refreshToken: as<String>(json['refresh_token'], '')!,
+        expireIn: as<int>(json['expire_in'], 0)!,
+        createTime: as<DateTime>(json['update_time'] ?? json['create_time']),
+      );
 
   final String accessToken;
   final int expireIn;
@@ -180,11 +177,11 @@ class TokenModel implements Base {
 
   @override
   Json toJson() => {
-        'access_token': accessToken,
-        'refresh_token': refreshToken,
-        'expire_in': expireIn,
-        'create_time': createTime?.toString(),
-      };
+    'access_token': accessToken,
+    'refresh_token': refreshToken,
+    'expire_in': expireIn,
+    'create_time': createTime?.toString(),
+  };
 }
 
 class UserInfo implements Base {

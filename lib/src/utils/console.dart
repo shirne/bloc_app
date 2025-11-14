@@ -80,10 +80,7 @@ final offsetMove = ValueNotifier(Offset.zero);
 void showConsole() {
   store.set(_showConsoleKey, true);
   if (consoleEntry == null) {
-    consolePosition ??= const Offset(
-      16,
-      16 + kBottomNavigationBarHeight,
-    );
+    consolePosition ??= const Offset(16, 16 + kBottomNavigationBarHeight);
 
     consoleEntry = OverlayEntry(
       builder: (context) {
@@ -118,10 +115,7 @@ void showConsole() {
                   child: ValueListenableBuilder(
                     valueListenable: offsetMove,
                     builder: (context, offset, child) {
-                      return Transform.translate(
-                        offset: offset,
-                        child: child,
-                      );
+                      return Transform.translate(offset: offset, child: child);
                     },
                     child: Material(
                       color: Colors.blue,
@@ -184,29 +178,31 @@ void showConsole() {
                                   closeConsole();
                                   final result =
                                       await showCupertinoModalPopup<Level>(
-                                    context: context,
-                                    builder: (context) {
-                                      return CupertinoActionSheet(
-                                        title: const Text('Set log level'),
-                                        actions: [
-                                          for (var l in Level.LEVELS)
-                                            CupertinoActionSheetAction(
-                                              onPressed: () {
-                                                Navigator.pop(context, l);
-                                              },
-                                              child: Text(l.name),
-                                            ),
-                                        ],
-                                        cancelButton:
-                                            CupertinoActionSheetAction(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(context.l10n.cancel),
-                                        ),
+                                        context: context,
+                                        builder: (context) {
+                                          return CupertinoActionSheet(
+                                            title: const Text('Set log level'),
+                                            actions: [
+                                              for (var l in Level.LEVELS)
+                                                CupertinoActionSheetAction(
+                                                  onPressed: () {
+                                                    Navigator.pop(context, l);
+                                                  },
+                                                  child: Text(l.name),
+                                                ),
+                                            ],
+                                            cancelButton:
+                                                CupertinoActionSheetAction(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(
+                                                    context.l10n.cancel,
+                                                  ),
+                                                ),
+                                          );
+                                        },
                                       );
-                                    },
-                                  );
                                   if (result != null) {
                                     Logger.root.level = result;
                                     setLevel(result);
@@ -220,8 +216,9 @@ void showConsole() {
                               GestureDetector(
                                 onTap: () async {
                                   closeConsole();
-                                  final result =
-                                      await MyDialog.confirm('Clear logs?');
+                                  final result = await MyDialog.confirm(
+                                    'Clear logs?',
+                                  );
                                   if (result != null) {
                                     clearLog();
                                   }
@@ -351,16 +348,18 @@ class LogItem extends StatelessWidget {
               if (record.error != null)
                 TextSpan(
                   text: '\n${record.error}',
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: context.colorScheme.error),
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colorScheme.error,
+                  ),
                 ),
               if (record.stackTrace != null)
                 TextSpan(
                   text: ' StackTrace',
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      var size =
-                          View.of(navigatorKey.currentContext!).physicalSize;
+                      var size = View.of(
+                        navigatorKey.currentContext!,
+                      ).physicalSize;
                       late EntryController controller;
                       controller = MyDialog.overlayModal(
                         GestureDetector(
@@ -410,8 +409,9 @@ class LogItem extends StatelessWidget {
                         ),
                       );
                     },
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: Colors.blue),
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: Colors.blue,
+                  ),
                 ),
             ],
           ),

@@ -1,20 +1,14 @@
 class IFrameElement {
   String src;
   CssStyleDeclaration style;
-  IFrameElement()
-      : src = '',
-        style = CssStyleDeclaration();
+  IFrameElement() : src = '', style = CssStyleDeclaration();
 }
 
 class CssStyleDeclaration {
   String border;
   String width;
   String height;
-  CssStyleDeclaration({
-    this.border = '',
-    this.width = '',
-    this.height = '',
-  });
+  CssStyleDeclaration({this.border = '', this.width = '', this.height = ''});
 }
 
 class PlatformViewRegistry {

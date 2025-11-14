@@ -1,17 +1,10 @@
 part of 'bloc.dart';
 
-enum FilterType {
-  activity,
-  carpool,
-}
+enum FilterType { activity, carpool }
 
 @immutable
 class MainState extends BaseState {
-  MainState({
-    super.status,
-    super.message,
-    this.isSearch = false,
-  });
+  MainState({super.status, super.message, this.isSearch = false});
 
   final bool isSearch;
 

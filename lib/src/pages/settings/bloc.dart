@@ -7,7 +7,7 @@ part 'state.dart';
 
 class SettingsBloc extends CachedBloc<SettingsEvent, SettingsState> {
   SettingsBloc([String globalKey = ''])
-      : super(() => SettingsState(), globalKey) {
+    : super(() => SettingsState(), globalKey) {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });

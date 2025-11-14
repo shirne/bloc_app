@@ -2,11 +2,7 @@ import 'package:isar_community/isar.dart';
 
 part 'repositories.g.dart';
 
-enum UserStatus {
-  none,
-  logged,
-  verified;
-}
+enum UserStatus { none, logged, verified }
 
 @collection
 class UserProfile {

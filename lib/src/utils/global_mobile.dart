@@ -16,8 +16,11 @@ class GlobalMobileVerify {
   static final DZ = MobileRegular(213, "阿尔及利亚", r"^(\+?213|0)(5|6|7)\d{8}$");
   static final SY = MobileRegular(963, "叙利亚", r"^(!?(\+?963)|0)?9\d{8}$");
   static final SA = MobileRegular(966, "沙特阿拉伯", r"^(!?(\+?966)|0)?5\d{8}$");
-  static final US =
-      MobileRegular(1, "美国", r"^(\+?1)?[2-9]\d{2}[2-9](?!11)\d{6}$");
+  static final US = MobileRegular(
+    1,
+    "美国",
+    r"^(\+?1)?[2-9]\d{2}[2-9](?!11)\d{6}$",
+  );
   static final CZ = MobileRegular(
     420,
     "捷克共和国",
@@ -32,30 +35,45 @@ class GlobalMobileVerify {
   static final GR = MobileRegular(30, "希腊", r"^(\+?30)?(69\d{8})$");
   static final AU = MobileRegular(61, "澳大利亚", r"^(\+?61|0)4\d{8}$");
   static final GB = MobileRegular(44, "英国", r"^(\+?44|0)7\d{9}$");
-  static final CA =
-      MobileRegular(1, "加拿大", r"^(\+?1)?[2-9]\d{2}[2-9](?!11)\d{6}$");
+  static final CA = MobileRegular(
+    1,
+    "加拿大",
+    r"^(\+?1)?[2-9]\d{2}[2-9](?!11)\d{6}$",
+  );
   static final IN = MobileRegular(91, "印度", r"^(\+?91|0)?[789]\d{9}$");
   static final NZ = MobileRegular(64, "新西兰", r"^(\+?64|0)2\d{7,9}$");
   static final ZA = MobileRegular(27, "南非", r"^(\+?27|0)\d{9}$");
   static final ZM = MobileRegular(260, "赞比亚", r"^(\+?26)?09[567]\d{7}$");
-  static final ES =
-      MobileRegular(34, "西班牙", r"^(\+?34)?(6\d{1}|7[1234])\d{7}$");
+  static final ES = MobileRegular(
+    34,
+    "西班牙",
+    r"^(\+?34)?(6\d{1}|7[1234])\d{7}$",
+  );
   static final FI = MobileRegular(
     358,
     "芬兰",
     r"^(\+?358|0)\s?(4(0|1|2|4|5)?|50)\s?(\d\s?){4,8}\d$",
   );
   static final FR = MobileRegular(33, "法国", r"^(\+?33|0)[67]\d{8}$");
-  static final IL =
-      MobileRegular(972, "以色列", r"^(\+972|0)([23489]|5[0248]|77)[1-9]\d{6}");
+  static final IL = MobileRegular(
+    972,
+    "以色列",
+    r"^(\+972|0)([23489]|5[0248]|77)[1-9]\d{6}",
+  );
   static final HU = MobileRegular(36, "匈牙利", r"^(\+?36)(20|30|70)\d{7}$");
   static final IT = MobileRegular(39, "意大利", r"^(\+?39)?\s?3\d{2} ?\d{6,7}$");
-  static final JP =
-      MobileRegular(81, "日本", r"^(\+?81|0)\d{1,4}[ \\-]?\d{1,4}[ \-]?\d{4}$");
+  static final JP = MobileRegular(
+    81,
+    "日本",
+    r"^(\+?81|0)\d{1,4}[ \\-]?\d{1,4}[ \-]?\d{4}$",
+  );
   static final NO = MobileRegular(47, "挪威", r"^(\+?47)?[49]\d{7}$");
   static final BE = MobileRegular(32, "比利时", r"^(\+?32|0)4?\d{8}$");
-  static final PL =
-      MobileRegular(48, "波兰", r"^(\+?48)? ?[5-8]\d ?\\d{3} ?\d{2} ?\d{2}$");
+  static final PL = MobileRegular(
+    48,
+    "波兰",
+    r"^(\+?48)? ?[5-8]\d ?\\d{3} ?\d{2} ?\d{2}$",
+  );
   static final BR = MobileRegular(
     55,
     "巴西",
@@ -147,7 +165,7 @@ class MobileRegular {
   final int code;
 
   MobileRegular(this.code, this.name, String regular)
-      : regular = RegExp(regular);
+    : regular = RegExp(regular);
 
   bool verify(String mobile) {
     return regular.hasMatch(mobile);

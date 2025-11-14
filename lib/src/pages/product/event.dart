@@ -11,6 +11,6 @@ class RefreshEvent extends ProductEvent {
 
 class StateChangedEvent extends ProductEvent {
   StateChangedEvent(this.state);
-  
+
   final ProductState state;
 }

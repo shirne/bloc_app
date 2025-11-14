@@ -11,6 +11,6 @@ class RefreshEvent extends ProfileEvent {
 
 class StateChangedEvent extends ProfileEvent {
   StateChangedEvent(this.state);
-  
+
   final ProfileState state;
 }

@@ -59,15 +59,12 @@ class _LazyIndexedStackState extends State<LazyIndexedStack> {
   }
 
   List<Widget> _buildChildren(BuildContext context) {
-    return List<Widget>.generate(
-      widget.children.length,
-      (int i) {
-        if (_activatedList[i]) {
-          return widget.children[i];
-        }
-        return const SizedBox.shrink();
-      },
-    );
+    return List<Widget>.generate(widget.children.length, (int i) {
+      if (_activatedList[i]) {
+        return widget.children[i];
+      }
+      return const SizedBox.shrink();
+    });
   }
 
   @override

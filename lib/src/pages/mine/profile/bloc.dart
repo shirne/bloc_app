@@ -7,7 +7,7 @@ part 'state.dart';
 
 class ProfileBloc extends CachedBloc<ProfileEvent, ProfileState> {
   ProfileBloc([String globalKey = ''])
-      : super(() => ProfileState(), globalKey) {
+    : super(() => ProfileState(), globalKey) {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });

@@ -24,12 +24,7 @@ enum UploadType {
   final int type;
 }
 
-enum UploadState {
-  init,
-  error,
-  uploading,
-  uploaded;
-}
+enum UploadState { init, error, uploading, uploaded }
 
 class UploadEvent {
   UploadEvent({
@@ -38,28 +33,13 @@ class UploadEvent {
     this.file,
     this.message,
   });
-  UploadEvent.init()
-      : this(
-          status: UploadState.init,
-          progress: 0,
-        );
+  UploadEvent.init() : this(status: UploadState.init, progress: 0);
   UploadEvent.progress(double progress)
-      : this(
-          status: UploadState.uploading,
-          progress: progress,
-        );
+    : this(status: UploadState.uploading, progress: progress);
   UploadEvent.uploaded(FileModel file)
-      : this(
-          status: UploadState.uploaded,
-          progress: 1,
-          file: file,
-        );
+    : this(status: UploadState.uploaded, progress: 1, file: file);
   UploadEvent.error(String message)
-      : this(
-          status: UploadState.error,
-          progress: 0,
-          message: message,
-        );
+    : this(status: UploadState.error, progress: 0, message: message);
 
   final UploadState status;
   final double progress;
@@ -76,24 +56,20 @@ abstract class UploadOption {
 
 class ImageOption extends UploadOption {
   static bool needCrop(UploadType type) => switch (type) {
-        UploadType.icon || UploadType.avatar => true,
-        _ => false,
-      };
+    UploadType.icon || UploadType.avatar => true,
+    _ => false,
+  };
   static Size? limitSize(UploadType type) => switch (type) {
-        UploadType.icon => Size(64, 64),
-        UploadType.avatar => Size(400, 400),
-        UploadType.origin || UploadType.doc || UploadType.video => null,
-        _ => Size(1600, 1600),
-      };
+    UploadType.icon => Size(64, 64),
+    UploadType.avatar => Size(400, 400),
+    UploadType.origin || UploadType.doc || UploadType.video => null,
+    _ => Size(1600, 1600),
+  };
 
   ImageOption(super.type, [this.size, this.crop = false]);
 
   ImageOption.fromType(UploadType type)
-      : this(
-          type,
-          limitSize(type),
-          needCrop(type),
-        );
+    : this(type, limitSize(type), needCrop(type));
 
   final Size? size;
   final bool crop;
@@ -164,8 +140,10 @@ class UploadUtil {
 
       if (image.width > size.width || image.height > size.height) {
         if (option.crop) {
-          var scale =
-              math.max(size.width / image.width, size.height / image.height);
+          var scale = math.max(
+            size.width / image.width,
+            size.height / image.height,
+          );
 
           var scaleWidth = (image.width * scale).ceil();
           var scaleHeight = (image.height * scale).ceil();
@@ -182,8 +160,10 @@ class UploadUtil {
               height: size.height.toInt(),
             );
         } else {
-          var scale =
-              math.min(size.width / image.width, size.height / image.height);
+          var scale = math.min(
+            size.width / image.width,
+            size.height / image.height,
+          );
           cmd.copyResize(
             width: (image.width * scale).ceil(),
             height: (image.height * scale).ceil(),
@@ -244,9 +224,7 @@ class UploadUtil {
       if (result.success) {
         progress = 1;
         try {
-          handler.call(
-            UploadEvent.uploaded(result.data!),
-          );
+          handler.call(UploadEvent.uploaded(result.data!));
         } catch (e) {
           logger.warning(e);
         }

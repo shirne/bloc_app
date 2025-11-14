@@ -8,7 +8,7 @@ part 'state.dart';
 class SystemUIModeBloc
     extends CachedBloc<SystemUIModeEvent, SystemUIModeState> {
   SystemUIModeBloc([String globalKey = ''])
-      : super(() => SystemUIModeState(), globalKey) {
+    : super(() => SystemUIModeState(), globalKey) {
     on<StateChangedEvent>((event, emit) {
       emit(event.state);
     });

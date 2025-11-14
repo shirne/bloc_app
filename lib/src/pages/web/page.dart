@@ -9,8 +9,8 @@ int webviewId = 0;
 /// 加载web页(url = 链接, show_app_bar = 是否显示appbar)
 class WebViewPage extends StatefulWidget {
   WebViewPage(Json? config, {super.key})
-      : url = config?['url'] ?? '',
-        showAppBar = config?['show_app_bar'] ?? true;
+    : url = config?['url'] ?? '',
+      showAppBar = config?['show_app_bar'] ?? true;
 
   final String url;
   final bool showAppBar;
@@ -47,18 +47,14 @@ class _WebViewPageState extends State<WebViewPage> {
         Navigator.of(context).pop();
       },
       onJsAlert: (controller, jsAlertRequest) async {
-        final result = await MyDialog.alert(
-          jsAlertRequest.message,
-        );
+        final result = await MyDialog.alert(jsAlertRequest.message);
         return JsAlertResponse(
           handledByClient: true,
           action: result == null ? null : JsAlertResponseAction.CONFIRM,
         );
       },
       onJsConfirm: (controller, jsConfirmRequest) async {
-        final result = await MyDialog.confirm(
-          jsConfirmRequest.message,
-        );
+        final result = await MyDialog.confirm(jsConfirmRequest.message);
         return JsConfirmResponse(
           handledByClient: true,
           action: result == true
@@ -94,12 +90,12 @@ class _WebViewPageState extends State<WebViewPage> {
       },
       onGeolocationPermissionsShowPrompt:
           (InAppWebViewController controller, String origin) async {
-        return GeolocationPermissionShowPromptResponse(
-          origin: origin,
-          allow: true,
-          retain: true,
-        );
-      },
+            return GeolocationPermissionShowPromptResponse(
+              origin: origin,
+              allow: true,
+              retain: true,
+            );
+          },
       onProgressChanged: (InAppWebViewController controller, int progress) {
         this.progress.value = progress;
       },

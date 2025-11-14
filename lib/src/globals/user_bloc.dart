@@ -53,10 +53,8 @@ class UserQuitEvent extends UserEvent {}
 class UpdateNoticeBadgeEvent extends UserEvent {}
 
 class UserState {
-  UserState({
-    UserModel? user,
-    this.isAuthed = false,
-  }) : user = user ?? UserModel.empty;
+  UserState({UserModel? user, this.isAuthed = false})
+    : user = user ?? UserModel.empty;
 
   final UserModel user;
 
@@ -69,10 +67,7 @@ class UserState {
   set token(TokenModel? token) =>
       _tokenNotifier.value = token ?? TokenModel.empty;
 
-  UserState clone({
-    Optional<UserModel>? user,
-    bool? isAuthed,
-  }) {
+  UserState clone({Optional<UserModel>? user, bool? isAuthed}) {
     return UserState(
       user: user == null ? this.user : user.value,
       isAuthed: isAuthed ?? this.isAuthed,
@@ -82,10 +77,7 @@ class UserState {
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final StoreService storeService;
-  UserBloc(this.storeService)
-      : super(
-          UserState(),
-        ) {
+  UserBloc(this.storeService) : super(UserState()) {
     _instance = this;
 
     on<StateChangedEvent>((event, emit) {
@@ -101,12 +93,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(state.clone(isAuthed: event.authed));
       } else {
         state.token = null;
-        emit(
-          state.clone(
-            user: Optional(null),
-            isAuthed: false,
-          ),
-        );
+        emit(state.clone(user: Optional(null), isAuthed: false));
       }
     });
 
@@ -155,9 +142,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     if (state.token.isValid) {
       if (state.token.isExpire) {
         ApiService.instance.onRequest = null;
-        final result = await Api.ucenter.doRefresh(
-          state.token.refreshToken,
-        );
+        final result = await Api.ucenter.doRefresh(state.token.refreshToken);
         if (result.success && result.data != null) {
           add(TokenRefreshEvent(result.data!));
         } else {
@@ -184,9 +169,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   Future<void> _init([ResultCallback? onReady]) async {
     if (state.token.isValid) {
-      await Future.wait([
-        upUserinfo(() {}),
-      ]);
+      await Future.wait([upUserinfo(() {})]);
     }
     onReady?.call(true, null);
   }
@@ -197,16 +180,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   ]) async {
     final result = await Api.ucenter.getUserinfo(onRequireLogin);
     if (!isClosed && result.success) {
-      add(
-        StateChangedEvent(state.clone(user: Optional(result.data))),
-      );
+      add(StateChangedEvent(state.clone(user: Optional(result.data))));
     }
   }
 
   Future<void> updateBadge([VoidCallback? onRequireLogin]) async {
-    final result = await Api.ucenter.getNoticeCount(
-      onRequireLogin,
-    );
+    final result = await Api.ucenter.getNoticeCount(onRequireLogin);
     if (result.success) {
       _noticeBadge.value = result.data?['unread_count'] ?? 0;
     }

@@ -3,15 +3,12 @@ import 'package:flutter/material.dart';
 import '../utils/core.dart';
 
 Widget noImage(BuildContext context) => FractionallySizedBox(
-      widthFactor: 0.5,
-      heightFactor: 0.5,
-      child: FittedBox(
-        child: Icon(
-          Icons.image,
-          color: context.colorScheme.tertiary,
-        ),
-      ),
-    );
+  widthFactor: 0.5,
+  heightFactor: 0.5,
+  child: FittedBox(
+    child: Icon(Icons.image, color: context.colorScheme.tertiary),
+  ),
+);
 
 class ImageBox extends StatelessWidget {
   const ImageBox({
@@ -53,7 +50,8 @@ class ImageBox extends StatelessWidget {
               width: width,
               height: height,
               fit: fit,
-              errorBuilder: errorBuilder ??
+              errorBuilder:
+                  errorBuilder ??
                   (context, error, stackTrace) {
                     return noImage(context);
                   },

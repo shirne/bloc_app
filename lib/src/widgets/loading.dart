@@ -13,8 +13,10 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> with SingleTickerProviderStateMixin {
-  late final animationController =
-      AnimationController(vsync: this, duration: const Duration(seconds: 2));
+  late final animationController = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 2),
+  );
   double angle = 0.0;
   bool isStop = false;
 
@@ -66,8 +68,10 @@ class _LoadingState extends State<Loading> with SingleTickerProviderStateMixin {
   void _onTicker() {
     if (animationController.value > 0.7) {
       setState(() {
-        angle = (math.pi * (animationController.value - 0.7) / 0.29)
-            .clamp(0, math.pi);
+        angle = (math.pi * (animationController.value - 0.7) / 0.29).clamp(
+          0,
+          math.pi,
+        );
       });
     }
   }

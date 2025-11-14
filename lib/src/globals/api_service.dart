@@ -18,12 +18,12 @@ const _tokenHeaderKey = 'Authorization';
 class ApiService {
   static final _instances = <String, ApiService>{};
   static ApiService get instance => _instances.putIfAbsent(
-        '_default',
-        () => ApiService._(
-          Config.serverUrl[0],
-          connectTimeout: const Duration(seconds: 10),
-        ),
-      );
+    '_default',
+    () => ApiService._(
+      Config.serverUrl[0],
+      connectTimeout: const Duration(seconds: 10),
+    ),
+  );
   factory ApiService([String? baseUrl, Duration? connectTimeout]) {
     return baseUrl == null
         ? instance
@@ -55,13 +55,13 @@ class ApiService {
     this.sendTimeout,
     this.receiveTimeout,
   }) : _dio = Dio(
-          BaseOptions(
-            connectTimeout: connectTimeout,
-            sendTimeout: sendTimeout,
-            receiveTimeout: receiveTimeout,
-            baseUrl: baseUrl,
-          ),
-        ) {
+         BaseOptions(
+           connectTimeout: connectTimeout,
+           sendTimeout: sendTimeout,
+           receiveTimeout: receiveTimeout,
+           baseUrl: baseUrl,
+         ),
+       ) {
     _dio.interceptors.add(ApiInterceptor());
   }
 
@@ -152,10 +152,7 @@ class ApiService {
 
     Options options = Options(
       method: method,
-      headers: {
-        'lang': defaultLang,
-        ...?header,
-      },
+      headers: {'lang': defaultLang, ...?header},
       sendTimeout: sendTimeout,
       receiveTimeout: receiveTimeout,
     );
@@ -337,15 +334,13 @@ class ApiResult<T extends Base> {
 
   ApiResult(this.status, this._message, [this.data, this.origin]);
 
-  ApiResult.fromResponse(
-    Response<Json> response, [
-    DataParser<T>? dataParser,
-  ])  : status = response.statusCode ?? -1,
-        _message = response.statusMessage,
-        data = response.data == null
-            ? null
-            : dataParser?.call(response.data) ?? transData<T>(response.data),
-        origin = response.data;
+  ApiResult.fromResponse(Response<Json> response, [DataParser<T>? dataParser])
+    : status = response.statusCode ?? -1,
+      _message = response.statusMessage,
+      data = response.data == null
+          ? null
+          : dataParser?.call(response.data) ?? transData<T>(response.data),
+      origin = response.data;
 
   static T? transData<T>(dynamic data) {
     if (data == null) return null;
@@ -374,11 +369,11 @@ class ApiResult<T extends Base> {
   }
 
   Json toJson() => {
-        'status': status,
-        'message': _message,
-        'data': data,
-        'origin': origin,
-      };
+    'status': status,
+    'message': _message,
+    'data': data,
+    'origin': origin,
+  };
 
   @override
   String toString() => toJson().toString();
@@ -429,10 +424,7 @@ class ApiInterceptor extends Interceptor {
       StackTrace.current.cast(5),
     );
     if (err.response?.data != null) {
-      logger.fine(
-        '错误数据',
-        '${err.response?.data}',
-      );
+      logger.fine('错误数据', '${err.response?.data}');
     }
 
     return super.onError(err, handler);

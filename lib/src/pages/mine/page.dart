@@ -34,9 +34,7 @@ class MinePage extends StatelessWidget {
               );
             }
 
-            return const Center(
-              child: Text('Mine'),
-            );
+            return const Center(child: Text('Mine'));
           },
         ),
       ),

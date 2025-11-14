@@ -16,12 +16,7 @@ import '../utils/utils.dart';
 const _secLength = 256;
 const _macLegth = 16;
 
-enum ChatConnectState {
-  initial,
-  connecting,
-  connected,
-  closed;
-}
+enum ChatConnectState { initial, connecting, connected, closed }
 
 class ConnectionInfo {
   ConnectionInfo({
@@ -42,10 +37,7 @@ Future<void> deleteSftpFile(ConnectionInfo info, String file) async {
   SSHClient? client;
   try {
     client = SSHClient(
-      await SSHSocket.connect(
-        info.ip,
-        info.sshPort,
-      ),
+      await SSHSocket.connect(info.ip, info.sshPort),
       username: info.account,
       onPasswordRequest: () => info.password,
       printTrace: (log) {
@@ -75,10 +67,7 @@ Future<String?> uploadSftpFile(
   SSHClient? client;
   try {
     client = SSHClient(
-      await SSHSocket.connect(
-        info.ip,
-        info.sshPort,
-      ),
+      await SSHSocket.connect(info.ip, info.sshPort),
       username: info.account,
       onPasswordRequest: () => info.password,
       printTrace: (log) {
@@ -100,12 +89,14 @@ Future<String?> uploadSftpFile(
 
     final stream = file.openRead();
 
-    await sftpFile.write(
-      stream.map((ilist) => Uint8List.fromList(ilist)),
-      onProgress: (total) {
-        logger.info('progress: $total');
-      },
-    ).done;
+    await sftpFile
+        .write(
+          stream.map((ilist) => Uint8List.fromList(ilist)),
+          onProgress: (total) {
+            logger.info('progress: $total');
+          },
+        )
+        .done;
     // await file.writeBytes(await file.readBytes());
     await sftpFile.close();
     sftp.close();
@@ -122,8 +113,10 @@ Future<String?> uploadSftpFile(
 /// 会员主机请求封装
 class UserSocketManager extends SocketManager {
   UserSocketManager._(
-      String server, RSAPublicKey publicKey, RSAPrivateKey privateKey)
-      : super._('user', server, publicKey, privateKey);
+    String server,
+    RSAPublicKey publicKey,
+    RSAPrivateKey privateKey,
+  ) : super._('user', server, publicKey, privateKey);
 
   static UserSocketManager? _instance;
   static UserSocketManager get instance => _instance!;
@@ -271,26 +264,17 @@ class SocketManager {
       channel.sink.add(binmsg);
     } catch (e) {
       logger.warning(e);
-      return {
-        'success': false,
-        'message': 'Request Error',
-      };
+      return {'success': false, 'message': 'Request Error'};
     }
     Map<String, dynamic>? result;
     try {
       result = await Future.any<Map<String, dynamic>>([
         _messageFuture.future,
-        Future.delayed(
-          timeout ?? this.timeout,
-          () {
-            close();
+        Future.delayed(timeout ?? this.timeout, () {
+          close();
 
-            return {
-              'success': false,
-              'message': 'Request Timeout',
-            };
-          },
-        ),
+          return {'success': false, 'message': 'Request Timeout'};
+        }),
       ]);
     } catch (e) {
       logger.warning('$e');
@@ -396,7 +380,10 @@ class SocketManager {
     final result = Uint8List(message.length + preLen);
     result.setRange(0, encSessionKey.length, encSessionKey);
     result.setRange(
-        encSessionKey.length, encSessionKey.length + nonce.length, nonce);
+      encSessionKey.length,
+      encSessionKey.length + nonce.length,
+      nonce,
+    );
 
     cipherAES.processBytes(message, 0, message.length, result, preLen);
     final mac = Uint8List(cipherAES.macSize);
@@ -416,8 +403,10 @@ class SocketManager {
     final sessionKey = encryptor.process(encSecretKey);
 
     final nonce = data.sublist(_secLength, _secLength + _macLegth);
-    final tag =
-        data.sublist(_secLength + _macLegth, _secLength + _macLegth * 2);
+    final tag = data.sublist(
+      _secLength + _macLegth,
+      _secLength + _macLegth * 2,
+    );
     final aes = EAX(AESEngine())
       ..init(
         false,

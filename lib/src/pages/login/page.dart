@@ -9,8 +9,8 @@ import 'bloc.dart';
 /// 登录页
 class LoginPage extends StatefulWidget {
   LoginPage(Json? args, {super.key})
-      : backPage = args?['back'] as String?,
-        arguments = args?['arguments'];
+    : backPage = args?['back'] as String?,
+      arguments = args?['arguments'];
 
   final String? backPage;
   final Object? arguments;
@@ -46,10 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       logger.fine("last route $backPage ${widget.arguments}");
 
-      navigator.pushReplacementNamed(
-        backPage!,
-        arguments: widget.arguments,
-      );
+      navigator.pushReplacementNamed(backPage!, arguments: widget.arguments);
     }
   }
 
@@ -187,9 +184,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: state.isLoading
                                 ? null
                                 : () {
-                                    context
-                                        .read<LoginBloc>()
-                                        .add(SubmitEvent());
+                                    context.read<LoginBloc>().add(
+                                      SubmitEvent(),
+                                    );
                                   },
                             child: Center(
                               child: Text(context.l10n.loginButtonText),

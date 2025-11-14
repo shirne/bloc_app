@@ -20,22 +20,22 @@ class MainApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider<GlobalBloc>(
-            create: (BuildContext context) => GlobalBloc(
-              context.read<StoreService>(),
-            ),
+            create: (BuildContext context) =>
+                GlobalBloc(context.read<StoreService>()),
           ),
           BlocProvider<UserBloc>(
-            create: (BuildContext context) => UserBloc(
-              context.read<StoreService>(),
-            ),
+            create: (BuildContext context) =>
+                UserBloc(context.read<StoreService>()),
           ),
         ],
         child: BlocBuilder<GlobalBloc, GlobalState>(
           builder: (context, state) {
             return DefaultTextStyle(
               // 如果需要内置字体，此处修改为对应的字体名
-              style:
-                  const TextStyle(fontFamily: '微软雅黑', fontFamilyFallback: ['']),
+              style: const TextStyle(
+                fontFamily: '微软雅黑',
+                fontFamilyFallback: [''],
+              ),
               child: MaterialApp(
                 restorationScopeId: 'app',
                 navigatorKey: navigatorKey,
@@ -62,9 +62,7 @@ class MainApp extends StatelessWidget {
                 themeMode: state.themeMode,
                 debugShowCheckedModeBanner: false,
                 scrollBehavior: _CustomScrollBehavior(),
-                navigatorObservers: [
-                  AppNavigatorObserver(navigatorKey),
-                ],
+                navigatorObservers: [AppNavigatorObserver(navigatorKey)],
                 initialRoute: Routes.splash.name,
                 onGenerateRoute: (RouteSettings routeSettings) {
                   final route = Routes.match(routeSettings);
@@ -134,16 +132,17 @@ class _CustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.stylus,
-        PointerDeviceKind.invertedStylus,
-        PointerDeviceKind.trackpad,
-        PointerDeviceKind.unknown,
-      };
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.invertedStylus,
+    PointerDeviceKind.trackpad,
+    PointerDeviceKind.unknown,
+  };
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) =>
-      const BouncingScrollPhysics()
-          .applyTo(const AlwaysScrollableScrollPhysics());
+      const BouncingScrollPhysics().applyTo(
+        const AlwaysScrollableScrollPhysics(),
+      );
 }

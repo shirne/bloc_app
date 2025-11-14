@@ -66,7 +66,6 @@ T? as<T>(dynamic value, [T? defaultValue]) {
       return result as T;
     }
   } else
-
   // String parse
   if (value is String) {
     if (value.isEmpty) {
@@ -91,10 +90,7 @@ T? as<T>(dynamic value, [T? defaultValue]) {
       try {
         return jsonDecode(value) as T;
       } catch (e) {
-        logger.warning(
-          'Json decode error: $e',
-          StackTrace.current.cast(3),
-        );
+        logger.warning('Json decode error: $e', StackTrace.current.cast(3));
       }
     } else {
       logger.warning(
@@ -172,12 +168,11 @@ class ModelList<T extends Base> implements Base {
   ModelList({this.items});
 
   ModelList.fromJson(Json? json, [DataParser<T>? dataParser])
-      : this(
-          items: as<List>(json?['items'] ?? json?['list'] ?? json?['data'])
-              ?.map<T?>(dataParser ?? (item) => item as T?)
-              .whereType<T>()
-              .toList(),
-        );
+    : this(
+        items: as<List>(
+          json?['items'] ?? json?['list'] ?? json?['data'],
+        )?.map<T?>(dataParser ?? (item) => item as T?).whereType<T>().toList(),
+      );
 
   List<T>? items;
 
@@ -189,8 +184,8 @@ class ModelList<T extends Base> implements Base {
 
   @override
   Json toJson() => {
-        'items': items?.map<Json>((item) => item.toJson()).toList(),
-      };
+    'items': items?.map<Json>((item) => item.toJson()).toList(),
+  };
 }
 
 /// 分页数据的模型，以下定义的字段可根据实际情况调整
@@ -204,25 +199,24 @@ class ModelPage<T extends Base> extends ModelList<T> {
   });
 
   ModelPage.fromJson(Json? json, [DataParser<T>? dataParser])
-      : this(
-          total: as<int>(json?['total'], 0)!,
-          page: as<int>(
-            json?['page'] ?? json?['current'] ?? json?['currentPage'],
-            0,
-          )!,
-          pageSize: as<int>(
-            json?['page_size'] ?? json?['pageSize'] ?? json?['size'],
-            8,
-          )!,
-          totalPage: as<int>(
-            json?['pages'] ?? json?['total_page'] ?? json?['totalPage'],
-            1,
-          )!,
-          items: as<List>(json?['items'] ?? json?['list'])
-              ?.map<T?>(dataParser ?? (item) => item as T?)
-              .whereType<T>()
-              .toList(),
-        );
+    : this(
+        total: as<int>(json?['total'], 0)!,
+        page: as<int>(
+          json?['page'] ?? json?['current'] ?? json?['currentPage'],
+          0,
+        )!,
+        pageSize: as<int>(
+          json?['page_size'] ?? json?['pageSize'] ?? json?['size'],
+          8,
+        )!,
+        totalPage: as<int>(
+          json?['pages'] ?? json?['total_page'] ?? json?['totalPage'],
+          1,
+        )!,
+        items: as<List>(
+          json?['items'] ?? json?['list'],
+        )?.map<T?>(dataParser ?? (item) => item as T?).whereType<T>().toList(),
+      );
 
   final int total;
   final int page;
@@ -252,9 +246,7 @@ class ActionResult implements Base {
   ActionResult clone({int? state}) => ActionResult(state ?? this.state);
 
   @override
-  Json toJson() => {
-        'state': state,
-      };
+  Json toJson() => {'state': state};
 }
 
 abstract class UserInfoModel {

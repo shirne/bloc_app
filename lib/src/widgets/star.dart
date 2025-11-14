@@ -12,8 +12,8 @@ class StarWidget extends StatefulWidget {
     this.count = 5,
     this.isHalf = false,
     this.onChanged,
-  })  : spacing = spacing ?? size / 2,
-        assert(rate >= 0 && rate <= 5);
+  }) : spacing = spacing ?? size / 2,
+       assert(rate >= 0 && rate <= 5);
 
   final double size;
   final double rate;
@@ -37,8 +37,10 @@ class _StarWidgetState extends State<StarWidget> {
   double tmpPosition = 0;
 
   double getRate() {
-    final intRate = (currentPos ~/ (widget.size + widget.spacing))
-        .clamp(0, widget.count - 1);
+    final intRate = (currentPos ~/ (widget.size + widget.spacing)).clamp(
+      0,
+      widget.count - 1,
+    );
     final r = currentPos % (widget.size + widget.spacing);
 
     if (!widget.isHalf) {
@@ -58,8 +60,10 @@ class _StarWidgetState extends State<StarWidget> {
   }
 
   double fixRate(double pos) {
-    final intRate =
-        (pos ~/ (widget.size + widget.spacing)).clamp(0, widget.count - 1);
+    final intRate = (pos ~/ (widget.size + widget.spacing)).clamp(
+      0,
+      widget.count - 1,
+    );
     final r = pos % (widget.size + widget.spacing);
 
     double half = 0;
@@ -82,14 +86,8 @@ class _StarWidgetState extends State<StarWidget> {
     final child = Stack(
       children: [
         IconTheme(
-          data: IconThemeData(
-            size: widget.size,
-            color: _kNormalColor,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: stars,
-          ),
+          data: IconThemeData(size: widget.size, color: _kNormalColor),
+          child: Row(mainAxisSize: MainAxisSize.min, children: stars),
         ),
         ValueListenableBuilder(
           valueListenable: clipWidth,
@@ -106,14 +104,8 @@ class _StarWidgetState extends State<StarWidget> {
             maxWidth: MediaQuery.of(context).size.width,
             alignment: Alignment.centerLeft,
             child: IconTheme(
-              data: IconThemeData(
-                size: widget.size,
-                color: _kActiveColor,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: stars,
-              ),
+              data: IconThemeData(size: widget.size, color: _kActiveColor),
+              child: Row(mainAxisSize: MainAxisSize.min, children: stars),
             ),
           ),
         ),

@@ -40,20 +40,14 @@ class StateChangedEvent extends GlobalEvent {
 }
 
 class GlobalState {
-  GlobalState({
-    this.themeMode = ThemeMode.system,
-    this.locale,
-  });
+  GlobalState({this.themeMode = ThemeMode.system, this.locale});
 
   final ThemeMode themeMode;
   final Locale? locale;
 
   Locale? get currentLocale => locale ?? navigatorKey.currentContext?.locale;
 
-  GlobalState clone({
-    ThemeMode? themeMode,
-    Optional<Locale>? locale,
-  }) {
+  GlobalState clone({ThemeMode? themeMode, Optional<Locale>? locale}) {
     return GlobalState(
       themeMode: themeMode ?? this.themeMode,
       locale: locale == null ? this.locale : locale.value,
@@ -75,12 +69,12 @@ class GlobalState {
 class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
   final StoreService storeService;
   GlobalBloc(this.storeService)
-      : super(
-          GlobalState(
-            themeMode: storeService.themeMode(),
-            locale: storeService.locale(),
-          ),
-        ) {
+    : super(
+        GlobalState(
+          themeMode: storeService.themeMode(),
+          locale: storeService.locale(),
+        ),
+      ) {
     _instance = this;
 
     on<ThemeModeChangedEvent>((event, emit) {

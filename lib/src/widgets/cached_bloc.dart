@@ -23,7 +23,7 @@ abstract class BaseState {
   static const messageError = '_ERROR';
 
   BaseState({this.status = Status.initial, String? message})
-      : message = message == null || message.isEmpty ? null : message;
+    : message = message == null || message.isEmpty ? null : message;
 
   final Status status;
   final String? message;
@@ -35,10 +35,7 @@ abstract class BaseState {
 
   BaseState clone();
 
-  Map<String, dynamic> toJson() => {
-        'status': status,
-        'message': message,
-      };
+  Map<String, dynamic> toJson() => {'status': status, 'message': message};
 
   @override
   String toString() => jsonEncode(toJson());
@@ -82,9 +79,7 @@ class QueryModel<T, S> {
     );
   }
 
-  QueryModel<T, S> fromPaged({
-    ModelPage? paged,
-  }) {
+  QueryModel<T, S> fromPaged({ModelPage? paged}) {
     return clone(
       page: paged?.page,
       pageSize: paged?.pageSize,
@@ -93,28 +88,24 @@ class QueryModel<T, S> {
   }
 
   Map<String, dynamic> toJson() => {
-        'page': page,
-        'pageSize': pageSize,
-        'total': total,
-        'keyword': keyword,
-        'type': '$type',
-        'status': '$status',
-      };
+    'page': page,
+    'pageSize': pageSize,
+    'total': total,
+    'keyword': keyword,
+    'type': '$type',
+    'status': '$status',
+  };
 }
 
 class PagedState<T, S extends QueryModel> extends BaseState {
-  PagedState({
-    Status? status,
-    super.message,
-    S? query,
-    List<T>? lists,
-  })  : assert(
-          query != null || S == QueryModel,
-          'Must specify a query instance when not use default QueryModel',
-        ),
-        query = query ?? (QueryModel._default as S),
-        lists = lists ?? [],
-        super(status: status ?? Status.initial);
+  PagedState({Status? status, super.message, S? query, List<T>? lists})
+    : assert(
+        query != null || S == QueryModel,
+        'Must specify a query instance when not use default QueryModel',
+      ),
+      query = query ?? (QueryModel._default as S),
+      lists = lists ?? [],
+      super(status: status ?? Status.initial);
 
   final S query;
 
@@ -142,11 +133,8 @@ class PagedState<T, S extends QueryModel> extends BaseState {
   }
 
   @override
-  Map<String, dynamic> toJson() => super.toJson()
-    ..addAll({
-      'query': query,
-      'lists': lists,
-    });
+  Map<String, dynamic> toJson() =>
+      super.toJson()..addAll({'query': query, 'lists': lists});
 }
 
 final _states = <String, dynamic>{};
@@ -175,9 +163,7 @@ abstract class CachedBloc<E, T extends BaseState> extends Bloc<E, T> {
     T Function() createState, [
     this.globalKey = '',
     T Function(T)? fromCache,
-  ]) : super(
-          _getCachedState(createState, globalKey, fromCache),
-        );
+  ]) : super(_getCachedState(createState, globalKey, fromCache));
 
   final String globalKey;
 
@@ -207,9 +193,7 @@ abstract class CachedCubit<T> extends Cubit<T> {
     T Function() createState, [
     this.globalKey = '',
     T Function(T)? fromCache,
-  ]) : super(
-          _getCachedState(createState, globalKey, fromCache),
-        );
+  ]) : super(_getCachedState(createState, globalKey, fromCache));
 
   @override
   Future<void> close() async {

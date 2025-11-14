@@ -15,17 +15,17 @@ class FileModel implements Base {
   });
 
   factory FileModel.fromJson(Json json) => FileModel(
-        id: as<int>(json['id']) ?? 0,
-        url: as<String>(json['url']) ?? '',
-        extensions: as<String>(json['extensions']) ?? '',
-        mimeType: as<String>(json['mime_type']) ?? '',
-        path: as<String>(json['path']) ?? '',
-        name: as<String>(json['name']) ?? '',
-        size: as<int>(json['size']) ?? 0,
-        type: as<int>(json['type']) ?? 0,
-        createdTime: as<DateTime>(json['created_time']),
-        updatedTime: as<DateTime>(json['updated_time']),
-      );
+    id: as<int>(json['id']) ?? 0,
+    url: as<String>(json['url']) ?? '',
+    extensions: as<String>(json['extensions']) ?? '',
+    mimeType: as<String>(json['mime_type']) ?? '',
+    path: as<String>(json['path']) ?? '',
+    name: as<String>(json['name']) ?? '',
+    size: as<int>(json['size']) ?? 0,
+    type: as<int>(json['type']) ?? 0,
+    createdTime: as<DateTime>(json['created_time']),
+    updatedTime: as<DateTime>(json['updated_time']),
+  );
 
   final int id;
   final String url;
@@ -40,17 +40,17 @@ class FileModel implements Base {
 
   @override
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'url': url,
-        'extensions': extensions,
-        'mime_type': mimeType,
-        'path': path,
-        'name': name,
-        'size': size,
-        'type': type,
-        'created_time': createdTime,
-        'updated_time': updatedTime,
-      };
+    'id': id,
+    'url': url,
+    'extensions': extensions,
+    'mime_type': mimeType,
+    'path': path,
+    'name': name,
+    'size': size,
+    'type': type,
+    'created_time': createdTime,
+    'updated_time': updatedTime,
+  };
 
   @override
   FileModel clone({

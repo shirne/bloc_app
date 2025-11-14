@@ -32,9 +32,7 @@ class DataUtil {
     }
     _isOpening = Completer();
     _box ??= await Isar.open(
-      [
-        UserProfileSchema,
-      ],
+      [UserProfileSchema],
       name: _myIsar,
       directory: await Utils.getDocDir(name: 'isardata'),
     );

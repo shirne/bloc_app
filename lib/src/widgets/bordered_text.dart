@@ -27,10 +27,7 @@ class BorderedText extends StatelessWidget {
               ..color = borderColor,
           ),
         ),
-        Text(
-          text,
-          style: style,
-        ),
+        Text(text, style: style),
       ],
     );
   }

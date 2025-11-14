@@ -77,10 +77,12 @@ class _StickyWidgetState extends State<StickyWidget> {
       showOverlay();
       return;
     }
-    final offset = (context
-            .findAncestorRenderObjectOfType<RenderSliverToBoxAdapter>()
-            ?.parentData as SliverPhysicalParentData?)
-        ?.paintOffset;
+    final offset =
+        (context
+                    .findAncestorRenderObjectOfType<RenderSliverToBoxAdapter>()
+                    ?.parentData
+                as SliverPhysicalParentData?)
+            ?.paintOffset;
     final offsetAxis =
         (state?.widget.axis == Axis.horizontal ? offset?.dx : offset?.dy) ?? 0;
     if (offsetAxis < widget.offset) {

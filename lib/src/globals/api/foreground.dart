@@ -12,11 +12,7 @@ class ApiForeground extends ApiBase {
   }) async {
     return await apiService.post(
       '${basePath}api/member/index/wxBindPhone',
-      {
-        'code': code,
-        'iv': iv,
-        'encryptedData': encryptedData,
-      },
+      {'code': code, 'iv': iv, 'encryptedData': encryptedData},
       dataParser: (d) => Model.fromJson(d),
     );
   }
@@ -62,14 +58,10 @@ class ApiForeground extends ApiBase {
     required String phone,
     required String verifyCode,
   }) async {
-    return await apiService.post(
-      '${basePath}api/member/index/bindPhone',
-      {
-        'phone': phone,
-        'verifyCode': verifyCode,
-      },
-      dataParser: (d) => Model.fromJson(d),
-    );
+    return await apiService.post('${basePath}api/member/index/bindPhone', {
+      'phone': phone,
+      'verifyCode': verifyCode,
+    }, dataParser: (d) => Model.fromJson(d));
   }
 
   /// 绑定邮箱
@@ -77,14 +69,10 @@ class ApiForeground extends ApiBase {
     required String email,
     required String verifyCode,
   }) async {
-    return await apiService.post(
-      '${basePath}api/member/index/bindEmail',
-      {
-        'email': email,
-        'verifyCode': verifyCode,
-      },
-      dataParser: (d) => Model.fromJson(d),
-    );
+    return await apiService.post('${basePath}api/member/index/bindEmail', {
+      'email': email,
+      'verifyCode': verifyCode,
+    }, dataParser: (d) => Model.fromJson(d));
   }
 
   /// 微信授权登录/注册
@@ -142,16 +130,10 @@ class ApiForeground extends ApiBase {
   }
 
   /// 文章点赞
-  Future<ApiResult<Model>> diggArticle({
-    required String id,
-  }) async {
-    return await apiService.post(
-      '${basePath}api/article/digg',
-      {
-        'id': id,
-      },
-      dataParser: (d) => Model.fromJson(d),
-    );
+  Future<ApiResult<Model>> diggArticle({required String id}) async {
+    return await apiService.post('${basePath}api/article/digg', {
+      'id': id,
+    }, dataParser: (d) => Model.fromJson(d));
   }
 
   /// 文章评论
@@ -160,15 +142,11 @@ class ApiForeground extends ApiBase {
     required String content,
     String? replyId,
   }) async {
-    return await apiService.post(
-      '${basePath}api/article/comment',
-      {
-        'id': id,
-        'content': content,
-        if (replyId != null) 'replyId': replyId,
-      },
-      dataParser: (d) => Model.fromJson(d),
-    );
+    return await apiService.post('${basePath}api/article/comment', {
+      'id': id,
+      'content': content,
+      if (replyId != null) 'replyId': replyId,
+    }, dataParser: (d) => Model.fromJson(d));
   }
 
   /// 获取系统配置
@@ -180,9 +158,7 @@ class ApiForeground extends ApiBase {
   }
 
   /// 获取指定位置的推荐位
-  Future<ApiResult<BoothDTO>> getBooth({
-    required String flag,
-  }) async {
+  Future<ApiResult<BoothDTO>> getBooth({required String flag}) async {
     return await apiService.get(
       '${basePath}api/common/booth/$flag',
       dataParser: (d) => BoothDTO.fromJson(d),
@@ -190,9 +166,7 @@ class ApiForeground extends ApiBase {
   }
 
   /// 获取指定位置的Banner
-  Future<ApiResult<BannerDTO>> getBanner({
-    required String flag,
-  }) async {
+  Future<ApiResult<BannerDTO>> getBanner({required String flag}) async {
     return await apiService.get(
       '${basePath}api/common/banner/$flag',
       dataParser: (d) => BannerDTO.fromJson(d),
@@ -200,14 +174,10 @@ class ApiForeground extends ApiBase {
   }
 
   /// 获取分类列表
-  Future<ApiResult<ModelList<CategoryModel>>> list({
-    String? parentId,
-  }) async {
+  Future<ApiResult<ModelList<CategoryModel>>> list({String? parentId}) async {
     return await apiService.get(
       '${basePath}api/category/list',
-      queryParameters: {
-        if (parentId != null) 'parent_id': parentId,
-      },
+      queryParameters: {if (parentId != null) 'parent_id': parentId},
       dataParser: (d) =>
           ModelList.fromJson(d, (m) => CategoryModel.fromJson(m)),
     );
@@ -228,10 +198,7 @@ class ApiForeground extends ApiBase {
   }) async {
     return await apiService.get(
       '${basePath}api/auth/send_sms_code',
-      queryParameters: {
-        'mobile': mobile,
-        'verify': verify,
-      },
+      queryParameters: {'mobile': mobile, 'verify': verify},
       dataParser: (d) => Model.fromJson(d),
     );
   }
@@ -243,10 +210,7 @@ class ApiForeground extends ApiBase {
   }) async {
     return await apiService.get(
       '${basePath}api/auth/send_email_code',
-      queryParameters: {
-        'email': email,
-        'verify': verify,
-      },
+      queryParameters: {'email': email, 'verify': verify},
       dataParser: (d) => Model.fromJson(d),
     );
   }
@@ -271,9 +235,7 @@ class ApiForeground extends ApiBase {
   }
 
   /// 文章详情
-  Future<ApiResult<ArticleDTO>> detail({
-    required String id,
-  }) async {
+  Future<ApiResult<ArticleDTO>> detail({required String id}) async {
     return await apiService.get(
       '${basePath}api/article/detail/$id',
       dataParser: (d) => ArticleDTO.fromJson(d),

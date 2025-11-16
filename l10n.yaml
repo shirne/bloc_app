@@ -3,5 +3,4 @@ output-class: AppLocalizations
 output-dir: lib/l10n/gen
 output-localization-file: l10n.dart
 template-arb-file: app_en.arb
-synthetic-package: false
 untranslated-messages-file: lib/l10n/gen/untranslated.txt

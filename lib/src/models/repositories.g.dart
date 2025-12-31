@@ -35,6 +35,7 @@ const UserProfileSchema = CollectionSchema(
     ),
     r'uid': PropertySchema(id: 3, name: r'uid', type: IsarType.long),
   },
+
   estimateSize: _userProfileEstimateSize,
   serialize: _userProfileSerialize,
   deserialize: _userProfileDeserialize,
@@ -57,6 +58,7 @@ const UserProfileSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {},
+
   getId: _userProfileGetId,
   getLinks: _userProfileGetLinks,
   attach: _userProfileAttach,
@@ -978,6 +980,7 @@ const UserAvatarSchema = CollectionSchema(
     ),
     r'uid': PropertySchema(id: 6, name: r'uid', type: IsarType.long),
   },
+
   estimateSize: _userAvatarEstimateSize,
   serialize: _userAvatarSerialize,
   deserialize: _userAvatarDeserialize,
@@ -1000,6 +1003,7 @@ const UserAvatarSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {},
+
   getId: _userAvatarGetId,
   getLinks: _userAvatarGetLinks,
   attach: _userAvatarAttach,

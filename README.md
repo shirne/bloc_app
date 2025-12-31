@@ -64,8 +64,8 @@ class ArticleModel implements Base {
   ArticleModel.fromJson(Map<String, dynamic>? json)
       : this(
           articleId: as<int>(json?['article_id']) ?? 0,
-          title: as<String>(json?['title'] ?? '',
-          content: as<String>(json?['content'] ?? '',
+          title: as<String>(json?['title']) ?? '',
+          content: as<String>(json?['content']) ?? '',
           createTime: as<DateTime>(json?['create_time']),
         );
 
